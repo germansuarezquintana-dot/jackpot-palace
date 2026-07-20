@@ -1,0 +1,139 @@
+import { useState } from "react";
+import "./App.css";
+
+const symbols = ["🍒", "🍋", "🔔", "⭐", "7️⃣", "💎"];
+
+function randomSymbol() {
+  return symbols[Math.floor(Math.random() * symbols.length)];
+}
+
+function App() {
+  const [balance, setBalance] = useState(1000);
+  const [reels, setReels] = useState(["🍒", "🍋", "🔔"]);
+  const [message, setMessage] = useState("Presioná GIRAR");
+  const [spinning, setSpinning] = useState(false);
+  const [stopped, setStopped] = useState([true, true, true]);
+
+  function spin() {
+    if (spinning) return;
+
+    if (balance < 50) {
+      setMessage("No tenés fichas suficientes");
+      return;
+    }
+
+    setSpinning(true);
+    setStopped([false, false, false]);
+    setBalance((currentBalance) => currentBalance - 50);
+    setMessage("Girando...");
+
+    const finalReels = [
+      randomSymbol(),
+      randomSymbol(),
+      randomSymbol(),
+    ];
+
+    const intervals = [0, 1, 2].map((reelIndex) =>
+      setInterval(() => {
+        setReels((currentReels) => {
+          const updatedReels = [...currentReels];
+          updatedReels[reelIndex] = randomSymbol();
+          return updatedReels;
+        });
+      }, 80)
+    );
+
+    function stopReel(reelIndex, delay) {
+      setTimeout(() => {
+        clearInterval(intervals[reelIndex]);
+
+        setReels((currentReels) => {
+          const updatedReels = [...currentReels];
+          updatedReels[reelIndex] = finalReels[reelIndex];
+          return updatedReels;
+        });
+
+        setStopped((currentStopped) => {
+          const updatedStopped = [...currentStopped];
+          updatedStopped[reelIndex] = true;
+          return updatedStopped;
+        });
+      }, delay);
+    }
+
+    stopReel(0, 900);
+    stopReel(1, 1250);
+    stopReel(2, 1600);
+
+    setTimeout(() => {
+      const threeEqual =
+        finalReels[0] === finalReels[1] &&
+        finalReels[1] === finalReels[2];
+
+      const twoEqual =
+        finalReels[0] === finalReels[1] ||
+        finalReels[1] === finalReels[2] ||
+        finalReels[0] === finalReels[2];
+
+      if (threeEqual) {
+        setBalance((currentBalance) => currentBalance + 500);
+        setMessage("🎉 JACKPOT: ganaste 500 fichas");
+      } else if (twoEqual) {
+        setBalance((currentBalance) => currentBalance + 100);
+        setMessage("✨ Ganaste 100 fichas");
+      } else {
+        setMessage("Probá otra vez");
+      }
+
+      setSpinning(false);
+    }, 1700);
+  }
+
+  const winner =
+    message.includes("Ganaste") ||
+    message.includes("JACKPOT");
+
+  return (
+    <main className="casino">
+      <section className={`machine ${winner ? "winner" : ""}`}>
+        <p className="brand">SPINVERSE</p>
+
+        <h1>RETRO SPIN 1991</h1>
+
+        <p className="subtitle">
+          Casino virtual — solo fichas
+        </p>
+
+        <div className="balance">
+          <span>Fichas</span>
+          <strong>{balance}</strong>
+        </div>
+
+        <div className="reels">
+          {reels.map((symbol, index) => (
+            <div
+              className={`reel ${
+                spinning && !stopped[index] ? "rolling" : ""
+              }`}
+              key={index}
+            >
+              <span>{symbol}</span>
+            </div>
+      
+        </div>
+
+        <p className="message">{message}</p>
+
+        <button
+          type="button"
+          onClick={spin}
+          disabled={spinning}
+        >
+          {spinning ? "GIRANDO..." : "GIRAR — 50 FICHAS"}
+        </button>
+      </section>
+    </main>
+  );
+}
+
+export default App;

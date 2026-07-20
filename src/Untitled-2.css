@@ -1,0 +1,115 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  min-height: 100vh;
+  font-family: Arial, Helvetica, sans-serif;
+  color: white;
+  background: #08140f;
+}
+
+button {
+  font-family: inherit;
+}
+
+.casino {
+  min-height: 100vh;
+  padding: 30px 20px;
+  background: radial-gradient(circle at top, #174d34, #08140f 65%);
+}
+
+header {
+  text-align: center;
+  margin-bottom: 35px;
+}
+
+header h1 {
+  margin: 0;
+  font-size: 42px;
+  color: #ffd54a;
+}
+
+header p {
+  color: #c8d8cf;
+}
+
+main {
+  width: 100%;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.balance {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 18px 22px;
+  margin-bottom: 20px;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 14px;
+}
+
+.balance strong {
+  font-size: 25px;
+  color: #ffd54a;
+}
+
+.slot-machine {
+  padding: 30px 20px;
+  text-align: center;
+  background: rgba(0, 0, 0, 0.35);
+  border: 2px solid #c99a19;
+  border-radius: 22px;
+}
+
+.reels {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin-bottom: 28px;
+}
+
+.reel {
+  width: 120px;
+  height: 130px;
+  display: grid;
+  place-items: center;
+  font-size: 62px;
+  background: white;
+  border: 5px solid #d5aa2d;
+  border-radius: 15px;
+}
+
+button {
+  border: none;
+  border-radius: 12px;
+  padding: 17px 35px;
+  font-size: 21px;
+  font-weight: bold;
+  cursor: pointer;
+  color: #2c2000;
+  background: linear-gradient(#ffe16b, #e9ad16);
+  box-shadow: 0 6px 0 #916500;
+}
+
+button:active {
+  transform: translateY(4px);
+}
+
+.slot-machine p {
+  min-height: 25px;
+  margin-top: 25px;
+  font-size: 18px;
+  font-weight: bold;
+}
+
+@media (max-width: 500px) {
+  .reel {
+    width: 85px;
+    height: 100px;
+    font-size: 45px;
+  }
+}
