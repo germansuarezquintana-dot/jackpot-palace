@@ -29,6 +29,7 @@ const PAYLINES = [
 ];
 
 const STORAGE_KEY = "retro-spin-game";
+const STARTING_JACKPOT = 5000;
 
 function randomSymbol() {
   const number = Math.random();
@@ -86,6 +87,11 @@ function loadSavedGame() {
         typeof parsedGame.soundEnabled === "boolean"
           ? parsedGame.soundEnabled
           : true,
+
+      jackpot:
+        typeof parsedGame.jackpot === "number"
+          ? parsedGame.jackpot
+          : STARTING_JACKPOT,
     };
   } catch {
     return null;
@@ -188,6 +194,10 @@ export default function App() {
   );
 
   const [lastPrize, setLastPrize] = useState(0);
+  const [jackpot, setJackpot] = useState(
+    savedGame?.jackpot ?? STARTING_JACKPOT
+  );
+  const [celebration, setCelebration] = useState(null);
   const [winningLines, setWinningLines] = useState([]);
   const [winningCells, setWinningCells] = useState([]);
   const [scatterCells, setScatterCells] = useState([]);
@@ -203,13 +213,14 @@ export default function App() {
       betIndex,
       freeSpins,
       soundEnabled,
+      jackpot,
     };
 
     localStorage.setItem(
       STORAGE_KEY,
       JSON.stringify(gameToSave)
     );
-  }, [credits, betIndex, freeSpins, soundEnabled]);
+  }, [credits, betIndex, freeSpins, soundEnabled, jackpot]);
 
   useEffect(() => {
     return () => {
@@ -539,13 +550,21 @@ export default function App() {
 
     const scatterWin = evaluateScatters(result);
 
+    const jackpotLine = lineWins.find(
+      (win) =>
+        win.symbol === "👑" &&
+        win.consecutive === 5
+    );
+
+    const jackpotPrize = jackpotLine ? jackpot : 0;
+
     const linePrize = lineWins.reduce(
       (total, win) => total + win.amount,
       0
     );
 
     const totalPrize =
-      linePrize + scatterWin.amount;
+      linePrize + scatterWin.amount + jackpotPrize;
 
     const cells = lineWins.flatMap(
       (win) => win.cells
@@ -554,7 +573,10 @@ export default function App() {
     let resultMessage =
       "Sin premio. Probá otra vez.";
 
-    if (
+    if (jackpotPrize > 0) {
+      resultMessage =
+        `👑 ¡JACKPOT! ${totalPrize} CRÉDITOS`;
+    } else if (
       lineWins.length > 0 &&
       scatterWin.freeSpins > 0
     ) {
@@ -583,6 +605,7 @@ export default function App() {
       cells,
       scatterCells: scatterWin.cells,
       freeSpinsWon: scatterWin.freeSpins,
+      jackpotWon: jackpotPrize > 0,
     };
   }
 
@@ -627,6 +650,8 @@ export default function App() {
     setBetIndex(1);
     setLastPrize(0);
     setFreeSpins(0);
+    setJackpot(STARTING_JACKPOT);
+    setCelebration(null);
     setWinningLines([]);
     setWinningCells([]);
     setScatterCells([]);
@@ -702,6 +727,7 @@ export default function App() {
     }
 
     setSpinning(true);
+    setCelebration(null);
     setLastPrize(0);
     setWinningLines([]);
     setWinningCells([]);
@@ -712,6 +738,9 @@ export default function App() {
       setMessage("🎁 Giro gratis...");
     } else {
       setCredits((current) => current - bet);
+      setJackpot((current) =>
+        current + Math.max(1, Math.round(bet * 0.05))
+      );
       setMessage("Girando...");
     }
 
@@ -773,18 +802,36 @@ export default function App() {
             );
           }
 
-          if (prize.freeSpinsWon > 0) {
+          if (prize.jackpotWon) {
+            setCelebration({
+              type: "jackpot",
+              amount: prize.amount,
+            });
+            setJackpot(STARTING_JACKPOT);
+            playScatterSound();
+          } else if (prize.freeSpinsWon > 0) {
             setFreeSpins(
               (current) =>
                 current +
                 prize.freeSpinsWon
             );
-
+            setCelebration({
+              type: "bonus",
+              amount: prize.amount,
+            });
             playScatterSound();
           } else if (prize.amount > 0) {
-            playWinSound(
-              prize.amount >= bet * 20
-            );
+            const winRatio = prize.amount / bet;
+            setCelebration({
+              type:
+                winRatio >= 20
+                  ? "mega"
+                  : winRatio >= 8
+                  ? "big"
+                  : "win",
+              amount: prize.amount,
+            });
+            playWinSound(winRatio >= 20);
           }
 
           setSpinning(false);
@@ -795,7 +842,13 @@ export default function App() {
 
   return (
     <main className="page">
-      <section className="machine">
+      <section
+        className={[
+          "machine",
+          spinning ? "machine-spinning" : "",
+          celebration ? "machine-winning" : "",
+        ].join(" ")}
+      >
         <div className="lights">
           {Array.from({
             length: 16,
@@ -826,6 +879,12 @@ export default function App() {
         <p className="subtitle">
           WILD · SCATTER · GIROS GRATIS
         </p>
+
+        <div className="jackpot-panel">
+          <span>JACKPOT PROGRESIVO</span>
+          <strong>{jackpot.toLocaleString("es-AR")}</strong>
+          <small>5 coronas en línea</small>
+        </div>
 
         <div className="information-panel">
           <div className="information-box">
@@ -978,6 +1037,44 @@ export default function App() {
             💾 Partida guardada
           </div>
         </div>
+
+        {celebration && (
+          <button
+            className={`celebration celebration-${celebration.type}`}
+            onClick={() => setCelebration(null)}
+            aria-label="Cerrar celebración"
+          >
+            <div className="coin-rain" aria-hidden="true">
+              {Array.from({ length: 28 }).map((_, index) => (
+                <span
+                  key={index}
+                  style={{
+                    "--coin-index": index,
+                    "--coin-delay": `${(index % 9) * 0.11}s`,
+                    "--coin-left": `${(index * 37) % 100}%`,
+                  }}
+                >
+                  🪙
+                </span>
+              ))}
+            </div>
+            <div className="celebration-card">
+              <span className="celebration-kicker">
+                {celebration.type === "jackpot"
+                  ? "👑 PREMIO MÁXIMO 👑"
+                  : celebration.type === "bonus"
+                  ? "🎁 BONUS ACTIVADO"
+                  : celebration.type === "mega"
+                  ? "MEGA WIN"
+                  : celebration.type === "big"
+                  ? "BIG WIN"
+                  : "¡GANASTE!"}
+              </span>
+              <strong>{celebration.amount.toLocaleString("es-AR")}</strong>
+              <small>CRÉDITOS · TOCÁ PARA CONTINUAR</small>
+            </div>
+          </button>
+        )}
       </section>
 
       <style>{`
@@ -1059,6 +1156,19 @@ export default function App() {
           animation-delay: 0.35s;
         }
 
+        .machine-spinning .light {
+          animation-duration: 0.18s;
+        }
+
+        .machine-winning {
+          animation: cabinetWin 0.55s ease-in-out infinite alternate;
+        }
+
+        .machine-winning .light {
+          animation-duration: 0.12s;
+          background: #ffffff;
+        }
+
         .sound-button {
           position: absolute;
           z-index: 10;
@@ -1108,6 +1218,35 @@ export default function App() {
           letter-spacing: 4px;
           text-shadow:
             0 0 9px #ff0000;
+        }
+
+        .jackpot-panel {
+          width: min(420px, 90%);
+          margin: 0 auto 14px;
+          padding: 8px 18px 10px;
+          border: 2px solid #ffe66d;
+          border-radius: 16px;
+          background: linear-gradient(180deg, #2b001f, #080008);
+          box-shadow: inset 0 0 16px #000000, 0 0 18px rgba(255, 0, 220, 0.55);
+        }
+
+        .jackpot-panel span,
+        .jackpot-panel small {
+          display: block;
+          color: #fff4a8;
+          font-size: 10px;
+          font-weight: 900;
+          letter-spacing: 2px;
+        }
+
+        .jackpot-panel strong {
+          display: block;
+          margin: 2px 0;
+          color: #ffffff;
+          font-size: clamp(26px, 5vw, 42px);
+          line-height: 1;
+          text-shadow: 0 0 8px #ff00d4, 0 0 18px #ff00d4;
+          animation: jackpotGlow 1.2s ease-in-out infinite alternate;
         }
 
         .information-panel {
@@ -1430,6 +1569,12 @@ export default function App() {
             0 5px 0 #000000;
         }
 
+        .spin-button:not(:disabled):active,
+        .small-button:not(:disabled):active {
+          transform: translateY(5px);
+          box-shadow: 0 3px 0 #4c0000;
+        }
+
         button:disabled {
           cursor: not-allowed;
           opacity: 0.55;
@@ -1459,6 +1604,73 @@ export default function App() {
           color: #c7ffc7;
           font-size: 12px;
           font-weight: bold;
+        }
+
+        .celebration {
+          position: fixed;
+          z-index: 100;
+          inset: 0;
+          width: 100%;
+          border: 0;
+          overflow: hidden;
+          cursor: pointer;
+          background: rgba(5, 0, 8, 0.78);
+          backdrop-filter: blur(5px);
+        }
+
+        .celebration-card {
+          position: absolute;
+          z-index: 2;
+          top: 50%;
+          left: 50%;
+          width: min(620px, 90vw);
+          padding: 36px 20px;
+          transform: translate(-50%, -50%);
+          border: 5px solid #ffe66d;
+          border-radius: 28px;
+          background: radial-gradient(circle, #a60066, #350025 58%, #080008);
+          box-shadow: 0 0 35px #ffcc00, 0 0 90px #ff00c8;
+          animation: celebrationPop 0.55s cubic-bezier(.2,1.6,.4,1);
+        }
+
+        .celebration-kicker {
+          display: block;
+          color: #fff5a8;
+          font-size: clamp(23px, 6vw, 58px);
+          font-weight: 1000;
+          letter-spacing: 2px;
+          text-shadow: 0 4px 0 #7a002e, 0 0 22px #ffcc00;
+        }
+
+        .celebration-card strong {
+          display: block;
+          margin: 12px 0;
+          color: #ffffff;
+          font-size: clamp(52px, 14vw, 118px);
+          line-height: 0.95;
+          text-shadow: 0 0 12px #ffffff, 0 0 32px #ff00d4;
+        }
+
+        .celebration-card small {
+          color: #ffffff;
+          font-size: 12px;
+          font-weight: 900;
+          letter-spacing: 2px;
+        }
+
+        .celebration-jackpot .celebration-card {
+          background: radial-gradient(circle, #7a4a00, #3a1200 58%, #080300);
+          box-shadow: 0 0 40px #ffffff, 0 0 110px #ffd000;
+        }
+
+        .coin-rain span {
+          position: absolute;
+          z-index: 1;
+          top: -15%;
+          left: var(--coin-left);
+          font-size: clamp(24px, 5vw, 48px);
+          animation: coinFall 2.2s linear infinite;
+          animation-delay: var(--coin-delay);
         }
 
         @keyframes reelRoll {
@@ -1548,6 +1760,28 @@ export default function App() {
           to {
             opacity: 1;
           }
+        }
+
+        @keyframes jackpotGlow {
+          from { transform: scale(0.98); opacity: 0.82; }
+          to { transform: scale(1.03); opacity: 1; }
+        }
+
+        @keyframes cabinetWin {
+          from { box-shadow: 0 0 18px #ffd000, 0 0 55px rgba(255, 0, 0, 0.7), inset 0 0 35px rgba(0, 0, 0, 0.9); }
+          to { box-shadow: 0 0 34px #ffffff, 0 0 90px rgba(255, 0, 225, 0.95), inset 0 0 35px rgba(255, 210, 0, 0.25); }
+        }
+
+        @keyframes celebrationPop {
+          0% { transform: translate(-50%, -50%) scale(0.35) rotate(-7deg); opacity: 0; }
+          75% { transform: translate(-50%, -50%) scale(1.06) rotate(1deg); opacity: 1; }
+          100% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+        }
+
+        @keyframes coinFall {
+          0% { transform: translateY(-10vh) rotate(0deg); opacity: 0; }
+          12% { opacity: 1; }
+          100% { transform: translateY(125vh) rotate(720deg); opacity: 1; }
         }
 
         @media (max-width: 650px) {
