@@ -19,7 +19,7 @@ const symbols = [
 
 const ROWS = 3;
 const COLUMNS = 5;
-const BET_OPTIONS = [100, 250, 500, 1000, 2500, 5000];
+const BET_OPTIONS = [10, 20, 50, 100];
 
 const PAYLINES = [
   [0, 0, 0, 0, 0],
@@ -169,7 +169,6 @@ function Reel({
 }
 
 export default function App() {
-  const [showIntro, setShowIntro] = useState(true);
   const [grid, setGrid] = useState(createGrid());
 
   const [reelSpinning, setReelSpinning] = useState(
@@ -867,65 +866,8 @@ export default function App() {
     }
   }
 
-  async function startGame() {
-    if (soundEnabled) {
-      await unlockAudio();
-      await playTone({
-        frequency: 660,
-        duration: 0.12,
-        volume: 0.18,
-        type: "sine",
-      });
-      await playTone({
-        frequency: 880,
-        duration: 0.18,
-        volume: 0.2,
-        type: "sine",
-        delay: 0.1,
-      });
-    }
-
-    setShowIntro(false);
-  }
-
   return (
     <main className="page">
-      {showIntro && (
-        <section className="intro-screen">
-          <div className="intro-stars" aria-hidden="true">
-            {Array.from({ length: 30 }).map((_, index) => (
-              <span
-                key={index}
-                style={{
-                  "--star-left": `${(index * 41) % 100}%`,
-                  "--star-top": `${(index * 67) % 100}%`,
-                  "--star-delay": `${(index % 8) * 0.18}s`,
-                }}
-              >
-                ✦
-              </span>
-            ))}
-          </div>
-
-          <div className="intro-card">
-            <div className="intro-crown">👑</div>
-            <p className="intro-kicker">Spin Retro PRESENTA</p>
-            <h1 className="intro-title">Slot Machine</h1>
-            <p className="intro-year"></p>
-            <p className="intro-description">
-              WILD · SCATTER · JACKPOT · GIROS GRATIS
-            </p>
-
-            <button className="intro-play-button" onClick={startGame}>
-              🎰 JUGAR
-            </button>
-
-            <small className="intro-help">
-              Tocá JUGAR para activar el sonido y entrar al casino
-            </small>
-          </div>
-        </section>
-      )}
       <section
         className={[
           "machine",
@@ -1140,6 +1082,7 @@ export default function App() {
             💾 Partida guardada
           </div>
         </div>
+
 
         {paytableOpen && (
           <button
