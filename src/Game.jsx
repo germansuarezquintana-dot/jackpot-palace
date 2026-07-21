@@ -24,33 +24,107 @@ const BET_OPTIONS = [100, 250, 500, 1000, 2500, 5000];
 function randomSymbol() {
   const number = Math.random();
 
-  if (number < 0.05) return SCATTER;
-  if (number < 0.11) return WILD;
+  if (number < 0.01) return SCATTER;
+  if (number < 0.04) return WILD;
 
-  const regularSymbols = symbols.filter(
-    (symbol) => symbol !== WILD && symbol !== SCATTER
-  );
+const pool = [
+  "🍒","🍒","🍒","🍒","🍒",
+  "🍋","🍋","🍋","🍋",
+  "🔔","🔔","🔔",
+  "⭐","⭐","⭐",
+  "🍉","🍉",
+  "💎","💎",
+  "7️⃣",
+  "👑"
+];
 
-  return regularSymbols[
-    Math.floor(Math.random() * regularSymbols.length)
-  ];
+return pool[Math.floor(Math.random() * pool.length)];
 }
+
+
+
+
 
 function createGrid() {
-  return Array.from({ length: COLUMNS }, () =>
+  const grid = Array.from({ length: COLUMNS }, () =>
     Array.from({ length: ROWS }, () => randomSymbol())
   );
+
+  const chance = Math.random();
+
+  // 30%: premio chico
+  if (chance < 0.30) {
+    const payline =
+      PAYLINES[Math.floor(Math.random() * PAYLINES.length)];
+
+    const symbol =
+      ["🍒", "🍋", "🔔", "⭐"][
+        Math.floor(Math.random() * 4)
+      ];
+
+    for (let column = 0; column < 3; column += 1) {
+      grid[column][payline[column]] = symbol;
+    }
+
+    // Evita que continúe accidentalmente a 4 o 5 símbolos
+    if (
+      grid[3][payline[3]] === symbol ||
+      grid[3][payline[3]] === WILD
+    ) {
+      grid[3][payline[3]] = "💎";
+    }
+  }
+
+  // 8%: premio medio
+  else if (chance < 0.38) {
+    const payline =
+      PAYLINES[Math.floor(Math.random() * PAYLINES.length)];
+
+    const symbol =
+      ["🍉", "💎", "7️⃣"][
+        Math.floor(Math.random() * 3)
+      ];
+
+    for (let column = 0; column < 4; column += 1) {
+      grid[column][payline[column]] = symbol;
+    }
+
+    // Evita que se convierta accidentalmente en 5 iguales
+    if (
+      grid[4][payline[4]] === symbol ||
+      grid[4][payline[4]] === WILD
+    ) {
+      grid[4][payline[4]] = "🍋";
+    }
+  }
+
+  // 1%: premio grande
+  else if (chance < 0.39) {
+    const payline =
+      PAYLINES[Math.floor(Math.random() * PAYLINES.length)];
+
+    const symbol =
+      ["💎", "7️⃣"][
+        Math.floor(Math.random() * 2)
+      ];
+
+    for (let column = 0; column < COLUMNS; column += 1) {
+      grid[column][payline[column]] = symbol;
+    }
+  }
+
+  return grid;
 }
 const SYMBOL_PAYS = {
-  "🍒": { 3: 4, 4: 10, 5: 25 },
-  "🍋": { 3: 4, 4: 10, 5: 25 },
-  "🔔": { 3: 4, 4: 10, 5: 25 },
-  "⭐": { 3: 4, 4: 10, 5: 25 },
-  "7️⃣": { 3: 4, 4: 10, 5: 25 },
-  "💎": { 3: 4, 4: 10, 5: 25 },
-  "🍉": { 3: 4, 4: 10, 5: 25 },
-  "👑": { 3: 4, 4: 10, 5: 25 },
-  [WILD]: { 3: 4, 4: 10, 5: 25 },
+  "🍒": { 3: 2, 4: 5, 5: 12 },
+  "🍋": { 3: 2, 4: 5, 5: 12 },
+  "🔔": { 3: 2, 4: 6, 5: 14 },
+  "⭐": { 3: 3, 4: 7, 5: 16 },
+  "🍉": { 3: 3, 4: 8, 5: 18 },
+  "💎": { 3: 4, 4: 10, 5: 22 },
+  "7️⃣": { 3: 5, 4: 12, 5: 28 },
+  "👑": { 3: 6, 4: 18, 5: 0 }, // las 5 coronas pagan el jackpot
+  [WILD]: { 3: 5, 4: 12, 5: 25 },
 };
 const PAYLINES = [
   [0, 0, 0, 0, 0],
@@ -433,7 +507,27 @@ useEffect(() => {
       type: "triangle",
     });
   }
+function playCoinSound(amount = 3) {
+  const coinNotes = [1200, 1450, 1700, 1350, 1850, 1550];
 
+  for (let index = 0; index < amount; index += 1) {
+    playTone({
+      frequency: coinNotes[index % coinNotes.length],
+      duration: 0.09,
+      volume: 0.13,
+      type: "triangle",
+      delay: index * 0.08,
+    });
+
+    playTone({
+      frequency: coinNotes[index % coinNotes.length] * 1.35,
+      duration: 0.05,
+      volume: 0.07,
+      type: "square",
+      delay: index * 0.08 + 0.02,
+    });
+  }
+}
   function playWinSound(bigWin = false) {
     const notes = bigWin
       ? [440, 550, 660, 880, 1100, 1320]
@@ -511,7 +605,7 @@ useEffect(() => {
     }
 
     const paySymbol = lineSymbols[0] === WILD ? WILD : baseSymbol;
-    const multiplier = SYMBOL_PAYS[paySymbol]?.[consecutive - 1] ?? 0;
+    const multiplier = SYMBOL_PAYS[paySymbol]?.[consecutive] ?? 0;
 
     if (multiplier === 0) {
       return null;
@@ -892,25 +986,23 @@ useEffect(() => {
                 current +
                 prize.freeSpinsWon
             );
-            setCelebration({
-              type: "bonus",
-              amount: prize.amount,
-            });
-            playScatterSound();
-          } else if (prize.amount >= bet * 8) {
-            const winRatio = prize.amount / bet;
-            setCelebration({
-              type:
-                winRatio >= 20
-                  ? "mega"
-                  : winRatio >= 8
-                  ? "big"
-                  : "win",
-              amount: prize.amount,
-            });
-            playWinSound(winRatio >= 20);
-          }
+            setCelebration(null);
+playCoinSound(4);
+            
+          } else if (prize.amount > 0) {
+           const winRatio = prize.amount / bet;
 
+if (winRatio < 8) {
+  playCoinSound(winRatio <= 3 ? 3 : 6);
+} else {
+  setCelebration({
+    type: winRatio >= 20 ? "mega" : "big",
+    amount: prize.amount,
+  });
+
+  playWinSound(winRatio >= 20);
+}
+          }
           const { data: resultData, error: resultError } = await supabase.rpc(
             "apply_game_result",
             {
@@ -1159,7 +1251,7 @@ useEffect(() => {
                   spinning={
                     reelSpinning[index]
                   }
-                  delay={index * -180}F
+                  delay={index * -180}
                   columnIndex={index}
                   winningCells={
                     winningCells
