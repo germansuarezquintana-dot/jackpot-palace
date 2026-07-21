@@ -453,3 +453,26 @@ button {
     grid-template-columns: 1fr;
   }
 }
+html:has(.admin-page),
+body:has(.admin-page),
+#root:has(.admin-page) {
+  height: auto !important;
+  min-height: 100% !important;
+  max-height: none !important;
+  overflow: visible !important;
+  position: static !important;
+}
+
+body:has(.admin-page) {
+  overflow-y: auto !important;
+}
+
+.admin-page {
+  width: 100%;
+  height: auto !important;
+  min-height: 100vh;
+  max-height: none !important;
+  overflow: visible !important;
+  padding-bottom: 60px;
+  box-sizing: border-box;
+}
