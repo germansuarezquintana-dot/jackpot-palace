@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
+import { supabase } from "./supabase";
 import "./App.css";
-
+import coin from "./assets/coin.png";
 const WILD = "🃏";
 const SCATTER = "🎁";
 
@@ -19,29 +20,12 @@ const symbols = [
 
 const ROWS = 3;
 const COLUMNS = 5;
-const BET_OPTIONS = [10, 20, 50, 100];
-
-const PAYLINES = [
-  [0, 0, 0, 0, 0],
-  [1, 1, 1, 1, 1],
-  [2, 2, 2, 2, 2],
-  [0, 1, 2, 1, 0],
-  [2, 1, 0, 1, 2],
-];
-
-const STORAGE_KEY = "retro-spin-game";
-const STARTING_JACKPOT = 5000;
-
+const BET_OPTIONS = [100, 250, 500, 1000, 2500, 5000];
 function randomSymbol() {
   const number = Math.random();
 
-  if (number < 0.05) {
-    return SCATTER;
-  }
-
-  if (number < 0.11) {
-    return WILD;
-  }
+  if (number < 0.05) return SCATTER;
+  if (number < 0.11) return WILD;
 
   const regularSymbols = symbols.filter(
     (symbol) => symbol !== WILD && symbol !== SCATTER
@@ -57,50 +41,27 @@ function createGrid() {
     Array.from({ length: ROWS }, () => randomSymbol())
   );
 }
+const SYMBOL_PAYS = {
+  "🍒": { 3: 4, 4: 10, 5: 25 },
+  "🍋": { 3: 4, 4: 10, 5: 25 },
+  "🔔": { 3: 4, 4: 10, 5: 25 },
+  "⭐": { 3: 4, 4: 10, 5: 25 },
+  "7️⃣": { 3: 4, 4: 10, 5: 25 },
+  "💎": { 3: 4, 4: 10, 5: 25 },
+  "🍉": { 3: 4, 4: 10, 5: 25 },
+  "👑": { 3: 4, 4: 10, 5: 25 },
+  [WILD]: { 3: 4, 4: 10, 5: 25 },
+};
+const PAYLINES = [
+  [0, 0, 0, 0, 0],
+  [1, 1, 1, 1, 1],
+  [2, 2, 2, 2, 2],
+  [0, 1, 2, 1, 0],
+  [2, 1, 0, 1, 2],
+];
 
-function loadSavedGame() {
-  try {
-    const savedGame = localStorage.getItem(STORAGE_KEY);
-
-    if (!savedGame) {
-      return null;
-    }
-
-    const parsedGame = JSON.parse(savedGame);
-
-    return {
-      credits:
-        typeof parsedGame.credits === "number"
-          ? parsedGame.credits
-          : 1000,
-
-      betIndex:
-        typeof parsedGame.betIndex === "number"
-          ? parsedGame.betIndex
-          : 1,
-
-      freeSpins:
-        typeof parsedGame.freeSpins === "number"
-          ? parsedGame.freeSpins
-          : 0,
-
-      soundEnabled:
-        typeof parsedGame.soundEnabled === "boolean"
-          ? parsedGame.soundEnabled
-          : true,
-
-      jackpot:
-        typeof parsedGame.jackpot === "number"
-          ? parsedGame.jackpot
-          : STARTING_JACKPOT,
-    };
-  } catch {
-    return null;
-  }
-}
-
-const savedGame = loadSavedGame();
-
+const STARTING_JACKPOT = 5000;
+const DEFAULT_STATS = { spins: 0, totalBet: 0, totalWon: 0, biggestWin: 0, jackpots: 0, freeSpinsWon: 0 };
 const spinningSymbols = Array.from(
   { length: 60 },
   (_, index) => symbols[index % symbols.length]
@@ -168,7 +129,8 @@ function Reel({
   );
 }
 
-export default function App() {
+export default function Game({ player, onCreditsChange, onLogout, onOpenAdmin }) {
+  const [showIntro, setShowIntro] = useState(true);
   const [grid, setGrid] = useState(createGrid());
 
   const [reelSpinning, setReelSpinning] = useState(
@@ -178,51 +140,84 @@ export default function App() {
   const [spinning, setSpinning] = useState(false);
   const [message, setMessage] = useState("Presioná GIRAR");
 
-  const [credits, setCredits] = useState(
-    savedGame?.credits ?? 1000
-  );
+  const [credits, setCredits] = useState(player?.credits ?? 0);
+const [displayCredits, setDisplayCredits] = useState(
+  player?.credits ?? 0
+);
 
-  const [betIndex, setBetIndex] = useState(
-    savedGame?.betIndex ?? 1
-  );
+useEffect(() => {
+  const start = displayCredits;
+  const end = credits;
 
-  const [freeSpins, setFreeSpins] = useState(
-    savedGame?.freeSpins ?? 0
-  );
+  if (start === end) return;
 
-  const [soundEnabled, setSoundEnabled] = useState(
-    savedGame?.soundEnabled ?? true
-  );
+  const duration = 500;
+  const startTime = performance.now();
+
+  function animateCredits(currentTime) {
+    const progress = Math.min(
+      (currentTime - startTime) / duration,
+      1
+    );
+
+    const animatedValue = Math.round(
+      start + (end - start) * progress
+    );
+
+    setDisplayCredits(animatedValue);
+
+    if (progress < 1) {
+      requestAnimationFrame(animateCredits);
+    }
+  }
+
+  requestAnimationFrame(animateCredits);
+}, [credits]);
+  const [betIndex, setBetIndex] = useState(1);
+
+  const [freeSpins, setFreeSpins] = useState(0);
+
+  const [soundEnabled, setSoundEnabled] = useState(true);
 
   const [lastPrize, setLastPrize] = useState(0);
-  const [jackpot, setJackpot] = useState(
-    savedGame?.jackpot ?? STARTING_JACKPOT
-  );
+  const [displayPrize, setDisplayPrize] = useState(0);
+  const [jackpot, setJackpot] = useState(STARTING_JACKPOT);
   const [celebration, setCelebration] = useState(null);
   const [paytableOpen, setPaytableOpen] = useState(false);
+  const [statsOpen, setStatsOpen] = useState(false);
+  const [stats, setStats] = useState(DEFAULT_STATS);
+  const [autoSpins, setAutoSpins] = useState(0);
   const [winningLines, setWinningLines] = useState([]);
   const [winningCells, setWinningCells] = useState([]);
   const [scatterCells, setScatterCells] = useState([]);
 
   const audioContextRef = useRef(null);
   const spinSoundRef = useRef(null);
+  const spinActionRef = useRef(null);
 
   const bet = BET_OPTIONS[betIndex];
 
   useEffect(() => {
-    const gameToSave = {
-      credits,
-      betIndex,
-      freeSpins,
-      soundEnabled,
-      jackpot,
+    if (lastPrize <= 0) {
+      setDisplayPrize(0);
+      return undefined;
+    }
+
+    const duration = Math.min(1800, Math.max(650, lastPrize * 2));
+    const startedAt = performance.now();
+    let frameId;
+
+    const animate = (now) => {
+      const progress = Math.min(1, (now - startedAt) / duration);
+      const eased = 1 - Math.pow(1 - progress, 3);
+      setDisplayPrize(Math.round(lastPrize * eased));
+
+      if (progress < 1) frameId = requestAnimationFrame(animate);
     };
 
-    localStorage.setItem(
-      STORAGE_KEY,
-      JSON.stringify(gameToSave)
-    );
-  }, [credits, betIndex, freeSpins, soundEnabled, jackpot]);
+    frameId = requestAnimationFrame(animate);
+    return () => cancelAnimationFrame(frameId);
+  }, [lastPrize]);
 
   useEffect(() => {
     return () => {
@@ -235,6 +230,57 @@ export default function App() {
       }
     };
   }, []);
+
+  useEffect(() => {
+    if (
+      autoSpins <= 0 ||
+      spinning ||
+      showIntro ||
+      paytableOpen ||
+      celebration
+    ) {
+      return undefined;
+    }
+
+    const timer = window.setTimeout(() => {
+      spinActionRef.current?.();
+    }, 850);
+
+    return () => window.clearTimeout(timer);
+  }, [autoSpins, spinning, showIntro, paytableOpen, celebration]);
+
+  useEffect(() => {
+    function handleKeyboard(event) {
+      const target = event.target;
+      const isTyping =
+        target instanceof HTMLInputElement ||
+        target instanceof HTMLTextAreaElement ||
+        target instanceof HTMLSelectElement;
+
+      if (isTyping) return;
+
+      if (event.code === "Escape") {
+        setPaytableOpen(false);
+        setStatsOpen(false);
+        setCelebration(null);
+        setAutoSpins(0);
+        return;
+      }
+
+      if (
+        event.code === "Space" &&
+        !showIntro &&
+        !paytableOpen &&
+        !celebration
+      ) {
+        event.preventDefault();
+        spinActionRef.current?.();
+      }
+    }
+
+    window.addEventListener("keydown", handleKeyboard);
+    return () => window.removeEventListener("keydown", handleKeyboard);
+  }, [showIntro, paytableOpen, celebration]);
 
   async function getAudioContext() {
     try {
@@ -464,15 +510,8 @@ export default function App() {
       }
     }
 
-    let multiplier = 0;
-
-    if (consecutive === 5) {
-      multiplier = 25;
-    } else if (consecutive === 4) {
-      multiplier = 10;
-    } else if (consecutive === 3) {
-      multiplier = 4;
-    }
+    const paySymbol = lineSymbols[0] === WILD ? WILD : baseSymbol;
+    const multiplier = SYMBOL_PAYS[paySymbol]?.[consecutive - 1] ?? 0;
 
     if (multiplier === 0) {
       return null;
@@ -489,7 +528,7 @@ export default function App() {
     return {
       lineIndex,
       consecutive,
-      symbol: baseSymbol,
+      symbol: paySymbol,
       amount: bet * multiplier,
       cells,
     };
@@ -512,8 +551,8 @@ export default function App() {
     if (cells.length >= 5) {
       return {
         count: cells.length,
-        amount: bet * 20,
-        freeSpins: 15,
+        amount: bet * 15,
+        freeSpins: 12,
         cells,
       };
     }
@@ -521,8 +560,8 @@ export default function App() {
     if (cells.length === 4) {
       return {
         count: 4,
-        amount: bet * 10,
-        freeSpins: 10,
+        amount: bet * 7,
+        freeSpins: 8,
         cells,
       };
     }
@@ -530,7 +569,7 @@ export default function App() {
     if (cells.length === 3) {
       return {
         count: 3,
-        amount: bet * 5,
+        amount: bet * 3,
         freeSpins: 5,
         cells,
       };
@@ -639,35 +678,17 @@ export default function App() {
     );
   }
 
-  async function resetGame() {
-    if (spinning) {
-      return;
+  async function refreshCredits() {
+    const { data, error } = await supabase
+      .from("players")
+      .select("credits")
+      .eq("id", player.id)
+      .single();
+
+    if (!error && data) {
+      setCredits(data.credits);
+      onCreditsChange?.(data.credits);
     }
-
-    await unlockAudio();
-
-    stopSpinSound();
-
-    setCredits(1000);
-    setBetIndex(1);
-    setLastPrize(0);
-    setFreeSpins(0);
-    setJackpot(STARTING_JACKPOT);
-    setCelebration(null);
-    setWinningLines([]);
-    setWinningCells([]);
-    setScatterCells([]);
-    setGrid(createGrid());
-    setMessage("Partida reiniciada");
-
-    localStorage.removeItem(STORAGE_KEY);
-
-    await playTone({
-      frequency: 440,
-      duration: 0.14,
-      volume: 0.18,
-      type: "sine",
-    });
   }
 
   async function toggleSound() {
@@ -725,6 +746,23 @@ export default function App() {
     setMessage("APUESTA MÁXIMA seleccionada");
   }
 
+  async function toggleAutoSpins() {
+    await unlockAudio();
+
+    if (autoSpins > 0) {
+      setAutoSpins(0);
+      setMessage("⏹ Giro automático detenido");
+      await playClickSound(320);
+      return;
+    }
+
+    if (spinning) return;
+
+    setAutoSpins(10);
+    setMessage("▶ 10 giros automáticos preparados");
+    await playClickSound(680);
+  }
+
   async function spin() {
     if (spinning) {
       return;
@@ -744,12 +782,17 @@ export default function App() {
     const isFreeSpin = freeSpins > 0;
 
     if (!isFreeSpin && credits < bet) {
+      setAutoSpins(0);
       setMessage(
         "❌ No tenés créditos suficientes"
       );
 
       playErrorSound();
       return;
+    }
+
+    if (autoSpins > 0) {
+      setAutoSpins((current) => Math.max(0, current - 1));
     }
 
     setSpinning(true);
@@ -783,9 +826,9 @@ export default function App() {
       index < COLUMNS;
       index += 1
     ) {
-      const stopTime = 1300 + index * 450;
+      const stopTime = 1400 + index * 600;
 
-      setTimeout(() => {
+      setTimeout(async () => {
         setGrid((currentGrid) => {
           const updatedGrid =
             currentGrid.map((column) => [
@@ -820,6 +863,14 @@ export default function App() {
           setScatterCells(
             prize.scatterCells
           );
+          setStats((current) => ({
+            spins: current.spins + 1,
+            totalBet: current.totalBet + (isFreeSpin ? 0 : bet),
+            totalWon: current.totalWon + prize.amount,
+            biggestWin: Math.max(current.biggestWin, prize.amount),
+            jackpots: current.jackpots + (prize.jackpotWon ? 1 : 0),
+            freeSpinsWon: current.freeSpinsWon + prize.freeSpinsWon,
+          }));
 
           if (prize.amount > 0) {
             setCredits(
@@ -846,7 +897,7 @@ export default function App() {
               amount: prize.amount,
             });
             playScatterSound();
-          } else if (prize.amount > 0) {
+          } else if (prize.amount >= bet * 8) {
             const winRatio = prize.amount / bet;
             setCelebration({
               type:
@@ -860,14 +911,95 @@ export default function App() {
             playWinSound(winRatio >= 20);
           }
 
+          const { data: resultData, error: resultError } = await supabase.rpc(
+            "apply_game_result",
+            {
+              p_bet: bet,
+              p_win: prize.amount,
+              p_is_free_spin: isFreeSpin,
+            }
+          );
+
+          if (resultError) {
+            console.error(resultError);
+            setMessage("⚠️ No se pudo guardar la jugada. Actualizando saldo...");
+            await refreshCredits();
+            setAutoSpins(0);
+          } else if (resultData?.length) {
+            const onlineCredits = resultData[0].credits_after;
+            setCredits(onlineCredits);
+            onCreditsChange?.(onlineCredits);
+          }
+
           setSpinning(false);
         }
       }, stopTime);
     }
   }
 
+  useEffect(() => {
+    spinActionRef.current = spin;
+  });
+
+  async function startGame() {
+    if (soundEnabled) {
+      await unlockAudio();
+      await playTone({
+        frequency: 660,
+        duration: 0.12,
+        volume: 0.18,
+        type: "sine",
+      });
+      await playTone({
+        frequency: 880,
+        duration: 0.18,
+        volume: 0.2,
+        type: "sine",
+        delay: 0.1,
+      });
+    }
+
+    setShowIntro(false);
+  }
+
   return (
     <main className="page">
+      {showIntro && (
+        <section className="intro-screen">
+          <div className="intro-stars" aria-hidden="true">
+            {Array.from({ length: 30 }).map((_, index) => (
+              <span
+                key={index}
+                style={{
+                  "--star-left": `${(index * 41) % 100}%`,
+                  "--star-top": `${(index * 67) % 100}%`,
+                  "--star-delay": `${(index % 8) * 0.18}s`,
+                }}
+              >
+                ✦
+              </span>
+            ))}
+          </div>
+
+          <div className="intro-card">
+            <div className="intro-crown">👑</div>
+            <p className="intro-kicker">JACKPOT PALACE PRESENTA</p>
+            <h1 className="intro-title">GOLD PALACE</h1>
+            <p className="intro-year"></p>
+            <p className="intro-description">
+              WILD · SCATTER · JACKPOT · GIROS GRATIS
+            </p>
+
+            <button className="intro-play-button" onClick={startGame}>
+              🎰 JUGAR
+            </button>
+
+            <small className="intro-help">
+              Tocá JUGAR para activar el sonido y entrar al casino
+            </small>
+          </div>
+        </section>
+      )}
       <section
         className={[
           "machine",
@@ -894,6 +1026,7 @@ export default function App() {
           >
             📋
           </button>
+          <button className="round-action-button" onClick={() => setStatsOpen(true)} title="Estadísticas">📊</button>
           <button
             className="round-action-button"
             onClick={toggleFullscreen}
@@ -911,7 +1044,7 @@ export default function App() {
         </div>
 
         <h1 className="title">
-          GOLD PALACE
+         👑 JACKPOT PALACE
         </h1>
 
         <p className="subtitle">
@@ -931,7 +1064,7 @@ export default function App() {
             </span>
 
             <strong className="information-value">
-              {credits}
+              {displayCredits}
             </strong>
           </div>
 
@@ -950,8 +1083,8 @@ export default function App() {
               PREMIO
             </span>
 
-            <strong className="information-value">
-              {lastPrize}
+            <strong className={`information-value prize-counter ${lastPrize > 0 ? "prize-active" : ""}`}>
+              {displayPrize.toLocaleString("es-AR")}
             </strong>
           </div>
 
@@ -991,7 +1124,32 @@ export default function App() {
           ))}
         </div>
 
-        <div className="reels-frame">
+        <div className={`reels-frame ${spinning ? "reels-live" : ""} ${winningCells.length ? "reels-win" : ""}`}>
+          <div className="glass-reflection" aria-hidden="true" />
+          <svg
+            className={`payline-overlay ${winningLines.length ? "show-paylines" : ""}`}
+            viewBox="0 0 500 300"
+            preserveAspectRatio="none"
+            aria-hidden="true"
+          >
+            {PAYLINES.map((payline, lineIndex) => {
+              const points = payline
+                .map((rowIndex, columnIndex) =>
+                  `${50 + columnIndex * 100},${50 + rowIndex * 100}`
+                )
+                .join(" ");
+
+              return (
+                <polyline
+                  key={lineIndex}
+                  className={`payline payline-${lineIndex + 1} ${
+                    winningLines.includes(lineIndex) ? "payline-active" : ""
+                  }`}
+                  points={points}
+                />
+              );
+            })}
+          </svg>
           <div className="reels-container">
             {grid.map(
               (column, index) => (
@@ -1001,7 +1159,7 @@ export default function App() {
                   spinning={
                     reelSpinning[index]
                   }
-                  delay={index * -75}
+                  delay={index * -180}F
                   columnIndex={index}
                   winningCells={
                     winningCells
@@ -1015,8 +1173,8 @@ export default function App() {
           </div>
         </div>
 
-        <div className="message">
-          {message}
+        <div className={`message ${lastPrize > 0 ? "message-win" : ""}`}>
+          {credits <= 0 ? "SIN CRÉDITOS — Contacte al administrador." : message}
         </div>
 
         <div className="controls">
@@ -1039,7 +1197,7 @@ export default function App() {
                 : ""
             }`}
             onClick={spin}
-            disabled={spinning}
+            disabled={spinning || (!freeSpins && credits < bet)}
           >
             {spinning
               ? "GIRANDO..."
@@ -1067,22 +1225,31 @@ export default function App() {
           >
             MAX
           </button>
+
+          <button
+            className={`auto-spin-button ${autoSpins > 0 ? "auto-active" : ""}`}
+            onClick={toggleAutoSpins}
+            disabled={showIntro}
+            title="Iniciar o detener 10 giros automáticos"
+          >
+            {autoSpins > 0 ? `STOP ${autoSpins}` : "AUTO ×10"}
+          </button>
         </div>
 
-        <div className="bottom-buttons">
-          <button
-            className="reset-button"
-            onClick={resetGame}
-            disabled={spinning}
-          >
-            REINICIAR PARTIDA
+        <div className="bottom-buttons account-actions">
+          {player?.is_admin && (
+            <button className="reset-button admin-button" onClick={onOpenAdmin} disabled={spinning}>
+              👑 ADMIN
+            </button>
+          )}
+          <button className="reset-button logout-button" onClick={onLogout} disabled={spinning}>
+            CERRAR SESIÓN
           </button>
 
           <div className="saved-message">
-            💾 Partida guardada
+            👤 {player?.display_name || player?.username} · Créditos online
           </div>
         </div>
-
 
         {paytableOpen && (
           <button
@@ -1098,19 +1265,37 @@ export default function App() {
                 {symbols.filter((symbol) => symbol !== SCATTER).map((symbol) => (
                   <div className="paytable-row" key={symbol}>
                     <strong>{symbol}</strong>
-                    <span>3 = ×4</span>
-                    <span>4 = ×10</span>
-                    <span>5 = ×25</span>
+                    <span>3 = ×{SYMBOL_PAYS[symbol]?.[2] ?? 0}</span>
+                    <span>4 = ×{SYMBOL_PAYS[symbol]?.[3] ?? 0}</span>
+                    <span>5 = ×{SYMBOL_PAYS[symbol]?.[4] ?? 0}</span>
                   </div>
                 ))}
                 <div className="paytable-row scatter-pay">
                   <strong>{SCATTER}</strong>
-                  <span>3 = ×5 + 5 gratis</span>
-                  <span>4 = ×10 + 10 gratis</span>
-                  <span>5+ = ×20 + 15 gratis</span>
+                  <span>3 = ×3 + 5 gratis</span>
+                  <span>4 = ×7 + 8 gratis</span>
+                  <span>5+ = ×15 + 12 gratis</span>
                 </div>
               </div>
               <small>👑 Cinco coronas en línea entregan el jackpot progresivo.</small>
+            </div>
+          </button>
+        )}
+
+        {statsOpen && (
+          <button className="paytable-overlay" onClick={() => setStatsOpen(false)} aria-label="Cerrar estadísticas">
+            <div className="paytable-card stats-card" onClick={(event) => event.stopPropagation()}>
+              <button className="paytable-close" onClick={() => setStatsOpen(false)}>×</button>
+              <h2>ESTADÍSTICAS</h2>
+              <div className="stats-grid">
+                <div><span>Giros</span><strong>{stats.spins.toLocaleString("es-AR")}</strong></div>
+                <div><span>Total apostado</span><strong>{stats.totalBet.toLocaleString("es-AR")}</strong></div>
+                <div><span>Total ganado</span><strong>{stats.totalWon.toLocaleString("es-AR")}</strong></div>
+                <div><span>Mayor premio</span><strong>{stats.biggestWin.toLocaleString("es-AR")}</strong></div>
+                <div><span>Giros gratis ganados</span><strong>{stats.freeSpinsWon.toLocaleString("es-AR")}</strong></div>
+                <div><span>Jackpots</span><strong>{stats.jackpots}</strong></div>
+              </div>
+              <small>RTP personal: {stats.totalBet > 0 ? ((stats.totalWon / stats.totalBet) * 100).toFixed(1) : "0.0"}%</small>
             </div>
           </button>
         )}
@@ -1122,17 +1307,17 @@ export default function App() {
             aria-label="Cerrar celebración"
           >
             <div className="coin-rain" aria-hidden="true">
-              {Array.from({ length: 28 }).map((_, index) => (
-                <span
-                  key={index}
-                  style={{
-                    "--coin-index": index,
-                    "--coin-delay": `${(index % 9) * 0.11}s`,
-                    "--coin-left": `${(index * 37) % 100}%`,
-                  }}
-                >
-                  🪙
-                </span>
+              {Array.from({ length: 45 }).map((_, index) => (
+               <span
+  key={index}
+  style={{
+    "--coin-index": index,
+    "--coin-delay": `${(index % 9) * 0.11}s`,
+    "--coin-left": `${(index * 37) % 100}%`,
+  }}
+>
+  <img src={coin} className="coin-img" alt="" />
+</span>
               ))}
             </div>
             <div className="celebration-card">

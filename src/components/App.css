@@ -462,15 +462,49 @@ button {
   z-index: 5;
   border-radius: 14px;
   background:
-    rgba(255, 215, 0, 0.45);
+    radial-gradient(
+      circle,
+      rgba(255, 255, 255, 0.95) 0%,
+      rgba(255, 215, 0, 0.72) 40%,
+      rgba(255, 120, 0, 0.35) 75%,
+      transparent 100%
+    );
   box-shadow:
     inset 0 0 18px #ffffff,
-    0 0 16px #ffcc00;
-  animation:
-    winnerPulse
-    0.45s alternate infinite;
+    0 0 14px #fff3a0,
+    0 0 28px #ffcc00,
+    0 0 42px rgba(255, 120, 0, 0.9);
+  transform: scale(1.08);
+  animation: winnerPulse 0.45s ease-in-out infinite alternate;
+  overflow: hidden;
+isolation: isolate;
+}
+.winning-symbol::before {
+  content: "";
+  position: absolute;
+  top: -25%;
+  left: -120%;
+  width: 60%;
+  height: 150%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255,255,255,.95),
+    transparent
+  );
+  transform: rotate(18deg);
+  animation: winnerSweep 1s linear infinite;
+  pointer-events: none;
 }
 
+@keyframes winnerSweep {
+  from {
+    left: -120%;
+  }
+  to {
+    left: 170%;
+  }
+}
 .scatter-winner {
   position: relative;
   z-index: 6;
@@ -695,11 +729,25 @@ button:disabled {
   z-index: 1;
   top: -15%;
   left: var(--coin-left);
-  font-size: clamp(24px, 5vw, 48px);
-  animation: coinFall 2.2s linear infinite;
+  width: 22px;
+  height: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0;
+  line-height: 0;
+  animation: coinFall 2.4s linear infinite;
   animation-delay: var(--coin-delay);
+  transform-origin: center;
 }
-
+.coin-img {
+  width: 16px !important;
+  height: 16px !important;
+  max-width: 16px;
+  max-height: 16px;
+  object-fit: contain;
+  display: block;
+}
 @keyframes reelRoll {
   0% {
     transform:
@@ -806,193 +854,80 @@ button:disabled {
 }
 
 @keyframes coinFall {
-  0% { transform: translateY(-10vh) rotate(0deg); opacity: 0; }
-  12% { opacity: 1; }
-  100% { transform: translateY(125vh) rotate(720deg); opacity: 1; }
+  0% {
+    transform:
+      translate3d(0, -40px, 0)
+      rotateY(0deg)
+      rotateZ(0deg)
+      scale(0.7);
+    opacity: 0;
+  }
+
+  10% {
+    opacity: 1;
+  }
+
+  50% {
+    transform:
+      translate3d(18px, 45vh, 0)
+      rotateY(540deg)
+      rotateZ(180deg)
+      scale(1);
+  }
+
+  100% {
+    transform:
+      translate3d(-14px, 110vh, 0)
+      rotateY(1080deg)
+      rotateZ(360deg)
+      scale(0.8);
+    opacity: 0;
+  }
+}
+@keyframes reelStopBounce {
+  0% {
+    transform: translateY(-10px) scaleY(1.03);
+  }
+
+  55% {
+    transform: translateY(5px) scaleY(0.98);
+  }
+
+  100% {
+    transform: translateY(0) scaleY(1);
+  }
+}
+.coin-img {
+  width: 24px;
+  height: 24px;
+  object-fit: contain;
+  display: block;
+  filter:
+    drop-shadow(0 0 4px #ffd700)
+    drop-shadow(0 0 8px #ffb300);
+  animation: coinSpin 0.8s linear infinite;
 }
 
-@media (max-width: 650px) {
-  .page {
-    padding: 7px;
+@keyframes coinSpin {
+  from {
+    transform: rotateY(0deg);
   }
 
-  .machine {
-    padding:
-      42px 8px 25px;
-    border-width: 5px;
+  to {
+    transform: rotateY(360deg);
   }
-
-  
-.top-actions {
-  position: absolute;
-  z-index: 10;
-  top: 27px;
-  right: 20px;
-  display: flex;
-  gap: 8px;
+}
+.coin-rain span{
+    width:24px;
+    height:24px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
 }
 
-.round-action-button {
-  width: 44px;
-  height: 44px;
-  border: 2px solid #ffe66d;
-  border-radius: 50%;
-  font-size: 20px;
-  cursor: pointer;
-  color: #fff;
-  background: #260000;
-  box-shadow: 0 0 12px rgba(255, 204, 0, 0.7);
-}
-
-.round-action-button:hover {
-  transform: translateY(-2px) scale(1.04);
-}
-
-.max-bet-button {
-  min-width: 62px;
-  height: 52px;
-  border: 3px solid #ffe66d;
-  border-radius: 18px;
-  color: #2a0000;
-  font-weight: 1000;
-  cursor: pointer;
-  background: linear-gradient(#fff18a, #ffb300);
-  box-shadow: 0 5px 0 #8a4f00, 0 0 15px rgba(255, 204, 0, .7);
-}
-
-.paytable-overlay {
-  position: fixed;
-  z-index: 120;
-  inset: 0;
-  width: 100%;
-  border: 0;
-  padding: 20px;
-  cursor: pointer;
-  background: rgba(5, 0, 8, .88);
-  backdrop-filter: blur(6px);
-}
-
-.paytable-card {
-  position: relative;
-  width: min(720px, 96vw);
-  max-height: 90vh;
-  margin: auto;
-  padding: 24px;
-  overflow-y: auto;
-  cursor: default;
-  border: 4px solid #ffe66d;
-  border-radius: 24px;
-  color: #fff;
-  background: radial-gradient(circle at top, #78005f, #26001f 58%, #090009);
-  box-shadow: 0 0 35px #ffcc00, 0 0 80px rgba(255, 0, 210, .65);
-}
-
-.paytable-card h2 {
-  margin: 0 0 6px;
-  color: #ffe66d;
-  font-size: clamp(28px, 6vw, 48px);
-  text-shadow: 0 0 14px #ff7b00;
-}
-
-.paytable-close {
-  position: absolute;
-  top: 10px;
-  right: 12px;
-  width: 42px;
-  height: 42px;
-  border: 2px solid #ffe66d;
-  border-radius: 50%;
-  color: #fff;
-  font-size: 28px;
-  cursor: pointer;
-  background: #520000;
-}
-
-.paytable-grid {
-  display: grid;
-  gap: 8px;
-  margin: 18px 0;
-}
-
-.paytable-row {
-  display: grid;
-  grid-template-columns: 70px repeat(3, 1fr);
-  align-items: center;
-  gap: 8px;
-  padding: 10px;
-  border: 1px solid rgba(255, 230, 109, .65);
-  border-radius: 12px;
-  background: rgba(0, 0, 0, .38);
-}
-
-.paytable-row strong { font-size: 34px; }
-.paytable-row span { font-weight: 900; }
-.scatter-pay { border-color: #ff00e6; }
-
-.sound-button {
-    top: 25px;
-    right: 10px;
-    width: 40px;
-    height: 40px;
-    font-size: 19px;
-  }
-
-  .information-panel {
-    grid-template-columns:
-      repeat(2, 1fr);
-    gap: 4px;
-  }
-
-  .information-box {
-    padding: 7px 3px;
-  }
-
-  .information-label {
-    font-size: 9px;
-  }
-
-  .special-symbols {
-    font-size: 10px;
-  }
-
-  .reels-frame {
-    padding: 6px;
-    border-width: 3px;
-  }
-
-  .reels-container {
-    gap: 3px;
-    padding: 4px;
-  }
-
-  .reel-window {
-    height: 210px;
-    border-width: 2px;
-  }
-
-  .reel-symbol,
-  .stopped-symbol {
-    height: 70px;
-    font-size: clamp(
-      29px,
-      10vw,
-      48px
-    );
-  }
-
-  .controls {
-    gap: 8px;
-  }
-
-  .small-button {
-    width: 48px;
-    height: 48px;
-    font-size: 28px;
-  }
-
-  .spin-button {
-    width: 58%;
-    padding: 14px 6px;
-    letter-spacing: 1px;
-  }
+.coin-img{
+    width:24px;
+    height:24px;
+    object-fit:contain;
+    display:block;
 }
