@@ -52,8 +52,14 @@ function createGrid() {
 
   const chance = Math.random();
 
-  // 30%: premio chico
-  if (chance < 0.30) {
+  // Balance más realista:
+  // 3,5% fuerza un premio chico.
+  // 0,6% fuerza un premio medio.
+  // 0,07% fuerza un premio grande.
+  // En el resto de los giros, el resultado queda completamente al azar.
+  // Así hay rachas de pérdida y el saldo no se mantiene eternamente.
+
+  if (chance < 0.035) {
     const payline =
       PAYLINES[Math.floor(Math.random() * PAYLINES.length)];
 
@@ -66,17 +72,14 @@ function createGrid() {
       grid[column][payline[column]] = symbol;
     }
 
-    // Evita que continúe accidentalmente a 4 o 5 símbolos
+    // Evita que un premio chico se convierta por accidente en 4 o 5 iguales.
     if (
       grid[3][payline[3]] === symbol ||
       grid[3][payline[3]] === WILD
     ) {
       grid[3][payline[3]] = "💎";
     }
-  }
-
-  // 8%: premio medio
-  else if (chance < 0.38) {
+  } else if (chance < 0.041) {
     const payline =
       PAYLINES[Math.floor(Math.random() * PAYLINES.length)];
 
@@ -89,24 +92,19 @@ function createGrid() {
       grid[column][payline[column]] = symbol;
     }
 
-    // Evita que se convierta accidentalmente en 5 iguales
+    // Evita que un premio medio se convierta por accidente en 5 iguales.
     if (
       grid[4][payline[4]] === symbol ||
       grid[4][payline[4]] === WILD
     ) {
       grid[4][payline[4]] = "🍋";
     }
-  }
-
-  // 1%: premio grande
-  else if (chance < 0.39) {
+  } else if (chance < 0.0417) {
     const payline =
       PAYLINES[Math.floor(Math.random() * PAYLINES.length)];
 
     const symbol =
-      ["💎", "7️⃣"][
-        Math.floor(Math.random() * 2)
-      ];
+      ["💎", "7️⃣"][Math.floor(Math.random() * 2)];
 
     for (let column = 0; column < COLUMNS; column += 1) {
       grid[column][payline[column]] = symbol;
@@ -115,6 +113,7 @@ function createGrid() {
 
   return grid;
 }
+
 const SYMBOL_PAYS = {
   "🍒": { 3: 2, 4: 5, 5: 12 },
   "🍋": { 3: 2, 4: 5, 5: 12 },
@@ -204,7 +203,9 @@ function Reel({
 }
 
 export default function Game({ player, onCreditsChange, onLogout, onOpenAdmin }) {
-  const [showIntro, setShowIntro] = useState(true);
+  const [showIntro, setShowIntro] = useState(
+    () => sessionStorage.getItem("charly_game_started") !== "true"
+  );
   const [grid, setGrid] = useState(createGrid());
 
   const [reelSpinning, setReelSpinning] = useState(
@@ -257,6 +258,7 @@ useEffect(() => {
   const [displayPrize, setDisplayPrize] = useState(0);
   const [jackpot, setJackpot] = useState(STARTING_JACKPOT);
   const [celebration, setCelebration] = useState(null);
+  const [celebrationReady, setCelebrationReady] = useState(false);
   const [paytableOpen, setPaytableOpen] = useState(false);
   const [statsOpen, setStatsOpen] = useState(false);
   const [stats, setStats] = useState(DEFAULT_STATS);
@@ -304,6 +306,20 @@ useEffect(() => {
       }
     };
   }, []);
+
+  useEffect(() => {
+    setCelebrationReady(false);
+
+    if (!celebration) {
+      return undefined;
+    }
+
+    const timer = window.setTimeout(() => {
+      setCelebrationReady(true);
+    }, 800);
+
+    return () => window.clearTimeout(timer);
+  }, [celebration]);
 
   useEffect(() => {
     if (
@@ -858,7 +874,7 @@ function playCoinSound(amount = 3) {
   }
 
   async function spin() {
-    if (spinning) {
+    if (spinning || celebration) {
       return;
     }
 
@@ -920,7 +936,7 @@ function playCoinSound(amount = 3) {
       index < COLUMNS;
       index += 1
     ) {
-      const stopTime = 1400 + index * 600;
+      const stopTime = 1100 + index * 350;
 
       setTimeout(async () => {
         setGrid((currentGrid) => {
@@ -982,13 +998,13 @@ function playCoinSound(amount = 3) {
             playScatterSound();
           } else if (prize.freeSpinsWon > 0) {
             setFreeSpins(
-              (current) =>
-                current +
-                prize.freeSpinsWon
+              (current) => current + prize.freeSpinsWon
             );
             setCelebration(null);
-playCoinSound(4);
-            
+            setMessage(
+              `🎁 BONUS ACTIVADO: ${prize.freeSpinsWon} GIROS GRATIS`
+            );
+            playCoinSound(4);
           } else if (prize.amount > 0) {
            const winRatio = prize.amount / bet;
 
@@ -1051,6 +1067,7 @@ if (winRatio < 8) {
       });
     }
 
+    sessionStorage.setItem("charly_game_started", "true");
     setShowIntro(false);
   }
 
@@ -1251,7 +1268,7 @@ if (winRatio < 8) {
                   spinning={
                     reelSpinning[index]
                   }
-                  delay={index * -180}
+                  delay={index * -180}F
                   columnIndex={index}
                   winningCells={
                     winningCells
@@ -1392,15 +1409,18 @@ if (winRatio < 8) {
           </button>
         )}
 
-        {celebration && (
-          <button
-            className={`celebration celebration-${celebration.type}`}
-            onClick={() => setCelebration(null)}
-            aria-label="Cerrar celebración"
-          >
-            <div className="coin-rain" aria-hidden="true">
-              {Array.from({ length: 45 }).map((_, index) => (
-               <span
+
+      </section>
+
+      {celebration && (
+        <button
+          className={`celebration celebration-${celebration.type}`}
+          onClick={() => setCelebration(null)}
+          aria-label="Cerrar celebración"
+        >
+          <div className="coin-rain" aria-hidden="true">
+            {Array.from({ length: 45 }).map((_, index) => (
+             <span
   key={index}
   style={{
     "--coin-index": index,
@@ -1410,28 +1430,25 @@ if (winRatio < 8) {
 >
   <img src={coin} className="coin-img" alt="" />
 </span>
-              ))}
-            </div>
-            <div className="celebration-card">
-              <span className="celebration-kicker">
-                {celebration.type === "jackpot"
-                  ? "👑 PREMIO MÁXIMO 👑"
-                  : celebration.type === "bonus"
-                  ? "🎁 BONUS ACTIVADO"
-                  : celebration.type === "mega"
-                  ? "MEGA WIN"
-                  : celebration.type === "big"
-                  ? "BIG WIN"
-                  : "¡GANASTE!"}
-              </span>
-              <strong>{celebration.amount.toLocaleString("es-AR")}</strong>
-              <small>CRÉDITOS · TOCÁ PARA CONTINUAR</small>
-            </div>
-          </button>
-        )}
-      </section>
-
-      
+            ))}
+          </div>
+          <div className="celebration-card">
+            <span className="celebration-kicker">
+              {celebration.type === "jackpot"
+                ? "👑 PREMIO MÁXIMO 👑"
+                : celebration.type === "bonus"
+                ? "🎁 BONUS ACTIVADO"
+                : celebration.type === "mega"
+                ? "MEGA WIN"
+                : celebration.type === "big"
+                ? "BIG WIN"
+                : "¡GANASTE!"}
+            </span>
+            <strong>{celebration.amount.toLocaleString("es-AR")}</strong>
+            <small>CRÉDITOS · TOCÁ PARA CONTINUAR</small>
+          </div>
+        </button>
+      )}
     </main>
   );
 }
