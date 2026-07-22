@@ -1,3 +1,4 @@
+import { changePlayerPassword } from "./services/adminService";
 import { useEffect, useMemo, useState } from "react";
 import { supabase } from "./supabase";
 import "./Admin.css";
@@ -20,8 +21,35 @@ export default function Admin({ onClose }) {
   const [reasons, setReasons] = useState({});
   const [editingId, setEditingId] = useState(null);
   const [editName, setEditName] = useState("");
+const [passwordPlayer, setPasswordPlayer] = useState(null);
+const [newPassword, setNewPassword] = useState("");
+const [changingPassword, setChangingPassword] = useState(false);
+const [passwordError, setPasswordError] = useState("");
+async function handleChangePassword() {
+  if (!passwordPlayer) return;
 
-  async function loadAdminData() {
+  if (newPassword.trim().length < 8) {
+    setPasswordError("La contraseña debe tener al menos 8 caracteres.");
+    return;
+  }
+
+  try {
+    setChangingPassword(true);
+    setPasswordError("");
+
+    await changePlayerPassword(passwordPlayer.id, newPassword);
+
+    setMessage(`Contraseña cambiada para ${passwordPlayer.display_name || passwordPlayer.username}`);
+
+    setPasswordPlayer(null);
+    setNewPassword("");
+  } catch (err) {
+    setPasswordError(err.message);
+  } finally {
+    setChangingPassword(false);
+  }
+}
+async function loadAdminData() {
     setLoading(true);
     setMessage("");
 
@@ -220,57 +248,248 @@ export default function Admin({ onClose }) {
 
         {message && <div className="admin-message">{message}</div>}
 
-        {loading ? <p className="admin-loading">Cargando jugadores...</p> : (
-          <div className="players-list">
-            {filteredPlayers.length === 0 && <p className="admin-empty">No se encontraron jugadores.</p>}
-            {filteredPlayers.map((player) => {
-              const disabled = workingId === player.id;
-              return (
-                <article className="player-row" key={player.id}>
-                  <div className="player-main">
-                    {editingId === player.id ? (
-                      <div className="edit-name-row">
-                        <input value={editName} maxLength={40} onChange={(event) => setEditName(event.target.value)} />
-                        <button onClick={() => savePlayerName(player)} disabled={disabled}>GUARDAR</button>
-                        <button className="secondary" onClick={() => setEditingId(null)}>CANCELAR</button>
-                      </div>
-                    ) : (
-                      <div className="player-name-line">
-                        <strong>{player.display_name || player.username}</strong>
-                        {player.is_admin && <span className="admin-badge">ADMIN</span>}
-                        <span className={player.is_blocked ? "status blocked" : "status active"}>{player.is_blocked ? "BLOQUEADO" : "ACTIVO"}</span>
-                        <button className="edit-button" onClick={() => beginEdit(player)}>EDITAR NOMBRE</button>
-                      </div>
-                    )}
-                    <small>@{player.username}</small>
-                    <div className="player-stats">
-                      <span>Apostado: {formatNumber(player.total_bet)}</span>
-                      <span>Ganado: {formatNumber(player.total_win)}</span>
-                      <span>Giros: {formatNumber(player.total_spins)}</span>
-                    </div>
-                  </div>
+        {loading ? (
+  <p className="admin-loading">Cargando jugadores...</p>
+) : (
+  <div className="players-list">
+    {filteredPlayers.length === 0 && (
+      <p className="admin-empty">No se encontraron jugadores.</p>
+    )}
 
-                  <div className="credit-value"><span>CRÉDITOS</span><strong>{formatNumber(player.credits)}</strong></div>
+    {filteredPlayers.map((player) => {
+      const disabled = workingId === player.id;
 
-                  <div className="credit-controls">
-                    <div className="quick-buttons">
-                      {QUICK_AMOUNTS.map((amount) => <button key={amount} onClick={() => adjustCredits(player, amount)} disabled={disabled}>+{amount}</button>)}
-                      <button className="subtract" onClick={() => adjustCredits(player, -100)} disabled={disabled}>−100</button>
-                    </div>
-                    <div className="custom-credit-row">
-                      <input type="number" min="1" step="1" placeholder="Monto" value={customAmounts[player.id] || ""} onChange={(event) => setCustomAmounts((current) => ({ ...current, [player.id]: event.target.value }))} />
-                      <button onClick={() => applyCustomAmount(player, 1)} disabled={disabled}>SUMAR</button>
-                      <button className="subtract" onClick={() => applyCustomAmount(player, -1)} disabled={disabled}>RESTAR</button>
-                    </div>
-                    <input className="reason-input" type="text" maxLength={100} placeholder="Motivo del movimiento (opcional)" value={reasons[player.id] || ""} onChange={(event) => setReasons((current) => ({ ...current, [player.id]: event.target.value }))} />
-                    {!player.is_admin && <button className={player.is_blocked ? "unblock-button" : "block-button"} onClick={() => toggleBlocked(player)} disabled={disabled}>{player.is_blocked ? "DESBLOQUEAR" : "BLOQUEAR"}</button>}
-                  </div>
-                </article>
-              );
-            })}
+      return (
+        <article className="player-row" key={player.id}>
+          <div className="player-main">
+            {editingId === player.id ? (
+              <div className="edit-name-row">
+                <input
+                  value={editName}
+                  maxLength={40}
+                  onChange={(event) => setEditName(event.target.value)}
+                />
+
+                <button
+                  onClick={() => savePlayerName(player)}
+                  disabled={disabled}
+                >
+                  GUARDAR
+                </button>
+
+                <button
+                  className="secondary"
+                  onClick={() => setEditingId(null)}
+                >
+                  CANCELAR
+                </button>
+              </div>
+            ) : (
+              <div className="player-name-line">
+                <strong>
+                  {player.display_name || player.username}
+                </strong>
+
+                {player.is_admin && (
+                  <span className="admin-badge">ADMIN</span>
+                )}
+
+                <span
+                  className={
+                    player.is_blocked
+                      ? "status blocked"
+                      : "status active"
+                  }
+                >
+                  {player.is_blocked ? "BLOQUEADO" : "ACTIVO"}
+                </span>
+
+                <button
+                  className="edit-button"
+                  onClick={() => beginEdit(player)}
+                >
+                  EDITAR NOMBRE
+                </button>
+              </div>
+            )}
+
+            <small>@{player.username}</small>
+
+            <div className="player-stats">
+              <span>
+                Apostado: {formatNumber(player.total_bet)}
+              </span>
+
+              <span>
+                Ganado: {formatNumber(player.total_win)}
+              </span>
+
+              <span>
+                Giros: {formatNumber(player.total_spins)}
+              </span>
+            </div>
           </div>
-        )}
 
+          <div className="credit-value">
+            <span>CRÉDITOS</span>
+            <strong>{formatNumber(player.credits)}</strong>
+          </div>
+
+          <div className="credit-controls">
+            <div className="quick-buttons">
+              {QUICK_AMOUNTS.map((amount) => (
+                <button
+                  key={amount}
+                  onClick={() => adjustCredits(player, amount)}
+                  disabled={disabled}
+                >
+                  +{amount}
+                </button>
+              ))}
+
+              <button
+                className="subtract"
+                onClick={() => adjustCredits(player, -100)}
+                disabled={disabled}
+              >
+                −100
+              </button>
+            </div>
+
+            <div className="custom-credit-row">
+              <input
+                type="number"
+                min="1"
+                step="1"
+                placeholder="Monto"
+                value={customAmounts[player.id] || ""}
+                onChange={(event) =>
+                  setCustomAmounts((current) => ({
+                    ...current,
+                    [player.id]: event.target.value,
+                  }))
+                }
+              />
+
+              <button
+                onClick={() => applyCustomAmount(player, 1)}
+                disabled={disabled}
+              >
+                SUMAR
+              </button>
+
+              <button
+                className="subtract"
+                onClick={() => applyCustomAmount(player, -1)}
+                disabled={disabled}
+              >
+                RESTAR
+              </button>
+            </div>
+
+            <input
+              className="reason-input"
+              type="text"
+              maxLength={100}
+              placeholder="Motivo del movimiento (opcional)"
+              value={reasons[player.id] || ""}
+              onChange={(event) =>
+                setReasons((current) => ({
+                  ...current,
+                  [player.id]: event.target.value,
+                }))
+              }
+            />
+
+            {!player.is_admin && (
+              <button
+className="password-button"                onClick={() => {
+                  setPasswordPlayer(player);
+                  setNewPassword("");
+                  setPasswordError("");
+                }}
+                disabled={disabled}
+              >
+                🔑 CONTRASEÑA
+              </button>
+            )}
+
+            {!player.is_admin && (
+              <button
+                className={
+                  player.is_blocked
+                    ? "unblock-button"
+                    : "block-button"
+                }
+                onClick={() => toggleBlocked(player)}
+                disabled={disabled}
+              >
+                {player.is_blocked
+                  ? "DESBLOQUEAR"
+                  : "BLOQUEAR"}
+              </button>
+            )}
+          </div>
+        </article>
+      );
+    })}
+  </div>
+)}
+
+{passwordPlayer && (
+  <div className="admin-modal-overlay">
+    <div className="admin-modal">
+      <h2>Cambiar contraseña</h2>
+
+      <p>
+        Jugador:{" "}
+        <strong>
+          {passwordPlayer.display_name ||
+            passwordPlayer.username}
+        </strong>
+      </p>
+
+      <input
+        type="password"
+        placeholder="Nueva contraseña"
+        value={newPassword}
+        onChange={(event) =>
+          setNewPassword(event.target.value)
+        }
+        autoFocus
+      />
+
+      {passwordError && (
+        <div className="admin-message">
+          {passwordError}
+        </div>
+      )}
+
+      <div className="admin-modal-actions">
+        <button
+          onClick={handleChangePassword}
+          disabled={changingPassword}
+        >
+          {changingPassword
+            ? "GUARDANDO..."
+            : "GUARDAR"}
+        </button>
+
+        <button
+          className="secondary"
+          onClick={() => {
+            setPasswordPlayer(null);
+            setNewPassword("");
+            setPasswordError("");
+          }}
+          disabled={changingPassword}
+        >
+          CANCELAR
+        </button>
+      </div>
+    </div>
+  </div>
+)}
         <section className="history-section">
           <h2>ÚLTIMOS MOVIMIENTOS DE CRÉDITOS</h2>
           {transactions.length === 0 ? <p className="admin-empty">Todavía no hay movimientos registrados.</p> : (

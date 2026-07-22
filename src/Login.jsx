@@ -3,7 +3,7 @@ import { supabase } from "./supabase";
 import "./Login.css";
 
 export default function Login() {
-  const [email, setEmail] = useState("");
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -13,7 +13,10 @@ export default function Login() {
     setError("");
     setLoading(true);
 
-    const cleanEmail = email.trim().toLowerCase();
+    const cleanUsername = username.trim().toLowerCase();
+    const cleanEmail = cleanUsername.includes("@")
+      ? cleanUsername
+      : `${cleanUsername}@jackpot.com`;
     const { error: signInError } = await supabase.auth.signInWithPassword({
       email: cleanEmail,
       password,
@@ -35,12 +38,13 @@ export default function Login() {
 
         <form onSubmit={handleSubmit}>
           <label>
-            EMAIL
+            USUARIO
             <input
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              autoComplete="email"
+              type="text"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              autoComplete="username"
+              placeholder="u001"
               required
             />
           </label>

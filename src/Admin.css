@@ -476,3 +476,71 @@ body:has(.admin-page) {
   padding-bottom: 60px;
   box-sizing: border-box;
 }
+.admin-modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  background: rgba(0, 0, 0, 0.75);
+}
+
+.admin-modal {
+  width: min(420px, 100%);
+  padding: 24px;
+  border: 1px solid rgba(255, 215, 0, 0.5);
+  border-radius: 16px;
+  background: #161616;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.65);
+}
+
+.admin-modal h2 {
+  margin: 0 0 12px;
+}
+
+.admin-modal p {
+  margin: 0 0 16px;
+}
+
+.admin-modal input {
+  width: 100%;
+  box-sizing: border-box;
+  margin-bottom: 12px;
+  padding: 12px;
+  border: 1px solid #555;
+  border-radius: 8px;
+  background: #0d0d0d;
+  color: #fff;
+  font-size: 16px;
+}
+
+.admin-modal-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 16px;
+}
+
+.admin-modal-actions button {
+  flex: 1;
+}
+.password-button {
+  justify-self: end;
+  padding: 10px 16px;
+  border: 2px solid #ffe66d;
+  border-radius: 10px;
+  background: #ffcf30;
+  color: #260000;
+  font-weight: 900;
+  cursor: pointer;
+}
+
+.password-button:hover {
+  filter: brightness(1.08);
+}
+
+.password-button:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
