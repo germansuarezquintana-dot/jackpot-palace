@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { supabase } from "./supabase";
 import Login from "./Login";
 import Game from "./Game";
@@ -10,7 +10,7 @@ export default function App() {
   const [loading, setLoading] = useState(true);
   const [showAdmin, setShowAdmin] = useState(false);
   const [error, setError] = useState("");
-
+const forceLogoutVersionRef = useRef(null);
   async function loadPlayer(userId) {
     setLoading(true);
 
@@ -48,25 +48,69 @@ export default function App() {
     setLoading(false);
   }
 
-  useEffect(() => {
+    useEffect(() => {
     supabase.auth.getSession().then(({ data }) => {
       setSession(data.session);
-      if (data.session) loadPlayer(data.session.user.id);
-      else setLoading(false);
-    });
 
-    const { data: listener } = supabase.auth.onAuthStateChange((_event, nextSession) => {
-      setSession(nextSession);
-      setShowAdmin(false);
-      if (nextSession) loadPlayer(nextSession.user.id);
-      else {
-        setPlayer(null);
+      if (data.session) {
+        loadPlayer(data.session.user.id);
+      } else {
         setLoading(false);
       }
     });
 
+    const { data: listener } = supabase.auth.onAuthStateChange(
+      (_event, nextSession) => {
+        setSession(nextSession);
+        setShowAdmin(false);
+
+        if (nextSession) {
+          loadPlayer(nextSession.user.id);
+        } else {
+          setPlayer(null);
+          setLoading(false);
+        }
+      }
+    );
+
     return () => listener.subscription.unsubscribe();
   }, []);
+
+  useEffect(() => {
+    if (!session?.user?.id || !player?.id || player.is_admin) return;
+
+    forceLogoutVersionRef.current =
+      player.force_logout_version || null;
+
+    const channel = supabase
+      .channel(`force-logout-${player.id}`)
+      .on(
+        "postgres_changes",
+        {
+          event: "UPDATE",
+          schema: "public",
+          table: "players",
+          filter: `id=eq.${player.id}`,
+        },
+        async (payload) => {
+          const nextVersion =
+            payload.new?.force_logout_version || null;
+
+          if (nextVersion !== forceLogoutVersionRef.current) {
+  forceLogoutVersionRef.current = nextVersion;
+  await supabase.auth.signOut();
+  return;
+}
+
+          forceLogoutVersionRef.current = nextVersion;
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [session?.user?.id, player?.id, player?.is_admin]);
 
   if (loading) {
     return <main className="login-page"><section className="login-card"><h1>JACKPOT PALACE</h1><p>Cargando...</p></section></main>;

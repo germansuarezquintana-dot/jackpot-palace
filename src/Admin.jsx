@@ -1,4 +1,7 @@
-import { changePlayerPassword } from "./services/adminService";
+import {
+  changePlayerPassword,
+  forcePlayerLogout,
+} from "./services/adminService";
 import { useEffect, useMemo, useState } from "react";
 import { supabase } from "./supabase";
 import "./Admin.css";
@@ -166,7 +169,36 @@ async function loadAdminData() {
     }
     await adjustCredits(player, absoluteAmount * sign);
   }
+async function forceLogout(player) {
+  const confirmed = window.confirm(
+    `¿Forzar el cierre de sesión de ${
+      player.display_name || player.username
+    }?`
+  );
 
+  if (!confirmed) return;
+
+  try {
+    setWorkingId(player.id);
+    setMessage("");
+
+    await forcePlayerLogout(player.id);
+
+    setMessage(
+      `Sesión cerrada para ${
+        player.display_name || player.username
+      }.`
+    );
+  } catch (error) {
+    setMessage(
+      `No se pudo cerrar la sesión: ${
+        error.message || "Error desconocido"
+      }`
+    );
+  } finally {
+    setWorkingId(null);
+  }
+}
   async function toggleBlocked(player) {
     const action = player.is_blocked ? "desbloquear" : "bloquear";
     if (!window.confirm(`¿Confirmás ${action} a ${player.display_name || player.username}?`)) return;
@@ -413,7 +445,15 @@ className="password-button"                onClick={() => {
                 🔑 CONTRASEÑA
               </button>
             )}
-
+{!player.is_admin && (
+  <button
+    className="logout-button"
+    onClick={() => forceLogout(player)}
+    disabled={disabled}
+  >
+    🚪 CERRAR SESIÓN
+  </button>
+)}
             {!player.is_admin && (
               <button
                 className={

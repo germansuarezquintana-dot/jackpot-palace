@@ -23,3 +23,9 @@ export async function changePlayerPassword(playerId, password) {
     password,
   });
 }
+export async function forcePlayerLogout(playerId) {
+  return invokeAdminAction({
+    action: "force_logout",
+    player_id: playerId,
+  });
+}
