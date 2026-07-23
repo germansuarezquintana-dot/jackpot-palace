@@ -26,7 +26,7 @@ const symbols = [
 const ROWS = 3;
 const COLUMNS = 5;
 const BET_OPTIONS = [100, 250, 500, 1000, 2500, 5000];
-const LINE_PAYOUT_FACTOR = 0.40; // perfil definitivo: RTP teórico aproximado 84–87 %
+const LINE_PAYOUT_FACTOR = 0.36; // perfil definitivo: RTP teórico aproximado 84–87 %
 function randomSymbol() {
   const number = Math.random();
 
@@ -62,12 +62,11 @@ const OUTCOME_RATES = {
 
 function getSpinType() {
   const chance = Math.random();
-  let accumulated = 0;
 
-  for (const [type, rate] of Object.entries(OUTCOME_RATES)) {
-    accumulated += rate;
-    if (chance < accumulated) return type;
-  }
+  if (chance < 0.002) return "mega";
+  if (chance < 0.010) return "big";
+  if (chance < 0.028) return "scatter";
+  if (chance < 0.055) return "small";
 
   return "lose";
 }
@@ -781,32 +780,32 @@ if (multiplier === 0 && !isJackpotLine) {
       });
     });
 
-    if (cells.length >= 5) {
-      return {
-        count: cells.length,
-        amount: bet * 7,
-        freeSpins: 8,
-        cells,
-      };
-    }
+  if (cells.length >= 5) {
+  return {
+    count: cells.length,
+    amount: bet * 3,
+    freeSpins: 8,
+    cells,
+  };
+}
 
-    if (cells.length === 4) {
-      return {
-        count: 4,
-        amount: bet * 3,
-        freeSpins: 5,
-        cells,
-      };
-    }
+if (cells.length === 4) {
+  return {
+    count: 4,
+    amount: bet,
+    freeSpins: 5,
+    cells,
+  };
+}
 
-    if (cells.length === 3) {
-      return {
-        count: 3,
-        amount: bet,
-        freeSpins: 3,
-        cells,
-      };
-    }
+if (cells.length === 3) {
+  return {
+    count: 3,
+    amount: 0,
+    freeSpins: 3,
+    cells,
+  };
+}
 
     return {
       count: cells.length,
@@ -1146,11 +1145,14 @@ if (multiplier === 0 && !isJackpotLine) {
             setFreeSpins(
               (current) => current + prize.freeSpinsWon
             );
-            setCelebration(null);
+            setCelebration({
+  type: "bonus",
+  amount: prize.amount,
+});
             setMessage(
               `🎁 BONUS ACTIVADO: ${prize.freeSpinsWon} GIROS GRATIS`
             );
-            playCoinSound(4);
+            playScatterSound();
           } else if (prize.amount > 0) {
            const winRatio = prize.amount / bet;
 
@@ -1299,7 +1301,7 @@ if (winRatio < 8) {
         </div>
 
         <h1 className="title">
-         👑 JACKPOT PALACE
+        👑 JACKPOT PALACE
         </h1>
 
         <p className="subtitle">
