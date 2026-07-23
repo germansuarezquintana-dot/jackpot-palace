@@ -7,6 +7,7 @@ import {
 } from "./services/gameService";
 import "./App.css";
 import coin from "./assets/coin.png";
+import Reel from "./components/Reel";
 const WILD = "🃏";
 const SCATTER = "🎁";
 
@@ -249,67 +250,6 @@ const spinningSymbols = Array.from(
   (_, index) => symbols[index % symbols.length]
 );
 
-function Reel({
-  values,
-  spinning,
-  delay,
-  columnIndex,
-  winningCells,
-  scatterCells,
-}) {
-  return (
-    <div className="reel-window">
-      {spinning ? (
-        <div
-          className="reel-strip spinning"
-          style={{
-            animationDelay: `${delay}ms`,
-          }}
-        >
-          {spinningSymbols.map((symbol, index) => (
-            <div className="reel-symbol" key={index}>
-              {symbol}
-            </div>
-          ))}
-        </div>
-      ) : (
-        <div className="stopped-reel">
-          {values.map((symbol, rowIndex) => {
-            const isWinner = winningCells.some(
-              (cell) =>
-                cell.column === columnIndex &&
-                cell.row === rowIndex
-            );
-
-            const isScatterWinner = scatterCells.some(
-              (cell) =>
-                cell.column === columnIndex &&
-                cell.row === rowIndex
-            );
-
-            return (
-              <div
-                className={[
-                  "stopped-symbol",
-                  isWinner ? "winning-symbol" : "",
-                  isScatterWinner ? "scatter-winner" : "",
-                  symbol === WILD ? "wild-symbol" : "",
-                  symbol === SCATTER ? "scatter-symbol" : "",
-                ].join(" ")}
-                key={rowIndex}
-              >
-                {symbol}
-              </div>
-            );
-          })}
-        </div>
-      )}
-
-      <div className="reel-shadow reel-shadow-top" />
-      <div className="reel-shadow reel-shadow-bottom" />
-    </div>
-  );
-}
 
 export default function Game({ player, onCreditsChange, onLogout, onOpenAdmin }) {
   const [showIntro, setShowIntro] = useState(
@@ -1148,11 +1088,7 @@ if (cells.length === 3) {
             
             playScatterSound();
           } else if (prize.freeSpinsWon > 0) {
-            console.log("BONUS DEBUG", {
-  amount: prize.amount,
-  freeSpinsWon: prize.freeSpinsWon,
-  scatterCells: prize.scatterCells,
-});
+          
             setFreeSpins(
               (current) => current + prize.freeSpinsWon
             );
@@ -1435,6 +1371,7 @@ if (winRatio < 8) {
                   scatterCells={
                     scatterCells
                   }
+                  spinningSymbols={spinningSymbols}
                 />
               )
             )}

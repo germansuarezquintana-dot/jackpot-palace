@@ -1722,3 +1722,533 @@ body {
     transform: translate(-50%, -50%) scale(1);
   }
 }
+/* =========================================================
+   JACKPOT PALACE - REDISEÑO CASINO VIP
+   SOLO ESTÉTICA
+   ========================================================= */
+
+:root {
+  --vip-black: #050505;
+  --vip-black-soft: #111111;
+  --vip-panel: #171717;
+  --vip-gold: #d4af37;
+  --vip-gold-light: #f5dc7a;
+  --vip-gold-dark: #7a5a12;
+  --vip-white: #f7f3e8;
+  --vip-shadow: rgba(0, 0, 0, 0.75);
+}
+
+body {
+  background:
+    radial-gradient(circle at 50% 10%, rgba(212, 175, 55, 0.13), transparent 35%),
+    radial-gradient(circle at 50% 85%, rgba(212, 175, 55, 0.07), transparent 42%),
+    linear-gradient(180deg, #090909 0%, #030303 100%);
+  color: var(--vip-white);
+}
+
+#root {
+  min-height: 100vh;
+  background:
+    linear-gradient(rgba(0, 0, 0, 0.28), rgba(0, 0, 0, 0.62)),
+    radial-gradient(circle at center, #181818 0%, #050505 72%);
+}
+
+.game-container,
+.slot-machine,
+.machine,
+.game-wrapper {
+  position: relative;
+  border: 2px solid var(--vip-gold-dark);
+  border-radius: 28px;
+  background:
+    linear-gradient(145deg, #232323 0%, #0b0b0b 45%, #181818 100%);
+  box-shadow:
+    0 30px 70px var(--vip-shadow),
+    0 0 0 4px rgba(212, 175, 55, 0.1),
+    0 0 35px rgba(212, 175, 55, 0.18),
+    inset 0 1px 0 rgba(255, 255, 255, 0.12),
+    inset 0 -10px 30px rgba(0, 0, 0, 0.55);
+  overflow: hidden;
+}
+
+.game-container::before,
+.slot-machine::before,
+.machine::before,
+.game-wrapper::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  border-radius: inherit;
+  background:
+    linear-gradient(
+      120deg,
+      rgba(255, 255, 255, 0.12) 0%,
+      transparent 18%,
+      transparent 72%,
+      rgba(212, 175, 55, 0.08) 100%
+    );
+}
+
+.game-container::after,
+.slot-machine::after,
+.machine::after,
+.game-wrapper::after {
+  content: "";
+  position: absolute;
+  inset: 8px;
+  pointer-events: none;
+  border: 1px solid rgba(245, 220, 122, 0.2);
+  border-radius: 20px;
+}
+
+.reels,
+.reels-container,
+.slot-grid,
+.reel-window {
+  border: 2px solid var(--vip-gold);
+  border-radius: 18px;
+  background:
+    linear-gradient(180deg, #030303 0%, #151515 45%, #020202 100%);
+  box-shadow:
+    inset 0 0 30px rgba(0, 0, 0, 0.95),
+    inset 0 0 8px rgba(212, 175, 55, 0.25),
+    0 10px 25px rgba(0, 0, 0, 0.6),
+    0 0 18px rgba(212, 175, 55, 0.15);
+  overflow: hidden;
+}
+
+.reel,
+.reel-column,
+.symbol-cell,
+.cell {
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.035), rgba(0, 0, 0, 0.22));
+  border-color: rgba(212, 175, 55, 0.22);
+}
+
+.symbol,
+.reel-symbol {
+  filter:
+    drop-shadow(0 4px 4px rgba(0, 0, 0, 0.75))
+    drop-shadow(0 0 5px rgba(245, 220, 122, 0.12));
+}
+
+.jackpot,
+.jackpot-panel,
+.jackpot-display {
+  color: var(--vip-gold-light);
+  border: 1px solid var(--vip-gold);
+  border-radius: 16px;
+  background:
+    linear-gradient(180deg, #1b1505 0%, #080602 100%);
+  box-shadow:
+    inset 0 0 18px rgba(212, 175, 55, 0.18),
+    0 0 20px rgba(212, 175, 55, 0.2);
+  text-shadow:
+    0 0 6px rgba(245, 220, 122, 0.75),
+    0 2px 2px #000;
+}
+
+.balance-panel,
+.credits-panel,
+.bet-panel,
+.win-panel,
+.info-box,
+.stat-box {
+  border: 1px solid rgba(212, 175, 55, 0.55);
+  border-radius: 14px;
+  background:
+    linear-gradient(180deg, #1b1b1b 0%, #090909 100%);
+  color: var(--vip-white);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.08),
+    inset 0 0 14px rgba(0, 0, 0, 0.65),
+    0 5px 14px rgba(0, 0, 0, 0.55);
+}
+
+button {
+  font-weight: 800;
+  letter-spacing: 0.5px;
+}
+
+.spin-button,
+.spin-btn,
+button[class*="spin"] {
+  color: #171000;
+  border: 2px solid var(--vip-gold-light);
+  background:
+    radial-gradient(circle at 50% 25%, #fff0a6 0%, #d4af37 42%, #8b6517 100%);
+  box-shadow:
+    0 8px 0 #5a400c,
+    0 12px 22px rgba(0, 0, 0, 0.55),
+    0 0 20px rgba(212, 175, 55, 0.35),
+    inset 0 2px 0 rgba(255, 255, 255, 0.65),
+    inset 0 -5px 10px rgba(94, 62, 0, 0.45);
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.45);
+  transition:
+    transform 0.15s ease,
+    box-shadow 0.15s ease,
+    filter 0.15s ease;
+}
+
+.spin-button:hover,
+.spin-btn:hover,
+button[class*="spin"]:hover {
+  filter: brightness(1.08);
+  transform: translateY(-1px);
+}
+
+.spin-button:active,
+.spin-btn:active,
+button[class*="spin"]:active {
+  transform: translateY(5px);
+  box-shadow:
+    0 3px 0 #5a400c,
+    0 7px 12px rgba(0, 0, 0, 0.55),
+    0 0 14px rgba(212, 175, 55, 0.3);
+}
+
+button:not(.spin-button):not(.spin-btn) {
+  border-color: rgba(212, 175, 55, 0.7);
+  background:
+    linear-gradient(180deg, #282828 0%, #0e0e0e 100%);
+  color: var(--vip-white);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.12),
+    0 4px 10px rgba(0, 0, 0, 0.45);
+}
+
+button:not(.spin-button):not(.spin-btn):hover {
+  border-color: var(--vip-gold-light);
+  color: var(--vip-gold-light);
+}
+
+@media (max-width: 768px) {
+  .game-container,
+  .slot-machine,
+  .machine,
+  .game-wrapper {
+    border-radius: 18px;
+    box-shadow:
+      0 16px 35px rgba(0, 0, 0, 0.75),
+      0 0 20px rgba(212, 175, 55, 0.14);
+  }
+
+  .reels,
+  .reels-container,
+  .slot-grid,
+  .reel-window {
+    border-radius: 12px;
+  }
+}
+/* =========================================================
+   JACKPOT PALACE - DETALLES VIP
+   ========================================================= */
+
+/* TÍTULO PRINCIPAL */
+.game-title,
+.machine-title,
+.logo-title,
+h1 {
+  background: linear-gradient(
+    180deg,
+    #fff6b5 0%,
+    #f2d66b 28%,
+    #c89419 58%,
+    #7b4d00 100%
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  text-shadow:
+    0 2px 0 rgba(255, 255, 255, 0.12),
+    0 5px 8px rgba(0, 0, 0, 0.8),
+    0 0 14px rgba(255, 205, 55, 0.55);
+  letter-spacing: 3px;
+}
+
+/* PANELES DE INFORMACIÓN */
+.balance-panel,
+.credits-panel,
+.bet-panel,
+.win-panel,
+.info-box,
+.stat-box,
+[class*="credit"],
+[class*="bet"],
+[class*="prize"],
+[class*="win"] {
+  position: relative;
+  overflow: hidden;
+}
+
+.balance-panel::before,
+.credits-panel::before,
+.bet-panel::before,
+.win-panel::before,
+.info-box::before,
+.stat-box::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(
+      115deg,
+      rgba(255, 255, 255, 0.12),
+      transparent 28%,
+      transparent 72%,
+      rgba(255, 215, 90, 0.08)
+    );
+}
+
+/* NÚMEROS DE LOS DISPLAYS */
+.balance-panel strong,
+.credits-panel strong,
+.bet-panel strong,
+.win-panel strong,
+.info-box strong,
+.stat-box strong,
+[class*="credit"] strong,
+[class*="bet"] strong,
+[class*="prize"] strong,
+[class*="win"] strong {
+  color: #fff0a0;
+  font-size: 1.18em;
+  text-shadow:
+    0 0 4px rgba(255, 230, 120, 0.8),
+    0 0 10px rgba(255, 190, 30, 0.45),
+    0 2px 2px #000;
+}
+
+/* VENTANA DE RODILLOS */
+.reels,
+.reels-container,
+.slot-grid,
+.reel-window {
+  position: relative;
+  isolation: isolate;
+}
+
+.reels::before,
+.reels-container::before,
+.slot-grid::before,
+.reel-window::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  pointer-events: none;
+  border-radius: inherit;
+  background:
+    linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 0.12) 0%,
+      rgba(255, 255, 255, 0.025) 15%,
+      transparent 36%,
+      transparent 68%,
+      rgba(0, 0, 0, 0.28) 100%
+    );
+  box-shadow:
+    inset 0 18px 25px rgba(255, 255, 255, 0.025),
+    inset 0 -28px 35px rgba(0, 0, 0, 0.5);
+}
+
+/* COLUMNAS DE RODILLOS */
+.reel,
+.reel-column {
+  position: relative;
+  border-left: 1px solid rgba(255, 218, 100, 0.25);
+  border-right: 1px solid rgba(100, 65, 0, 0.7);
+  box-shadow:
+    inset 7px 0 12px rgba(255, 255, 255, 0.02),
+    inset -8px 0 14px rgba(0, 0, 0, 0.4);
+}
+
+/* CELDAS */
+.symbol-cell,
+.cell {
+  position: relative;
+  transition:
+    transform 0.15s ease,
+    filter 0.15s ease;
+}
+
+.symbol-cell::after,
+.cell::after {
+  content: "";
+  position: absolute;
+  inset: 4px;
+  pointer-events: none;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 215, 90, 0.04);
+}
+
+/* SÍMBOLOS */
+.symbol,
+.reel-symbol,
+.symbol-cell img,
+.cell img {
+  transform: translateZ(0);
+  filter:
+    drop-shadow(0 5px 3px rgba(0, 0, 0, 0.8))
+    drop-shadow(0 0 5px rgba(255, 218, 90, 0.15));
+}
+
+/* BOTÓN GIRAR */
+.spin-button,
+.spin-btn,
+button[class*="spin"] {
+  position: relative;
+  min-height: 48px;
+  border-radius: 999px;
+  overflow: hidden;
+  animation: vipSpinPulse 2.2s ease-in-out infinite;
+}
+
+.spin-button::before,
+.spin-btn::before,
+button[class*="spin"]::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -45%;
+  width: 35%;
+  height: 100%;
+  pointer-events: none;
+  transform: skewX(-22deg);
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.55),
+    transparent
+  );
+  animation: vipButtonShine 3.4s ease-in-out infinite;
+}
+
+.spin-button:disabled,
+.spin-btn:disabled,
+button[class*="spin"]:disabled {
+  animation: none;
+  filter: grayscale(0.55) brightness(0.7);
+  cursor: not-allowed;
+}
+
+/* JACKPOT */
+.jackpot,
+.jackpot-panel,
+.jackpot-display {
+  position: relative;
+  overflow: hidden;
+  animation: vipJackpotGlow 2.5s ease-in-out infinite;
+}
+
+.jackpot::after,
+.jackpot-panel::after,
+.jackpot-display::after {
+  content: "";
+  position: absolute;
+  top: -50%;
+  left: -35%;
+  width: 25%;
+  height: 200%;
+  pointer-events: none;
+  transform: rotate(20deg);
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 244, 180, 0.22),
+    transparent
+  );
+  animation: vipJackpotSweep 4.5s linear infinite;
+}
+
+/* ANIMACIONES */
+@keyframes vipSpinPulse {
+  0%,
+  100% {
+    box-shadow:
+      0 8px 0 #5a400c,
+      0 12px 22px rgba(0, 0, 0, 0.55),
+      0 0 14px rgba(212, 175, 55, 0.28),
+      inset 0 2px 0 rgba(255, 255, 255, 0.65),
+      inset 0 -5px 10px rgba(94, 62, 0, 0.45);
+  }
+
+  50% {
+    box-shadow:
+      0 8px 0 #5a400c,
+      0 12px 22px rgba(0, 0, 0, 0.55),
+      0 0 28px rgba(245, 210, 80, 0.58),
+      inset 0 2px 0 rgba(255, 255, 255, 0.75),
+      inset 0 -5px 10px rgba(94, 62, 0, 0.4);
+  }
+}
+
+@keyframes vipButtonShine {
+  0%,
+  60% {
+    left: -45%;
+    opacity: 0;
+  }
+
+  72% {
+    opacity: 1;
+  }
+
+  100% {
+    left: 120%;
+    opacity: 0;
+  }
+}
+
+@keyframes vipJackpotGlow {
+  0%,
+  100% {
+    box-shadow:
+      inset 0 0 18px rgba(212, 175, 55, 0.18),
+      0 0 14px rgba(212, 175, 55, 0.18);
+  }
+
+  50% {
+    box-shadow:
+      inset 0 0 22px rgba(245, 220, 122, 0.24),
+      0 0 28px rgba(212, 175, 55, 0.38);
+  }
+}
+
+@keyframes vipJackpotSweep {
+  from {
+    left: -35%;
+  }
+
+  to {
+    left: 125%;
+  }
+}
+
+/* AJUSTES EN CELULAR */
+@media (max-width: 768px) {
+  .game-title,
+  .machine-title,
+  .logo-title,
+  h1 {
+    letter-spacing: 1.5px;
+  }
+
+  .spin-button,
+  .spin-btn,
+  button[class*="spin"] {
+    min-height: 44px;
+  }
+
+  .symbol,
+  .reel-symbol,
+  .symbol-cell img,
+  .cell img {
+    filter:
+      drop-shadow(0 3px 2px rgba(0, 0, 0, 0.75))
+      drop-shadow(0 0 3px rgba(255, 218, 90, 0.12));
+  }
+}

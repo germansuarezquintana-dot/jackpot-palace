@@ -988,3 +988,33 @@ button:disabled {
     transform: scale(1.22);
   }
 }
+.symbol-image {
+  width: 48px;
+  height: 48px;
+  object-fit: contain;
+  display: block;
+  margin: auto;
+}
+
+@media (max-width: 768px) {
+  .symbol-image {
+    width: 74%;
+    height: 74%;
+  }
+}
+.symbol-image {
+  width: 36px !important;
+  height: 36px !important;
+  max-width: 36px !important;
+  max-height: 36px !important;
+  object-fit: contain;
+  display: block;
+  flex: 0 0 36px;
+}
+
+.reel-symbol img,
+.stopped-symbol img {
+  width: 36px !important;
+  height: 36px !important;
+  object-fit: contain;
+}
