@@ -1,5 +1,10 @@
 import { useEffect, useRef, useState } from "react";
 import { supabase } from "./supabase";
+import {
+  getJackpot,
+  addJackpotContribution,
+  claimJackpot,
+} from "./services/gameService";
 import "./App.css";
 import coin from "./assets/coin.png";
 const WILD = "🃏";
@@ -21,6 +26,7 @@ const symbols = [
 const ROWS = 3;
 const COLUMNS = 5;
 const BET_OPTIONS = [100, 250, 500, 1000, 2500, 5000];
+const LINE_PAYOUT_FACTOR = 0.40; // perfil definitivo: RTP teórico aproximado 84–87 %
 function randomSymbol() {
   const number = Math.random();
 
@@ -42,73 +48,168 @@ return pool[Math.floor(Math.random() * pool.length)];
 }
 
 
+// Motor de premios definitivo: probabilidades fijas, sin modificar resultados
+// según el saldo ni según un jugador concreto. La ventaja existe a largo plazo,
+// pero cada giro sigue siendo independiente y aleatorio.
+const OUTCOME_RATES = {
+  jackpot: 0.0001, // 1 cada 10.000 giros, aproximadamente
+  mega: 0.002,     // 0,2 %
+  big: 0.015,      // 1,5 %
+  medium: 0.06,    // 6 %
+  scatter: 0.008,  // 0,8 %
+  small: 0.38,     // 38 %; la mayoría devuelve menos que la apuesta
+};
 
+function getSpinType() {
+  const chance = Math.random();
+  let accumulated = 0;
 
+  for (const [type, rate] of Object.entries(OUTCOME_RATES)) {
+    accumulated += rate;
+    if (chance < accumulated) return type;
+  }
 
-function createGrid() {
-  const grid = Array.from({ length: COLUMNS }, () =>
-    Array.from({ length: ROWS }, () => randomSymbol())
+  return "lose";
+}
+
+function lineHasWin(grid, payline) {
+  const lineSymbols = payline.map(
+    (rowIndex, columnIndex) => grid[columnIndex][rowIndex]
   );
 
+  if (lineSymbols[0] === SCATTER) return false;
+
+  const baseSymbol = lineSymbols.find(
+    (symbol) => symbol !== WILD && symbol !== SCATTER
+  );
+
+  if (!baseSymbol) return false;
+
+  let consecutive = 0;
+
+  for (const symbol of lineSymbols) {
+    if (symbol === baseSymbol || symbol === WILD) {
+      consecutive += 1;
+    } else {
+      break;
+    }
+  }
+
+  return consecutive >= 3;
+}
+
+function countScatters(grid) {
+  return grid.reduce(
+    (total, column) =>
+      total + column.filter((symbol) => symbol === SCATTER).length,
+    0
+  );
+}
+
+function createLosingGrid() {
+  // Evita premios accidentales en los giros que el motor definió como pérdida.
+  // Así el RTP se mantiene estable y no depende de coincidencias ocultas.
+  for (let attempt = 0; attempt < 80; attempt += 1) {
+    const candidate = Array.from({ length: COLUMNS }, () =>
+      Array.from({ length: ROWS }, () => randomSymbol())
+    );
+
+    const hasLinePrize = PAYLINES.some((payline) =>
+      lineHasWin(candidate, payline)
+    );
+
+    if (!hasLinePrize && countScatters(candidate) < 3) {
+      return candidate;
+    }
+  }
+
+  // Respaldo extremadamente improbable, construido sin combinaciones de pago.
+  const safeSymbols = ["🍒", "🍋", "🔔", "⭐", "🍉", "💎", "7️⃣"];
+  return Array.from({ length: COLUMNS }, (_, column) =>
+    Array.from(
+      { length: ROWS },
+      (_, row) => safeSymbols[(column * 3 + row * 2) % safeSymbols.length]
+    )
+  );
+}
+
+function forceLine(grid, length, availableSymbols) {
+  const payline = PAYLINES[Math.floor(Math.random() * PAYLINES.length)];
+  const symbol =
+    availableSymbols[Math.floor(Math.random() * availableSymbols.length)];
+
+  for (let column = 0; column < length; column += 1) {
+    grid[column][payline[column]] = symbol;
+  }
+
+  // Corta la línea para que no escale accidentalmente al premio siguiente.
+  if (length < COLUMNS) {
+    const blockers = ["🍋", "🔔", "⭐", "🍉", "💎", "7️⃣"]
+      .filter((item) => item !== symbol);
+    grid[length][payline[length]] =
+      blockers[Math.floor(Math.random() * blockers.length)];
+  }
+}
+
+function forceScatters(grid) {
   const chance = Math.random();
+  const quantity = chance < 0.72 ? 3 : chance < 0.94 ? 4 : 5;
+  const used = new Set();
 
-  // Balance más realista:
-  // 3,5% fuerza un premio chico.
-  // 0,6% fuerza un premio medio.
-  // 0,07% fuerza un premio grande.
-  // En el resto de los giros, el resultado queda completamente al azar.
-  // Así hay rachas de pérdida y el saldo no se mantiene eternamente.
+  while (used.size < quantity) {
+    const column = Math.floor(Math.random() * COLUMNS);
+    const row = Math.floor(Math.random() * ROWS);
+    const key = `${column}-${row}`;
 
-  if (chance < 0.035) {
-    const payline =
-      PAYLINES[Math.floor(Math.random() * PAYLINES.length)];
-
-    const symbol =
-      ["🍒", "🍋", "🔔", "⭐"][
-        Math.floor(Math.random() * 4)
-      ];
-
-    for (let column = 0; column < 3; column += 1) {
-      grid[column][payline[column]] = symbol;
+    if (!used.has(key)) {
+      used.add(key);
+      grid[column][row] = SCATTER;
     }
+  }
+}
 
-    // Evita que un premio chico se convierta por accidente en 4 o 5 iguales.
-    if (
-      grid[3][payline[3]] === symbol ||
-      grid[3][payline[3]] === WILD
-    ) {
-      grid[3][payline[3]] = "💎";
-    }
-  } else if (chance < 0.041) {
-    const payline =
-      PAYLINES[Math.floor(Math.random() * PAYLINES.length)];
+function addNearMiss(grid) {
+  // Algunos giros sin premio muestran dos scatter o dos símbolos iguales.
+  // Es solo presentación: no cambia la probabilidad ni el pago.
+  if (Math.random() < 0.18) {
+    const firstRow = Math.floor(Math.random() * ROWS);
+    let secondRow = Math.floor(Math.random() * ROWS);
+    if (secondRow === firstRow) secondRow = (secondRow + 1) % ROWS;
+    grid[0][firstRow] = SCATTER;
+    grid[3][secondRow] = SCATTER;
+    return;
+  }
 
-    const symbol =
-      ["🍉", "💎", "7️⃣"][
-        Math.floor(Math.random() * 3)
-      ];
+  if (Math.random() < 0.28) {
+    const payline = PAYLINES[Math.floor(Math.random() * PAYLINES.length)];
+    const symbol = ["7️⃣", "💎", "👑"][Math.floor(Math.random() * 3)];
+    grid[0][payline[0]] = symbol;
+    grid[1][payline[1]] = symbol;
+  }
+}
 
-    for (let column = 0; column < 4; column += 1) {
-      grid[column][payline[column]] = symbol;
-    }
+function createGrid() {
+  const grid = createLosingGrid();
+  const spinType = getSpinType();
 
-    // Evita que un premio medio se convierta por accidente en 5 iguales.
-    if (
-      grid[4][payline[4]] === symbol ||
-      grid[4][payline[4]] === WILD
-    ) {
-      grid[4][payline[4]] = "🍋";
-    }
-  } else if (chance < 0.0417) {
-    const payline =
-      PAYLINES[Math.floor(Math.random() * PAYLINES.length)];
-
-    const symbol =
-      ["💎", "7️⃣"][Math.floor(Math.random() * 2)];
-
-    for (let column = 0; column < COLUMNS; column += 1) {
-      grid[column][payline[column]] = symbol;
-    }
+  if (spinType === "small") {
+    // 3 símbolos bajos: normalmente devuelve 0,8x o 1,2x la apuesta.
+    forceLine(grid, 3, ["🍒", "🍋", "🔔", "⭐"]);
+  } else if (spinType === "medium") {
+    // 4 símbolos bajos/medios: recuperación ocasional de 2x a 3,2x.
+    forceLine(grid, 4, ["🍒", "🍋", "🔔", "⭐", "🍉"]);
+  } else if (spinType === "big") {
+    // 4 símbolos premium: premio visible, pero poco frecuente.
+    forceLine(grid, 4, ["🍉", "💎", "7️⃣", "👑"]);
+  } else if (spinType === "mega") {
+    // 5 símbolos premium: MEGA WIN raro.
+    forceLine(grid, 5, ["💎", "7️⃣"]);
+  } else if (spinType === "jackpot") {
+    forceLine(grid, 5, ["👑"]);
+  } else if (spinType === "scatter") {
+    forceScatters(grid);
+  } else {
+    addNearMiss(grid);
   }
 
   return grid;
@@ -129,8 +230,17 @@ const PAYLINES = [
   [0, 0, 0, 0, 0],
   [1, 1, 1, 1, 1],
   [2, 2, 2, 2, 2],
+
   [0, 1, 2, 1, 0],
   [2, 1, 0, 1, 2],
+
+  [0, 0, 1, 0, 0],
+  [2, 2, 1, 2, 2],
+
+  [1, 0, 0, 0, 1],
+  [1, 2, 2, 2, 1],
+
+  [0, 1, 1, 1, 0],
 ];
 
 const STARTING_JACKPOT = 5000;
@@ -220,34 +330,30 @@ const [displayCredits, setDisplayCredits] = useState(
   player?.credits ?? 0
 );
 
-useEffect(() => {
-  const start = displayCredits;
-  const end = credits;
+  useEffect(() => {
+    const start = displayCredits;
+    const end = credits;
 
-  if (start === end) return;
+    if (start === end) return undefined;
 
-  const duration = 500;
-  const startTime = performance.now();
+    const difference = Math.abs(end - start);
+    const duration = Math.min(1600, Math.max(450, difference * 0.8));
+    const startedAt = performance.now();
+    let frameId;
 
-  function animateCredits(currentTime) {
-    const progress = Math.min(
-      (currentTime - startTime) / duration,
-      1
-    );
+    const animateCredits = (now) => {
+      const progress = Math.min(1, (now - startedAt) / duration);
+      const eased = 1 - Math.pow(1 - progress, 3);
+      setDisplayCredits(Math.round(start + (end - start) * eased));
 
-    const animatedValue = Math.round(
-      start + (end - start) * progress
-    );
+      if (progress < 1) {
+        frameId = requestAnimationFrame(animateCredits);
+      }
+    };
 
-    setDisplayCredits(animatedValue);
-
-    if (progress < 1) {
-      requestAnimationFrame(animateCredits);
-    }
-  }
-
-  requestAnimationFrame(animateCredits);
-}, [credits]);
+    frameId = requestAnimationFrame(animateCredits);
+    return () => cancelAnimationFrame(frameId);
+  }, [credits]);
   const [betIndex, setBetIndex] = useState(1);
 
   const [freeSpins, setFreeSpins] = useState(0);
@@ -257,6 +363,18 @@ useEffect(() => {
   const [lastPrize, setLastPrize] = useState(0);
   const [displayPrize, setDisplayPrize] = useState(0);
   const [jackpot, setJackpot] = useState(STARTING_JACKPOT);
+  useEffect(() => {
+  async function loadJackpot() {
+    try {
+      const onlineJackpot = await getJackpot();
+      setJackpot(onlineJackpot);
+    } catch (error) {
+      console.error("No se pudo cargar el jackpot:", error);
+    }
+  }
+
+  loadJackpot();
+}, []);
   const [celebration, setCelebration] = useState(null);
   const [celebrationReady, setCelebrationReady] = useState(false);
   const [paytableOpen, setPaytableOpen] = useState(false);
@@ -621,11 +739,14 @@ function playCoinSound(amount = 3) {
     }
 
     const paySymbol = lineSymbols[0] === WILD ? WILD : baseSymbol;
-    const multiplier = SYMBOL_PAYS[paySymbol]?.[consecutive] ?? 0;
+const multiplier = SYMBOL_PAYS[paySymbol]?.[consecutive] ?? 0;
 
-    if (multiplier === 0) {
-      return null;
-    }
+const isJackpotLine =
+  paySymbol === "👑" && consecutive === 5;
+
+if (multiplier === 0 && !isJackpotLine) {
+  return null;
+}
 
     const cells = Array.from(
       { length: consecutive },
@@ -639,7 +760,9 @@ function playCoinSound(amount = 3) {
       lineIndex,
       consecutive,
       symbol: paySymbol,
-      amount: bet * multiplier,
+      amount: isJackpotLine
+        ? 0
+        : Math.round(bet * multiplier * LINE_PAYOUT_FACTOR),
       cells,
     };
   }
@@ -661,8 +784,8 @@ function playCoinSound(amount = 3) {
     if (cells.length >= 5) {
       return {
         count: cells.length,
-        amount: bet * 15,
-        freeSpins: 12,
+        amount: bet * 7,
+        freeSpins: 8,
         cells,
       };
     }
@@ -670,8 +793,8 @@ function playCoinSound(amount = 3) {
     if (cells.length === 4) {
       return {
         count: 4,
-        amount: bet * 7,
-        freeSpins: 8,
+        amount: bet * 3,
+        freeSpins: 5,
         cells,
       };
     }
@@ -679,8 +802,8 @@ function playCoinSound(amount = 3) {
     if (cells.length === 3) {
       return {
         count: 3,
-        amount: bet * 3,
-        freeSpins: 5,
+        amount: bet,
+        freeSpins: 3,
         cells,
       };
     }
@@ -916,19 +1039,23 @@ function playCoinSound(amount = 3) {
       setFreeSpins((current) => current - 1);
       setMessage("🎁 Giro gratis...");
     } else {
-      setCredits((current) => current - bet);
-      setJackpot((current) =>
-        current + Math.max(1, Math.round(bet * 0.05))
-      );
-      setMessage("Girando...");
-    }
+  setCredits((current) => current - bet);
+
+  try {
+    const onlineJackpot = await addJackpotContribution(bet);
+    setJackpot(onlineJackpot);
+  } catch (error) {
+    console.error("No se pudo actualizar el jackpot:", error);
+  }
+
+  setMessage("Girando...");
+}
 
     setReelSpinning(
       Array(COLUMNS).fill(true)
     );
 
     startSpinSound();
-
     const finalResult = createGrid();
 
     for (
@@ -962,17 +1089,43 @@ function playCoinSound(amount = 3) {
         if (index === COLUMNS - 1) {
           stopSpinSound();
 
-          const prize =
-            calculatePrize(finalResult);
+          let prize = calculatePrize(finalResult);
+
+          if (prize.jackpotWon) {
+  try {
+    const claimedJackpot = await claimJackpot();
+
+    const correctedPrize =
+      prize.amount - jackpot + claimedJackpot;
+
+    prize = {
+      ...prize,
+      amount: correctedPrize,
+      message: `👑 ¡JACKPOT! ${correctedPrize} CRÉDITOS`,
+    };
+
+    setJackpot(STARTING_JACKPOT);
+  } catch (error) {
+    console.error("No se pudo cobrar el jackpot:", error);
+
+    prize = {
+      ...prize,
+      amount: prize.amount - jackpot,
+      jackpotWon: false,
+      message: "⚠️ No se pudo cobrar el jackpot. Intentá nuevamente.",
+    };
+
+    const onlineJackpot = await getJackpot().catch(() => jackpot);
+    setJackpot(onlineJackpot);
+  }
+}
 
           setGrid(finalResult);
           setMessage(prize.message);
           setLastPrize(prize.amount);
           setWinningLines(prize.lines);
           setWinningCells(prize.cells);
-          setScatterCells(
-            prize.scatterCells
-          );
+          setScatterCells(prize.scatterCells);
           setStats((current) => ({
             spins: current.spins + 1,
             totalBet: current.totalBet + (isFreeSpin ? 0 : bet),
@@ -982,19 +1135,12 @@ function playCoinSound(amount = 3) {
             freeSpinsWon: current.freeSpinsWon + prize.freeSpinsWon,
           }));
 
-          if (prize.amount > 0) {
-            setCredits(
-              (current) =>
-                current + prize.amount
-            );
-          }
-
           if (prize.jackpotWon) {
             setCelebration({
               type: "jackpot",
               amount: prize.amount,
             });
-            setJackpot(STARTING_JACKPOT);
+            
             playScatterSound();
           } else if (prize.freeSpinsWon > 0) {
             setFreeSpins(
@@ -1173,7 +1319,7 @@ if (winRatio < 8) {
             </span>
 
             <strong className="information-value">
-              {displayCredits}
+              {displayCredits.toLocaleString("es-AR")}
             </strong>
           </div>
 
@@ -1268,7 +1414,7 @@ if (winRatio < 8) {
                   spinning={
                     reelSpinning[index]
                   }
-                  delay={index * -180}F
+                  delay={index * -180}
                   columnIndex={index}
                   winningCells={
                     winningCells
@@ -1374,9 +1520,9 @@ if (winRatio < 8) {
                 {symbols.filter((symbol) => symbol !== SCATTER).map((symbol) => (
                   <div className="paytable-row" key={symbol}>
                     <strong>{symbol}</strong>
-                    <span>3 = ×{SYMBOL_PAYS[symbol]?.[2] ?? 0}</span>
-                    <span>4 = ×{SYMBOL_PAYS[symbol]?.[3] ?? 0}</span>
-                    <span>5 = ×{SYMBOL_PAYS[symbol]?.[4] ?? 0}</span>
+                    <span>3 = ×{SYMBOL_PAYS[symbol]?.[3] ?? 0}</span>
+<span>4 = ×{SYMBOL_PAYS[symbol]?.[4] ?? 0}</span>
+<span>5 = ×{SYMBOL_PAYS[symbol]?.[5] ?? 0}</span>
                   </div>
                 ))}
                 <div className="paytable-row scatter-pay">

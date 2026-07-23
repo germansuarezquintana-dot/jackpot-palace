@@ -1,9 +1,12 @@
+import DashboardCards from "./components/DashboardCards";
+import AdminStatusBar from "./components/AdminStatusBar";
 import {
   changePlayerPassword,
   forcePlayerLogout,
 } from "./services/adminService";
 import { useEffect, useMemo, useState } from "react";
 import { supabase } from "./supabase";
+import { getJackpot } from "./services/gameService";
 import "./Admin.css";
 
 const QUICK_AMOUNTS = [100, 500, 1000];
@@ -15,6 +18,7 @@ function formatNumber(value) {
 export default function Admin({ onClose }) {
   const [players, setPlayers] = useState([]);
   const [transactions, setTransactions] = useState([]);
+  const [jackpot, setJackpot] = useState(0);
   const [search, setSearch] = useState("");
   const [filter, setFilter] = useState("all");
   const [loading, setLoading] = useState(true);
@@ -56,7 +60,7 @@ async function loadAdminData() {
     setLoading(true);
     setMessage("");
 
-    const [playersResult, transactionsResult] = await Promise.all([
+    const [playersResult, transactionsResult, jackpotResult] = await Promise.all([
       supabase
         .from("players")
         .select("id,username,display_name,credits,is_admin,is_blocked,total_bet,total_win,total_spins,created_at")
@@ -66,6 +70,7 @@ async function loadAdminData() {
         .select("id,player_id,amount,transaction_type,admin_username,notes,created_at")
         .order("created_at", { ascending: false })
         .limit(50),
+      getJackpot().catch(() => 0),
     ]);
 
     if (playersResult.error) {
@@ -73,6 +78,8 @@ async function loadAdminData() {
     } else {
       setPlayers(playersResult.data || []);
     }
+
+    setJackpot(Number(jackpotResult || 0));
 
     if (transactionsResult.error) {
       setMessage((current) => current || `Error al cargar historial: ${transactionsResult.error.message}`);
@@ -85,17 +92,44 @@ async function loadAdminData() {
 
   useEffect(() => {
     loadAdminData();
+
+    const refreshTimer = window.setInterval(() => {
+      loadAdminData();
+    }, 15000);
+
+    return () => window.clearInterval(refreshTimer);
   }, []);
 
-  const dashboard = useMemo(() => ({
-    totalPlayers: players.length,
-    activePlayers: players.filter((player) => !player.is_blocked).length,
-    blockedPlayers: players.filter((player) => player.is_blocked).length,
-    totalCredits: players.reduce((sum, player) => sum + Number(player.credits || 0), 0),
-    totalSpins: players.reduce((sum, player) => sum + Number(player.total_spins || 0), 0),
-    totalBet: players.reduce((sum, player) => sum + Number(player.total_bet || 0), 0),
-    totalWin: players.reduce((sum, player) => sum + Number(player.total_win || 0), 0),
-  }), [players]);
+  const dashboard = useMemo(() => {
+    const totalBet = players.reduce(
+      (sum, player) => sum + Number(player.total_bet || 0),
+      0
+    );
+    const totalWin = players.reduce(
+      (sum, player) => sum + Number(player.total_win || 0),
+      0
+    );
+    const totalSpins = players.reduce(
+      (sum, player) => sum + Number(player.total_spins || 0),
+      0
+    );
+
+    return {
+      totalPlayers: players.length,
+      activePlayers: players.filter((player) => !player.is_blocked).length,
+      blockedPlayers: players.filter((player) => player.is_blocked).length,
+      totalCredits: players.reduce(
+        (sum, player) => sum + Number(player.credits || 0),
+        0
+      ),
+      totalSpins,
+      totalBet,
+      totalWin,
+      rtp: totalBet > 0 ? (totalWin / totalBet) * 100 : 0,
+      casinoBalance: totalBet - totalWin,
+      averageBet: totalSpins > 0 ? totalBet / totalSpins : 0,
+    };
+  }, [players]);
 
   const filteredPlayers = useMemo(() => {
     const term = search.trim().toLowerCase();
@@ -256,16 +290,12 @@ async function forceLogout(player) {
           </div>
           <button className="admin-back" onClick={onClose}>VOLVER AL JUEGO</button>
         </header>
-
-        <section className="dashboard-grid">
-          <div><span>JUGADORES</span><strong>{formatNumber(dashboard.totalPlayers)}</strong></div>
-          <div><span>ACTIVOS</span><strong>{formatNumber(dashboard.activePlayers)}</strong></div>
-          <div><span>BLOQUEADOS</span><strong>{formatNumber(dashboard.blockedPlayers)}</strong></div>
-          <div><span>CRÉDITOS TOTALES</span><strong>{formatNumber(dashboard.totalCredits)}</strong></div>
-          <div><span>GIROS</span><strong>{formatNumber(dashboard.totalSpins)}</strong></div>
-          <div><span>APOSTADO</span><strong>{formatNumber(dashboard.totalBet)}</strong></div>
-          <div><span>PREMIOS</span><strong>{formatNumber(dashboard.totalWin)}</strong></div>
-        </section>
+<AdminStatusBar
+  jackpot={jackpot}
+  totalPlayers={dashboard.totalPlayers}
+  loading={loading}
+/>
+     <DashboardCards dashboard={dashboard} jackpot={jackpot} />
 
         <div className="admin-toolbar">
           <input type="search" value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Buscar jugador..." />

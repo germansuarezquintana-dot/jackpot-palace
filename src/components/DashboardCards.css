@@ -1,0 +1,81 @@
+.dashboard-cards{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+    gap:18px;
+    margin-bottom:24px;
+}
+
+.dashboard-card{
+    position:relative;
+    display:flex;
+    align-items:center;
+    gap:18px;
+    padding:22px;
+    border-radius:18px;
+    border:2px solid rgba(255,215,0,.25);
+    background:linear-gradient(180deg,#5a004a,#2a001f);
+    box-shadow:
+        0 8px 20px rgba(0,0,0,.35),
+        inset 0 0 18px rgba(255,255,255,.03);
+    transition:.25s;
+}
+
+.dashboard-card:hover{
+    transform:translateY(-4px);
+    box-shadow:
+        0 14px 30px rgba(0,0,0,.45),
+        0 0 20px rgba(255,215,0,.15);
+}
+
+.dashboard-card-icon{
+    font-size:42px;
+}
+
+.dashboard-card-content{
+    display:flex;
+    flex-direction:column;
+}
+
+.dashboard-card-content span{
+    color:#d9b8d2;
+    font-size:12px;
+    font-weight:700;
+    letter-spacing:1px;
+}
+
+.dashboard-card-content strong{
+    margin-top:6px;
+    color:#ffe66d;
+    font-size:34px;
+    line-height:1;
+}
+
+.dashboard-card-content small{
+    margin-top:8px;
+    color:#bfa9bc;
+    font-size:12px;
+}
+
+.players-card{
+    border-left:6px solid #2fa7ff;
+}
+
+.jackpot-card{
+    border-left:6px solid gold;
+}
+
+.spins-card{
+    border-left:6px solid #ff8a00;
+}
+
+.rtp-card{
+    border-left:6px solid #00d084;
+}
+
+.balance-card.positive{
+    border-left:6px solid #00d084;
+}
+
+.balance-card.negative{
+    border-left:6px solid #ff3d3d;
+}

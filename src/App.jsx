@@ -10,7 +10,9 @@ export default function App() {
   const [loading, setLoading] = useState(true);
   const [showAdmin, setShowAdmin] = useState(false);
   const [error, setError] = useState("");
-const forceLogoutVersionRef = useRef(null);
+
+  const forceLogoutVersionRef = useRef(null);
+
   async function loadPlayer(userId) {
     setLoading(true);
 
@@ -29,7 +31,9 @@ const forceLogoutVersionRef = useRef(null);
     }
 
     if (!data) {
-      setError("El usuario existe, pero no tiene perfil de jugador vinculado.");
+      setError(
+        "El usuario existe, pero no tiene perfil de jugador vinculado."
+      );
       setPlayer(null);
       setLoading(false);
       return;
@@ -48,7 +52,7 @@ const forceLogoutVersionRef = useRef(null);
     setLoading(false);
   }
 
-    useEffect(() => {
+  useEffect(() => {
     supabase.auth.getSession().then(({ data }) => {
       setSession(data.session);
 
@@ -73,14 +77,54 @@ const forceLogoutVersionRef = useRef(null);
       }
     );
 
-    return () => listener.subscription.unsubscribe();
+    return () => {
+      listener.subscription.unsubscribe();
+    };
   }, []);
 
   useEffect(() => {
-    if (!session?.user?.id || !player?.id || player.is_admin) return;
+    if (!session?.user?.id || !player?.id || player.is_admin) {
+      return;
+    }
+
+    let active = true;
 
     forceLogoutVersionRef.current =
-      player.force_logout_version || null;
+      player.force_logout_version ?? null;
+
+    const checkForceLogout = async () => {
+      const { data, error: checkError } = await supabase
+        .from("players")
+        .select("force_logout_version")
+        .eq("id", player.id)
+        .single();
+
+      if (!active) {
+        return;
+      }
+
+      if (checkError) {
+        console.error(
+          "Error comprobando cierre forzado:",
+          checkError
+        );
+        return;
+      }
+
+      if (!data) {
+        return;
+      }
+
+      const nextVersion =
+        data.force_logout_version ?? null;
+
+      if (
+        nextVersion !== forceLogoutVersionRef.current
+      ) {
+        forceLogoutVersionRef.current = nextVersion;
+        await supabase.auth.signOut();
+      }
+    };
 
     const channel = supabase
       .channel(`force-logout-${player.id}`)
@@ -94,40 +138,89 @@ const forceLogoutVersionRef = useRef(null);
         },
         async (payload) => {
           const nextVersion =
-            payload.new?.force_logout_version || null;
+            payload.new?.force_logout_version ?? null;
 
-          if (nextVersion !== forceLogoutVersionRef.current) {
-  forceLogoutVersionRef.current = nextVersion;
-  await supabase.auth.signOut();
-  return;
-}
-
-          forceLogoutVersionRef.current = nextVersion;
+          if (
+            nextVersion !== forceLogoutVersionRef.current
+          ) {
+            forceLogoutVersionRef.current = nextVersion;
+            await supabase.auth.signOut();
+          }
         }
       )
       .subscribe();
 
+    const interval = setInterval(
+      checkForceLogout,
+      3000
+    );
+
     return () => {
+      active = false;
+      clearInterval(interval);
       supabase.removeChannel(channel);
     };
-  }, [session?.user?.id, player?.id, player?.is_admin]);
+  }, [
+    session?.user?.id,
+    player?.id,
+    player?.is_admin,
+    player?.force_logout_version,
+  ]);
 
   if (loading) {
-    return <main className="login-page"><section className="login-card"><h1>JACKPOT PALACE</h1><p>Cargando...</p></section></main>;
+    return (
+      <main className="login-page">
+        <section className="login-card">
+          <h1>JACKPOT PALACE</h1>
+          <p>Cargando...</p>
+        </section>
+      </main>
+    );
   }
 
   if (!session || !player) {
-    return <><Login />{error && <div style={{position:"fixed",bottom:15,left:"50%",transform:"translateX(-50%)",color:"#fff",background:"#7d0018",padding:"10px 16px",borderRadius:10,zIndex:999}}>{error}</div>}</>;
+    return (
+      <>
+        <Login />
+
+        {error && (
+          <div
+            style={{
+              position: "fixed",
+              bottom: 15,
+              left: "50%",
+              transform: "translateX(-50%)",
+              color: "#fff",
+              background: "#7d0018",
+              padding: "10px 16px",
+              borderRadius: 10,
+              zIndex: 999,
+            }}
+          >
+            {error}
+          </div>
+        )}
+      </>
+    );
   }
 
   if (showAdmin && player.is_admin) {
-    return <Admin onClose={() => setShowAdmin(false)} />;
+    return (
+      <Admin
+        onClose={() => setShowAdmin(false)}
+      />
+    );
   }
 
   return (
     <Game
       player={player}
-      onCreditsChange={(credits) => setPlayer((current) => ({ ...current, credits }))}
+      onCreditsChange={(credits) =>
+        setPlayer((current) => ({
+          ...current,
+          credits,
+        }))
+      }
       onLogout={() => supabase.auth.signOut()}
       onOpenAdmin={() => setShowAdmin(true)}
     />

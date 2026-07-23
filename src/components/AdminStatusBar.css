@@ -1,0 +1,81 @@
+.admin-status-bar{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:18px;
+    margin-bottom:24px;
+}
+
+.admin-status-item{
+    display:flex;
+    align-items:center;
+    gap:16px;
+    padding:18px 22px;
+    border-radius:16px;
+    background:linear-gradient(180deg,#4a003d,#24001c);
+    border:1px solid rgba(255,215,0,.20);
+    box-shadow:
+        0 8px 20px rgba(0,0,0,.30),
+        inset 0 0 15px rgba(255,255,255,.03);
+}
+
+.admin-status-item small{
+    display:block;
+    color:#cbb2c5;
+    font-size:11px;
+    letter-spacing:1px;
+}
+
+.admin-status-item strong{
+    color:#ffe66d;
+    font-size:20px;
+}
+
+.status-icon{
+    font-size:34px;
+}
+
+.status-dot{
+    width:14px;
+    height:14px;
+    border-radius:50%;
+    background:#00ff66;
+    box-shadow:
+        0 0 10px #00ff66,
+        0 0 20px #00ff66;
+    animation:statusPulse 1.4s infinite;
+}
+
+@keyframes statusPulse{
+
+    0%{
+        transform:scale(.8);
+        opacity:.5;
+    }
+
+    50%{
+        transform:scale(1.2);
+        opacity:1;
+    }
+
+    100%{
+        transform:scale(.8);
+        opacity:.5;
+    }
+
+}
+
+@media(max-width:1100px){
+
+    .admin-status-bar{
+        grid-template-columns:repeat(2,1fr);
+    }
+
+}
+
+@media(max-width:700px){
+
+    .admin-status-bar{
+        grid-template-columns:1fr;
+    }
+
+}
