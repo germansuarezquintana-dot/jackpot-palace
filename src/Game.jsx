@@ -65,7 +65,7 @@ function getSpinType() {
 
   if (chance < 0.002) return "mega";
   if (chance < 0.010) return "big";
-  if (chance < 0.028) return "scatter";
+  if (chance < 0.035) return "scatter";
   if (chance < 0.055) return "small";
 
   return "lose";
@@ -783,7 +783,9 @@ if (multiplier === 0 && !isJackpotLine) {
   if (cells.length >= 5) {
   return {
     count: cells.length,
-    amount: bet * 3,
+    amount: [200, 200, 200, 300, 300, 400, 500][
+  Math.floor(Math.random() * 7)
+],
     freeSpins: 8,
     cells,
   };
@@ -792,7 +794,9 @@ if (multiplier === 0 && !isJackpotLine) {
 if (cells.length === 4) {
   return {
     count: 4,
-    amount: bet,
+    amount: [200, 200, 200, 300, 300, 400, 500][
+  Math.floor(Math.random() * 7)
+],
     freeSpins: 5,
     cells,
   };
@@ -801,7 +805,9 @@ if (cells.length === 4) {
 if (cells.length === 3) {
   return {
     count: 3,
-    amount: 0,
+    amount: [200, 200, 200, 300, 300, 400, 500][
+  Math.floor(Math.random() * 7)
+],
     freeSpins: 3,
     cells,
   };
@@ -1301,7 +1307,7 @@ if (winRatio < 8) {
         </div>
 
         <h1 className="title">
-        👑 JACKPOT PALACE
+        👑 JACKPOT PALACE 
         </h1>
 
         <p className="subtitle">
