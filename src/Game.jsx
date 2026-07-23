@@ -1148,6 +1148,11 @@ if (cells.length === 3) {
             
             playScatterSound();
           } else if (prize.freeSpinsWon > 0) {
+            console.log("BONUS DEBUG", {
+  amount: prize.amount,
+  freeSpinsWon: prize.freeSpinsWon,
+  scatterCells: prize.scatterCells,
+});
             setFreeSpins(
               (current) => current + prize.freeSpinsWon
             );
