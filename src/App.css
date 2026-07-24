@@ -2565,4 +2565,18 @@ button[class*="spin"]:disabled {
     max-width: 78%;
   }
 }
+html,
+body,
+#root {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
+}
 
+img,
+button,
+input,
+select,
+textarea {
+  max-width: 100%;
+}
