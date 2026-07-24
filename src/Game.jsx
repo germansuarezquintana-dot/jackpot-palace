@@ -1226,23 +1226,9 @@ if (winRatio < 8) {
         <div className="top-actions">
           <button
             className="round-action-button"
-            onClick={() => setPaytableOpen(true)}
-            title="Ver tabla de pagos"
-          >
-            📋
-          </button>
-          <button className="round-action-button" onClick={() => setStatsOpen(true)} title="Estadísticas">📊</button>
-          <button
-            className="round-action-button"
-            onClick={toggleFullscreen}
-            title="Pantalla completa"
-          >
-            ⛶
-          </button>
-          <button
-            className="round-action-button"
             onClick={toggleSound}
             title={soundEnabled ? "Apagar sonido" : "Encender sonido"}
+            aria-label={soundEnabled ? "Apagar sonido" : "Encender sonido"}
           >
             {soundEnabled ? "🔊" : "🔇"}
           </button>
