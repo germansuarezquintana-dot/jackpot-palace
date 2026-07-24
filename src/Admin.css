@@ -544,3 +544,52 @@ body:has(.admin-page) {
   opacity: 0.55;
   cursor: not-allowed;
 }
+/* CORRECCIÓN PANEL ADMIN EN CELULAR */
+@media (max-width: 480px) {
+  html,
+  body,
+  #root {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: hidden;
+  }
+
+  .admin-page {
+    width: 100%;
+    max-width: 100%;
+    min-height: 100dvh;
+    padding: 8px;
+    overflow-x: hidden;
+    overflow-y: auto;
+    box-sizing: border-box;
+  }
+
+  .admin-card {
+    width: 100%;
+    max-width: 100%;
+    margin: 0;
+    padding: 12px;
+    box-sizing: border-box;
+  }
+
+  .dashboard-grid {
+    width: 100%;
+    max-width: 100%;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .dashboard-grid > div {
+    width: 100%;
+    min-width: 0;
+    position: static;
+    transform: none;
+    box-sizing: border-box;
+    overflow: hidden;
+  }
+
+  .dashboard-grid span,
+  .dashboard-grid strong {
+    max-width: 100%;
+    overflow-wrap: anywhere;
+  }
+}

@@ -918,7 +918,7 @@ animation: celebrationZoom 0.45s ease-out;
   box-shadow: 0 0 35px #ffcc00, 0 0 90px #ff00c8;
   animation: celebrationPop 0.55s cubic-bezier(.2,1.6,.4,1);
 }
-.jackpot-card {
+.celebration-card.jackpot-card {
   animation:
     celebrationPop 0.55s cubic-bezier(.2,1.6,.4,1),
     jackpotPulse 0.9s ease-in-out infinite;
