@@ -1,6 +1,6 @@
+import logoJackpotPalace from "../assets/logo-jackpot-palace.png";
 import { useEffect, useRef, useState } from "react";
 import "./App.css";
-
 const WILD = "🃏";
 const SCATTER = "🎁";
 
@@ -910,9 +910,11 @@ export default function App() {
           </button>
         </div>
 
-        <h1 className="title">
-          GOLD PALACE
-        </h1>
+        <img
+  src={logoJackpotPalace}
+  alt="Jackpot Palace"
+  className="main-logo"
+/>
 
         <p className="subtitle">
           WILD · SCATTER · GIROS GRATIS

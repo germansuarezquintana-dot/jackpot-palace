@@ -1018,3 +1018,71 @@ button:disabled {
   height: 36px !important;
   object-fit: contain;
 }
+.main-logo {
+  display: block;
+  width: min(700px, 92%);
+  height: auto;
+  margin: 0 auto 6px;
+}
+
+@media (max-width: 650px) {
+  .main-logo {
+    width: 95%;
+  }
+}
+.main-logo {
+  display: block;
+  width: min(700px, 92%);
+  height: auto;
+  margin: 0 auto 8px;
+}
+.main-logo {
+  display: block;
+  width: min(420px, 58%);
+  max-height: 120px;
+  height: auto;
+  object-fit: contain;
+  margin: 0 auto 4px;
+}
+
+@media (max-width: 650px) {
+  .main-logo {
+    width: min(330px, 72%);
+    max-height: 90px;
+    margin-bottom: 2px;
+  }
+}
+.main-logo {
+  display: block;
+  width: 420px;
+  max-width: 65%;
+  height: 105px;
+  object-fit: contain;
+  margin: 0 auto 4px;
+}
+
+@media (max-width: 650px) {
+  .main-logo {
+    width: 300px;
+    max-width: 72%;
+    height: 75px;
+  }
+}
+img.main-logo {
+  display: block !important;
+  width: 420px !important;
+  max-width: 70% !important;
+  height: 110px !important;
+  max-height: 110px !important;
+  object-fit: contain !important;
+  margin: 0 auto 4px !important;
+}
+
+@media (max-width: 650px) {
+  img.main-logo {
+    width: 300px !important;
+    max-width: 78% !important;
+    height: 80px !important;
+    max-height: 80px !important;
+  }
+}

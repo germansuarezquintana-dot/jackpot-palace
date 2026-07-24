@@ -1,3 +1,4 @@
+import logoJackpotPalace from "./assets/logo-jackpot-palace.png";
 import { useEffect, useRef, useState } from "react";
 import { supabase } from "./supabase";
 import {
@@ -1247,9 +1248,13 @@ if (winRatio < 8) {
           </button>
         </div>
 
-        <h1 className="title">
-        👑 JACKPOT PALACE 
-        </h1>
+        <div className="jackpot-main-logo-wrap">
+          <img
+            src={logoJackpotPalace}
+            alt="Jackpot Palace"
+            className="jackpot-main-logo"
+          />
+        </div>
 
         <p className="subtitle">
           WILD · SCATTER · GIROS GRATIS

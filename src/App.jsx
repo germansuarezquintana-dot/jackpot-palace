@@ -1,3 +1,4 @@
+import logoJackpotPalace from "./assets/logo-jackpot-palace.png";
 import { useEffect, useRef, useState } from "react";
 import { supabase } from "./supabase";
 import Login from "./Login";
@@ -171,7 +172,11 @@ export default function App() {
     return (
       <main className="login-page">
         <section className="login-card">
-          <h1>JACKPOT PALACE</h1>
+        <img
+  src={logoJackpotPalace}
+  alt="Jackpot Palace"
+  className="main-logo"
+/>
           <p>Cargando...</p>
         </section>
       </main>
