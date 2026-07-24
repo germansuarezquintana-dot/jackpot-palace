@@ -1520,8 +1520,18 @@ if (winRatio < 8) {
           aria-label="Cerrar celebración"
         >
           <div className="coin-rain" aria-hidden="true">
-            {Array.from({ length: 45 }).map((_, index) => (
-             <span
+{Array.from({
+  length:
+    celebration.type === "jackpot"
+      ? 140
+      : celebration.type === "mega"
+      ? 90
+      : celebration.type === "big"
+      ? 60
+      : celebration.type === "bonus"
+      ? 50
+      : 35,
+}).map((_, index) => (             <span
   key={index}
   style={{
     "--coin-index": index,
@@ -1533,7 +1543,30 @@ if (winRatio < 8) {
 </span>
             ))}
           </div>
-          <div className="celebration-card">
+
+          <div className="sparkle-field" aria-hidden="true">
+            {Array.from({ length: 120 }).map((_, index) => (
+              <span
+                key={index}
+                className="sparkle-particle"
+                style={{
+                  "--sparkle-left": `${(index * 37) % 100}%`,
+                  "--sparkle-top": `${(index * 61) % 100}%`,
+                  "--sparkle-delay": `${(index % 12) * 0.12}s`,
+                  "--sparkle-duration": `${1.2 + (index % 7) * 0.18}s`,
+                  "--sparkle-size": `${7 + (index % 6) * 3}px`,
+                }}
+              >
+                {index % 3 === 0 ? "✦" : index % 3 === 1 ? "✧" : "✶"}
+              </span>
+            ))}
+          </div>
+
+          <div
+  className={`celebration-card ${
+    celebration.type === "jackpot" ? "jackpot-card" : ""
+  }`}
+>
             <span className="celebration-kicker">
               {celebration.type === "jackpot"
                 ? "👑 PREMIO MÁXIMO 👑"

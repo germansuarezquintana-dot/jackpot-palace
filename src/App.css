@@ -237,7 +237,33 @@ button {
     0 0 55px rgba(255, 0, 0, 0.7),
     inset 0 0 35px rgba(0, 0, 0, 0.9);
 }
+.machine-winning {
+  animation: machineWinningGlow 0.75s ease-in-out infinite;
+}
 
+@keyframes machineWinningGlow {
+  0% {
+    box-shadow:
+      0 0 18px #ffd000,
+      0 0 55px rgba(255, 0, 0, 0.7),
+      inset 0 0 35px rgba(0, 0, 0, 0.9);
+  }
+
+  50% {
+    box-shadow:
+      0 0 30px #fff3a0,
+      0 0 75px rgba(255, 204, 0, 0.95),
+      0 0 120px rgba(255, 70, 0, 0.65),
+      inset 0 0 35px rgba(0, 0, 0, 0.75);
+  }
+
+  100% {
+    box-shadow:
+      0 0 18px #ffd000,
+      0 0 55px rgba(255, 0, 0, 0.7),
+      inset 0 0 35px rgba(0, 0, 0, 0.9);
+  }
+}
 .lights {
   position: absolute;
   top: 11px;
@@ -720,47 +746,98 @@ button {
 }
 
 .spin-button {
+  position: relative;
+overflow: hidden;
   width: min(270px, 60%);
   padding: 17px 20px;
   border: 4px solid #ffe66d;
   border-radius: 40px;
   color: #ffffff;
-  font-size: clamp(
-    20px,
-    4vw,
-    28px
-  );
+  font-size: clamp(20px, 4vw, 28px);
   font-weight: 900;
   letter-spacing: 2px;
   cursor: pointer;
-  background:
-    linear-gradient(
-      to bottom,
-      #ff4e4e,
-      #c00000 55%,
-      #780000
-    );
+
+  background: linear-gradient(
+    to bottom,
+    #ff5d5d,
+    #d40000 55%,
+    #760000
+  );
+
   box-shadow:
     0 8px 0 #4c0000,
-    0 0 22px
-      rgba(255, 0, 0, 0.9);
+    0 0 18px rgba(255,0,0,.70);
+
+  transition:
+    transform .18s ease,
+    box-shadow .25s ease,
+    filter .25s ease;
+
+  position: relative;
+  overflow: hidden;
+}
+.machine-spinning .spin-button {
+  animation: spinButtonPulse .8s ease-in-out infinite;
 }
 
-.free-spin-button {
-  border-color: #8fffff;
-  background:
-    linear-gradient(
-      to bottom,
-      #00cfdc,
-      #007c99 55%,
-      #003a4d
-    );
-  box-shadow:
-    0 8px 0 #002c36,
-    0 0 25px
-      rgba(0, 245, 255, 0.9);
+@keyframes spinButtonPulse {
+  0% {
+    transform: scale(1);
+    filter: brightness(1);
+    box-shadow:
+      0 8px 0 #4c0000,
+      0 0 18px rgba(255,0,0,.7);
+  }
+
+  50% {
+    transform: scale(1.05);
+    filter: brightness(1.18);
+    box-shadow:
+      0 8px 0 #4c0000,
+      0 0 35px rgba(255,210,0,.95),
+      0 0 70px rgba(255,80,0,.55);
+  }
+
+  100% {
+    transform: scale(1);
+    filter: brightness(1);
+    box-shadow:
+      0 8px 0 #4c0000,
+      0 0 18px rgba(255,0,0,.7);
+  }
+}
+.spin-button::before {
+  content: "";
+  position: absolute;
+  top: -30%;
+  left: -45%;
+  width: 35%;
+  height: 160%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255,255,255,.85),
+    transparent
+  );
+  transform: skewX(-25deg);
+  opacity: 0;
 }
 
+.machine-spinning .spin-button::before {
+  opacity: 1;
+  animation: spinButtonShine 1.3s linear infinite;
+}
+
+@keyframes spinButtonShine {
+  from {
+    left: -45%;
+  }
+
+  to {
+    left: 120%;
+  }
+}
 .small-button {
   width: 60px;
   height: 60px;
@@ -843,14 +920,73 @@ animation: celebrationZoom 0.45s ease-out;
   box-shadow: 0 0 35px #ffcc00, 0 0 90px #ff00c8;
   animation: celebrationPop 0.55s cubic-bezier(.2,1.6,.4,1);
 }
+.jackpot-card {
+  animation:
+    celebrationPop 0.55s cubic-bezier(.2,1.6,.4,1),
+    jackpotPulse 0.9s ease-in-out infinite;
 
+  border-color: #fff8a0;
+
+  box-shadow:
+    0 0 40px #ffe600,
+    0 0 90px #ffb300,
+    0 0 160px rgba(255, 180, 0, .8);
+
+  background:
+    radial-gradient(circle,
+      #6a0035 0%,
+      #3d001d 45%,
+      #170008 100%);
+}
+
+@keyframes jackpotPulse {
+
+  0% {
+    transform: translate(-50%, -50%) scale(1);
+    filter: brightness(1);
+  }
+
+  50% {
+    transform: translate(-50%, -50%) scale(1.08);
+    filter: brightness(1.35);
+  }
+
+  100% {
+    transform: translate(-50%, -50%) scale(1);
+    filter: brightness(1);
+  }
+}
 .celebration-kicker {
   display: block;
   color: #fff5a8;
   font-size: clamp(23px, 6vw, 58px);
   font-weight: 1000;
   letter-spacing: 2px;
-  text-shadow: 0 4px 0 #7a002e, 0 0 22px #ffcc00;
+
+  text-shadow:
+    0 4px 0 #7a002e,
+    0 0 18px #ffcc00,
+    0 0 38px rgba(255, 180, 0, 0.9),
+    0 0 70px rgba(255, 70, 0, 0.55);
+
+  animation: celebrationTitlePulse 0.75s ease-in-out infinite;
+}
+
+@keyframes celebrationTitlePulse {
+  0% {
+    transform: scale(1);
+    filter: brightness(1);
+  }
+
+  50% {
+    transform: scale(1.08);
+    filter: brightness(1.35);
+  }
+
+  100% {
+    transform: scale(1);
+    filter: brightness(1);
+  }
 }
 
 .celebration-card strong {
@@ -870,8 +1006,48 @@ animation: celebrationZoom 0.45s ease-out;
 }
 
 .celebration-jackpot .celebration-card {
-  background: radial-gradient(circle, #7a4a00, #3a1200 58%, #080300);
-  box-shadow: 0 0 40px #ffffff, 0 0 110px #ffd000;
+  background: radial-gradient(circle, #8f5600, #4a1700 55%, #120400);
+
+  border-color: #fff7a0;
+
+  box-shadow:
+    0 0 45px #ffffff,
+    0 0 120px #ffd000,
+    0 0 220px rgba(255, 190, 0, .9);
+
+  animation:
+    celebrationPop .55s cubic-bezier(.2,1.6,.4,1),
+    jackpotPulse .8s ease-in-out infinite;
+}
+
+.celebration-jackpot::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+
+  background:
+    radial-gradient(circle,
+      rgba(255,230,120,.45) 0%,
+      rgba(255,180,0,.18) 40%,
+      transparent 75%);
+
+  animation: jackpotFlash .9s ease-in-out infinite;
+}
+
+@keyframes jackpotFlash {
+
+  0% {
+    opacity: .15;
+  }
+
+  50% {
+    opacity: .9;
+  }
+
+  100% {
+    opacity: .15;
+  }
 }
 
 .coin-rain span {
@@ -1668,7 +1844,96 @@ body {
   backdrop-filter: blur(5px);
   isolation: isolate;
 }
+/* ==================================
+   DESTELLOS PREMIUM DE CELEBRACIÓN
+   ================================== */
 
+.celebration::after {
+  content:
+    "✦   ✧      ✦    ✧   ✦       ✧    ✦\A"
+    "   ✧    ✦       ✧      ✦   ✧     ✦\A"
+    "✦      ✧    ✦       ✧    ✦      ✧\A"
+    "    ✧      ✦    ✧       ✦    ✧\A"
+    "✦   ✧       ✦      ✧   ✦       ✧";
+
+  white-space: pre;
+  position: fixed;
+  left: 50%;
+  top: 50%;
+  width: min(1180px, 98vw);
+  height: min(760px, 94vh);
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  pointer-events: none;
+  z-index: 2;
+
+  color: #fff2a0;
+  font-size: clamp(17px, 2.5vw, 36px);
+  line-height: clamp(70px, 14vh, 125px);
+  text-align: center;
+
+  text-shadow:
+    0 0 5px #ffffff,
+    0 0 12px #fff4a0,
+    0 0 22px #ffd000,
+    0 0 42px rgba(255, 145, 0, 0.95);
+
+  transform: translate(-50%, -50%);
+  animation: premiumSparkles 1.15s ease-in-out infinite;
+}
+
+@keyframes premiumSparkles {
+  0% {
+    opacity: 0.28;
+    transform:
+      translate(-50%, -50%)
+      scale(0.92)
+      rotate(-2deg);
+
+    filter:
+      brightness(0.9)
+      blur(0);
+  }
+
+  35% {
+    opacity: 0.85;
+    transform:
+      translate(-50%, -50%)
+      scale(1.02)
+      rotate(1deg);
+
+    filter:
+      brightness(1.55)
+      blur(0.2px);
+  }
+
+  60% {
+    opacity: 1;
+    transform:
+      translate(-50%, -50%)
+      scale(1.08)
+      rotate(3deg);
+
+    filter:
+      brightness(2)
+      blur(0);
+  }
+
+  100% {
+    opacity: 0.3;
+    transform:
+      translate(-50%, -50%)
+      scale(0.94)
+      rotate(6deg);
+
+    filter:
+      brightness(1)
+      blur(0.3px);
+  }
+}
 .celebration-card {
   pointer-events: auto;
 }
@@ -2130,9 +2395,14 @@ button[class*="spin"]::before {
 .spin-button:disabled,
 .spin-btn:disabled,
 button[class*="spin"]:disabled {
-  animation: none;
-  filter: grayscale(0.55) brightness(0.7);
+  filter: grayscale(0.15) brightness(0.9);
   cursor: not-allowed;
+}
+
+.machine-spinning .spin-button:disabled,
+.machine-spinning .spin-btn:disabled,
+.machine-spinning button[class*="spin"]:disabled {
+  animation: spinButtonPulse 0.8s ease-in-out infinite;
 }
 
 /* JACKPOT */
