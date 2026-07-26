@@ -1,0 +1,805 @@
+.clown-page {
+  min-height: 100vh;
+  height: 100vh;
+
+  overflow-y: auto;
+  overflow-x: hidden;
+
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+
+  padding: 15px;
+
+  box-sizing: border-box;
+
+  color: white;
+
+  background:
+    radial-gradient(circle at top, rgba(255,225,74,.25), transparent 30%),
+    linear-gradient(180deg,#4d0b6e,#12011d);
+}
+
+.clown-machine {
+  width: min(780px, 100%);
+  position: relative;
+  z-index: 2;
+  margin: 0 auto;
+  padding: 20px;
+  box-sizing: border-box;
+  border: 5px solid #ffe55b;
+  border-radius: 30px;
+  background:
+    linear-gradient(180deg, rgba(255, 66, 174, 0.24), transparent 24%),
+    linear-gradient(145deg, #7b146c, #29043b);
+  box-shadow:
+    0 0 20px rgba(255, 229, 91, 0.75),
+    0 0 55px rgba(255, 53, 185, 0.35),
+    inset 0 0 26px rgba(0, 0, 0, 0.65);
+}
+
+.clown-machine-winning {
+  animation: clownMachineWin 0.65s infinite alternate;
+}
+
+.clown-sound-button {
+  position: absolute;
+  top: 13px;
+  right: 13px;
+  z-index: 5;
+  width: 44px;
+  height: 44px;
+  border: 2px solid #fff099;
+  border-radius: 50%;
+  color: #fff;
+  background: linear-gradient(180deg, #9a288a, #48094d);
+  font-size: 20px;
+  cursor: pointer;
+  box-shadow: 0 0 12px rgba(255, 240, 153, 0.5);
+}
+
+.clown-header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
+  padding-right: 40px;
+  text-align: center;
+}
+
+.clown-header h1 {
+  margin: 3px 0;
+  font-size: clamp(39px, 8vw, 73px);
+  line-height: 0.95;
+  color: #fff05b;
+  text-shadow:
+    3px 3px 0 #d90c80,
+    -2px -2px 0 #ff582f,
+    0 0 20px #ff74d4;
+}
+
+.clown-kicker {
+  margin: 0;
+  color: #ffd9f4;
+  font-size: 12px;
+  font-weight: 900;
+  letter-spacing: 2px;
+}
+
+.clown-subtitle {
+  margin: 8px 0 0;
+  color: #fff;
+  font-size: 12px;
+  font-weight: 900;
+  letter-spacing: 1px;
+}
+
+.clown-light {
+  font-size: 37px;
+  animation: clownBlink 0.7s infinite alternate;
+}
+
+.clown-prize-panel {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+  margin: 18px 0 12px;
+}
+
+.clown-prize-panel > div {
+  min-width: 0;
+  padding: 9px 5px;
+  text-align: center;
+  border: 2px solid #ffd75a;
+  border-radius: 13px;
+  background: linear-gradient(180deg, #491051, #1b061e);
+  box-shadow: inset 0 0 10px #000;
+}
+
+.clown-prize-panel span {
+  display: block;
+  overflow: hidden;
+  color: #ffbee9;
+  font-size: 10px;
+  font-weight: 900;
+  white-space: nowrap;
+}
+
+.clown-prize-panel strong {
+  display: block;
+  margin-top: 4px;
+  overflow: hidden;
+  color: #fff25d;
+  font-size: clamp(15px, 3.6vw, 24px);
+  text-overflow: ellipsis;
+}
+
+.clown-paylines {
+  display: flex;
+  justify-content: center;
+  gap: 7px;
+  margin-bottom: 9px;
+}
+
+.clown-paylines span {
+  padding: 4px 9px;
+  border: 1px solid #ffb9e8;
+  border-radius: 20px;
+  color: #ffb9e8;
+  background: rgba(0, 0, 0, 0.35);
+  font-size: 11px;
+  font-weight: 900;
+}
+
+.clown-paylines .clown-line-active {
+  color: #3b1500;
+  background: #fff05b;
+  box-shadow: 0 0 14px #fff05b;
+}
+
+.clown-reels {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 7px;
+  padding: 11px;
+  border: 5px solid #ffec85;
+  border-radius: 22px;
+  background: #140419;
+  box-shadow:
+    inset 0 0 27px #000,
+    0 0 20px rgba(255, 236, 133, 0.4);
+}
+
+.clown-reel {
+  display: grid;
+  gap: 7px;
+}
+
+.clown-symbol {
+  aspect-ratio: 1 / 1;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  border: 3px solid #ff7ace;
+  border-radius: 13px;
+  background:
+    radial-gradient(circle, #fff 0%, #ffe5f8 38%, #f993d5 100%);
+  box-shadow:
+    inset 0 0 10px rgba(255, 255, 255, 0.9),
+    0 0 8px rgba(255, 80, 190, 0.4);
+  font-size: clamp(31px, 6.5vw, 57px);
+  transition:
+    transform 0.2s,
+    filter 0.2s;
+}
+
+.clown-spinning {
+  animation: clownShake 0.11s infinite;
+  filter: blur(1.5px);
+}
+
+.clown-winning-symbol {
+  z-index: 2;
+  border-color: #fff34e;
+  animation: clownSymbolWin 0.55s infinite alternate;
+  box-shadow:
+    0 0 19px #fff34e,
+    inset 0 0 14px #fff;
+}
+
+.clown-scatter-symbol {
+  border-color: #49ecff;
+  background:
+    radial-gradient(circle, #fff 0%, #acf6ff 40%, #34aede 100%);
+  box-shadow: 0 0 18px #49ecff;
+}
+
+.clown-wild-symbol {
+  background:
+    radial-gradient(circle, #fff 0%, #fff581 35%, #ff844a 100%);
+}
+
+.clown-message {
+  min-height: 28px;
+  margin: 15px 0 10px;
+  text-align: center;
+  color: #ffe99a;
+  font-size: 17px;
+  font-weight: 900;
+}
+
+.clown-message-win {
+  color: #fff34e;
+  text-shadow: 0 0 12px #ff44b7;
+}
+
+.clown-controls {
+  display: grid;
+  grid-template-columns: 72px 1fr 72px;
+  gap: 10px;
+}
+
+.clown-controls button {
+  min-height: 57px;
+  border-radius: 15px;
+  font-weight: 900;
+}
+
+.clown-small-button {
+  border: 3px solid #ffd75a;
+  color: #fff;
+  background: linear-gradient(180deg, #9c298c, #450849);
+  font-size: 30px;
+  cursor: pointer;
+}
+
+.clown-spin-button {
+  border: 4px solid #fff25d;
+  color: #fff;
+  background: linear-gradient(180deg, #ff4c50, #a90025);
+  font-size: 23px;
+  cursor: pointer;
+  box-shadow:
+    0 0 18px rgba(255, 242, 93, 0.6),
+    inset 0 0 10px rgba(255, 255, 255, 0.25);
+}
+
+.clown-free-spin-button {
+  background: linear-gradient(180deg, #17c6e0, #086b9a);
+  animation: clownFreeSpin 0.65s infinite alternate;
+}
+
+.clown-controls button:disabled {
+  opacity: 0.55;
+  cursor: default;
+}
+
+.clown-bottom-actions {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 13px;
+}
+
+.clown-bottom-actions button {
+  padding: 10px 16px;
+  border-radius: 12px;
+  color: #fff;
+  font-weight: 900;
+  cursor: pointer;
+}
+
+.clown-back-button {
+  border: 2px solid #ffd75a;
+  background: linear-gradient(180deg, #6f2288, #300743);
+}
+
+.clown-logout-button {
+  border: 2px solid #ff7d8b;
+  background: linear-gradient(180deg, #9d2338, #510a18);
+}
+
+.clown-help {
+  display: flex;
+  justify-content: center;
+  gap: 14px;
+  flex-wrap: wrap;
+  margin-top: 15px;
+  color: #ffd5f2;
+  font-size: 11px;
+  font-weight: 800;
+  text-align: center;
+}
+
+.clown-confetti {
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.clown-confetti span {
+  position: absolute;
+  top: -30px;
+  left: var(--confetti-left);
+  color: #ffe94f;
+  font-size: 13px;
+  animation: clownConfettiFall var(--confetti-duration) linear infinite;
+  animation-delay: var(--confetti-delay);
+}
+
+.clown-confetti span:nth-child(3n) {
+  color: #ff4db5;
+}
+
+.clown-confetti span:nth-child(4n) {
+  color: #4ceaff;
+}
+
+.clown-confetti span:nth-child(5n) {
+  color: #ff7554;
+}
+
+.clown-celebration {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  display: grid;
+  place-items: center;
+  padding: 20px;
+  border: 0;
+  color: #fff;
+  background: rgba(15, 0, 24, 0.82);
+  cursor: pointer;
+}
+
+.clown-celebration-card {
+  width: min(440px, 92vw);
+  padding: 34px 20px;
+  border: 5px solid #fff05b;
+  border-radius: 28px;
+  text-align: center;
+  background:
+    radial-gradient(circle at top, #ff4fb8, transparent 55%),
+    linear-gradient(180deg, #821071, #250332);
+  box-shadow:
+    0 0 35px #fff05b,
+    0 0 80px #ff36b1;
+  animation: clownCelebrationPop 0.55s ease-out;
+}
+
+.clown-celebration-card span {
+  display: block;
+  color: #fff;
+  font-size: 25px;
+  font-weight: 1000;
+}
+
+.clown-celebration-card strong {
+  display: block;
+  margin: 12px 0;
+  color: #fff34e;
+  font-size: clamp(49px, 13vw, 84px);
+  text-shadow: 0 0 18px #ff4eb8;
+}
+
+.clown-celebration-card p {
+  margin: 7px 0;
+  color: #8ff8ff;
+  font-size: 20px;
+  font-weight: 900;
+}
+
+.clown-celebration-card small {
+  display: block;
+  margin-top: 15px;
+  color: #ffd8f2;
+  font-weight: 900;
+}
+
+@keyframes clownShake {
+  from {
+    transform: translateY(-5px);
+  }
+
+  to {
+    transform: translateY(5px);
+  }
+}
+
+@keyframes clownBlink {
+  from {
+    opacity: 0.45;
+    transform: scale(0.9);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1.15);
+  }
+}
+
+@keyframes clownSymbolWin {
+  from {
+    transform: scale(0.94);
+  }
+
+  to {
+    transform: scale(1.1);
+  }
+}
+
+@keyframes clownMachineWin {
+  from {
+    box-shadow:
+      0 0 22px #ffe55b,
+      0 0 50px #ff3fb8;
+  }
+
+  to {
+    box-shadow:
+      0 0 38px #fff,
+      0 0 85px #ff3fb8;
+  }
+}
+
+@keyframes clownFreeSpin {
+  from {
+    box-shadow: 0 0 8px #45efff;
+  }
+
+  to {
+    box-shadow: 0 0 28px #45efff;
+  }
+}
+
+@keyframes clownConfettiFall {
+  from {
+    transform: translateY(-30px) rotate(0deg);
+  }
+
+  to {
+    transform: translateY(110vh) rotate(720deg);
+  }
+}
+
+@keyframes clownCelebrationPop {
+  from {
+    opacity: 0;
+    transform: scale(0.55) rotate(-5deg);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1) rotate(0);
+  }
+}
+@media (max-height: 900px) and (min-width: 601px) {
+  .clown-page {
+    padding: 8px 10px 18px;
+  }
+
+  .clown-machine {
+    width: min(700px, 96vw);
+    padding: 12px;
+    border-width: 3px;
+    border-radius: 22px;
+  }
+
+  .clown-header h1 {
+    font-size: 50px;
+  }
+
+  .clown-kicker,
+  .clown-subtitle {
+    font-size: 9px;
+  }
+
+  .clown-light {
+    font-size: 26px;
+  }
+
+  .clown-prize-panel {
+    margin: 10px 0 7px;
+  }
+
+  .clown-prize-panel > div {
+    padding: 6px 4px;
+  }
+
+  .clown-reels {
+    gap: 4px;
+    padding: 6px;
+    border-width: 3px;
+  }
+
+  .clown-reel {
+    gap: 4px;
+  }
+
+  .clown-symbol {
+    font-size: 38px;
+    border-width: 2px;
+    border-radius: 9px;
+  }
+
+  .clown-message {
+    margin: 8px 0 6px;
+    min-height: 20px;
+    font-size: 13px;
+  }
+
+  .clown-controls button {
+    min-height: 45px;
+  }
+
+  .clown-bottom-actions {
+    margin-top: 8px;
+  }
+
+  .clown-bottom-actions button {
+    padding: 7px 12px;
+  }
+
+  .clown-help {
+    margin-top: 8px;
+    font-size: 9px;
+  }
+}
+@media (max-width: 600px) {
+  .clown-page {
+    padding: 8px 5px 25px;
+  }
+
+  .clown-machine {
+    padding: 12px 7px 17px;
+    border-width: 3px;
+    border-radius: 20px;
+  }
+
+  .clown-sound-button {
+    top: 7px;
+    right: 7px;
+    width: 38px;
+    height: 38px;
+    font-size: 17px;
+  }
+
+  .clown-header {
+    gap: 3px;
+    padding-right: 30px;
+  }
+
+  .clown-header h1 {
+    font-size: clamp(34px, 12vw, 53px);
+  }
+
+  .clown-light {
+    font-size: 23px;
+  }
+
+  .clown-kicker,
+  .clown-subtitle {
+    font-size: 8px;
+  }
+
+  .clown-prize-panel {
+    gap: 4px;
+    margin-top: 13px;
+  }
+
+  .clown-prize-panel > div {
+    padding: 7px 2px;
+    border-width: 1px;
+  }
+
+  .clown-prize-panel span {
+    font-size: 7px;
+  }
+
+  .clown-paylines {
+    gap: 3px;
+  }
+
+  .clown-paylines span {
+    padding: 3px 6px;
+    font-size: 8px;
+  }
+
+  .clown-reels {
+    gap: 3px;
+    padding: 5px;
+    border-width: 3px;
+  }
+
+  .clown-reel {
+    gap: 3px;
+  }
+
+  .clown-symbol {
+    border-width: 2px;
+    border-radius: 8px;
+    font-size: clamp(28px, 11vw, 43px);
+  }
+
+  .clown-message {
+    min-height: 24px;
+    margin: 10px 0 7px;
+    font-size: 13px;
+  }
+
+  .clown-controls {
+    grid-template-columns: 52px 1fr 52px;
+    gap: 6px;
+  }
+
+  .clown-controls button {
+    min-height: 50px;
+  }
+
+  .clown-small-button {
+    font-size: 25px;
+  }
+
+  .clown-spin-button {
+    font-size: 18px;
+  }
+
+  .clown-bottom-actions button {
+    padding: 9px 11px;
+    font-size: 11px;
+  }
+
+  .clown-help {
+    gap: 5px;
+    font-size: 8px;
+  }
+}
+
+/* Ajuste final para navegador de escritorio: entra completa sin scroll */
+@media (min-width: 601px) and (max-height: 850px) {
+  .clown-page {
+    width: 100%;
+    height: 100dvh;
+    min-height: 0;
+    overflow: hidden;
+    padding: 6px 10px;
+    align-items: center;
+  }
+
+  .clown-machine {
+    width: min(720px, 96vw);
+    height: auto;
+    margin: 0 auto;
+    padding: 9px 11px;
+    border-width: 3px;
+    border-radius: 19px;
+  }
+
+  .clown-sound-button {
+    top: 8px;
+    right: 8px;
+    width: 38px;
+    height: 38px;
+    font-size: 17px;
+  }
+
+  .clown-header {
+    gap: 7px;
+    padding-right: 34px;
+  }
+
+  .clown-header h1 {
+    margin: 0;
+    font-size: 42px;
+    line-height: 0.92;
+  }
+
+  .clown-kicker,
+  .clown-subtitle {
+    font-size: 8px;
+    line-height: 1.1;
+  }
+
+  .clown-subtitle {
+    margin-top: 4px;
+  }
+
+  .clown-light {
+    font-size: 22px;
+  }
+
+  .clown-prize-panel {
+    gap: 5px;
+    margin: 7px 0 5px;
+  }
+
+  .clown-prize-panel > div {
+    padding: 4px 3px;
+    border-width: 1px;
+    border-radius: 9px;
+  }
+
+  .clown-prize-panel span {
+    font-size: 8px;
+  }
+
+  .clown-prize-panel strong {
+    margin-top: 1px;
+    font-size: 18px;
+  }
+
+  .clown-paylines {
+    gap: 4px;
+    margin-bottom: 4px;
+  }
+
+  .clown-paylines span {
+    padding: 2px 7px;
+    font-size: 9px;
+  }
+
+  .clown-reels {
+    gap: 4px;
+    padding: 5px;
+    border-width: 3px;
+    border-radius: 14px;
+  }
+
+  .clown-reel {
+    gap: 4px;
+  }
+
+  .clown-symbol {
+    width: 100%;
+    height: 68px;
+    aspect-ratio: auto;
+    border-width: 2px;
+    border-radius: 8px;
+    font-size: 37px;
+  }
+
+  .clown-message {
+    min-height: 18px;
+    margin: 5px 0 4px;
+    font-size: 12px;
+    line-height: 1.2;
+  }
+
+  .clown-controls {
+    grid-template-columns: 54px 1fr 54px;
+    gap: 6px;
+  }
+
+  .clown-controls button {
+    min-height: 40px;
+    border-radius: 10px;
+  }
+
+  .clown-small-button {
+    font-size: 24px;
+  }
+
+  .clown-spin-button {
+    border-width: 3px;
+    font-size: 18px;
+  }
+
+  .clown-bottom-actions {
+    gap: 7px;
+    margin-top: 5px;
+  }
+
+  .clown-bottom-actions button {
+    padding: 6px 10px;
+    font-size: 10px;
+  }
+
+  .clown-help {
+    gap: 8px;
+    margin-top: 5px;
+    font-size: 8px;
+    line-height: 1.1;
+  }
+}

@@ -1,9 +1,10 @@
+import { GAME_CONFIG } from "./gameConfig.js";
 export const WILD = "🃏";
 export const SCATTER = "🎁";
 export const ROWS = 3;
 export const COLUMNS = 5;
 export const BET_OPTIONS = [100, 250, 500, 1000, 2500, 5000];
-export const STARTING_JACKPOT = 5000;
+export const STARTING_JACKPOT = GAME_CONFIG.JACKPOT_START;
 
 export const SYMBOLS = [
   "🍒", "🍋", "🔔", "⭐", "7️⃣", "💎", "🍉", "👑", WILD, SCATTER,
@@ -16,7 +17,7 @@ export const PAYLINES = [
   [0, 1, 1, 1, 0],
 ];
 
-const LINE_PAYOUT_FACTOR = 0.36;
+const LINE_PAYOUT_FACTOR = GAME_CONFIG.LINE_PAYOUT_FACTOR;
 
 export const OUTCOME_RATES = Object.freeze({
   jackpot: 0.00005,

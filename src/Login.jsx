@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { supabase } from "./supabase";
 import "./Login.css";
-
+const APP_VERSION = __APP_VERSION__;
+const BUILD_DATE = __BUILD_DATE__;
 export default function Login() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -66,6 +67,11 @@ export default function Login() {
             {loading ? "INGRESANDO..." : "🎰 INGRESAR"}
           </button>
         </form>
+        <p className="app-version">
+  Versión {APP_VERSION}
+  <br />
+  <small>{BUILD_DATE}</small>
+</p>
       </section>
     </main>
   );

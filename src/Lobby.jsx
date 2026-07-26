@@ -1,0 +1,248 @@
+import logoJackpotPalace from "./assets/logo-jackpot-palace.png";
+import "./Lobby.css";
+
+const games = [
+  {
+    id: "jackpot-palace",
+    name: "Jackpot Palace",
+    icon: "👑",
+    subtitle: "JACKPOT PROGRESIVO",
+    description: "Bonus, giros gratis y premios mayores.",
+    theme: "gold",
+    badge: "POPULAR",
+    available: true,
+  },
+  {
+    id: "clown-party",
+    name: "Clown Party",
+    icon: "🤡",
+    subtitle: "FIESTA DE CIRCO",
+    description: "Multiplicadores, bonus y premios sorpresa.",
+    theme: "pink",
+    badge: "NUEVO",
+    available: true,
+  },
+  {
+    id: "egyptian-gold",
+    name: "Egyptian Gold",
+    icon: "𓂀",
+    subtitle: "TESOROS DEL NILO",
+    description: "Faraones, pirámides y riquezas escondidas.",
+    theme: "amber",
+    badge: "PRÓXIMAMENTE",
+    available: false,
+  },
+  {
+    id: "wild-west",
+    name: "Wild West",
+    icon: "★",
+    subtitle: "RECOMPENSAS DEL OESTE",
+    description: "Forajidos, duelos y grandes recompensas.",
+    theme: "orange",
+    badge: "PRÓXIMAMENTE",
+    available: false,
+  },
+];
+
+export default function Lobby({
+  player,
+  onOpenGame,
+  onOpenAdmin,
+  onLogout,
+}) {
+  const displayName =
+    player?.display_name || player?.username || "Jugador";
+
+  const roleLabel =
+    player?.role === "super_admin"
+      ? "SUPER ADMIN"
+      : player?.role === "admin"
+      ? "ADMINISTRADOR"
+      : "JUGADOR";
+
+  const isAdmin = ["super_admin", "admin"].includes(player?.role);
+
+  return (
+    <main className="grand-lobby-v2">
+      <div className="grand-lobby-v2__spot grand-lobby-v2__spot--left" />
+      <div className="grand-lobby-v2__spot grand-lobby-v2__spot--right" />
+      <div className="grand-lobby-v2__mist grand-lobby-v2__mist--left" />
+      <div className="grand-lobby-v2__mist grand-lobby-v2__mist--right" />
+
+      <section className="grand-shell-v2">
+        <div className="grand-shell-v2__neon" aria-hidden="true" />
+
+        <div className="grand-shell-v2__bulbs grand-shell-v2__bulbs--top" aria-hidden="true">
+          {Array.from({ length: 42 }).map((_, index) => (
+            <span key={`top-${index}`} />
+          ))}
+        </div>
+
+        <div className="grand-shell-v2__bulbs grand-shell-v2__bulbs--bottom" aria-hidden="true">
+          {Array.from({ length: 42 }).map((_, index) => (
+            <span key={`bottom-${index}`} />
+          ))}
+        </div>
+
+        <header className="grand-header-v2">
+          <section className="grand-profile-v2">
+            <div className="grand-profile-v2__medallion">♛</div>
+
+            <div>
+              <span>BIENVENIDO</span>
+              <strong>{displayName}</strong>
+              <small>{roleLabel}</small>
+            </div>
+          </section>
+
+          <section className="grand-brand-v2">
+            <div className="grand-brand-v2__halo" aria-hidden="true" />
+            <div className="grand-brand-v2__rays" aria-hidden="true" />
+
+            <img
+              src={logoJackpotPalace}
+              alt="Jackpot Palace"
+              className="grand-brand-v2__logo"
+            />
+
+            <div className="grand-brand-v2__caption">
+              <span>✦</span>
+              <strong>CASINO VIP</strong>
+              <span>✦</span>
+            </div>
+          </section>
+
+          <section className="grand-account-v2">
+            <div className="grand-account-v2__balance">
+              <span>CRÉDITOS</span>
+              <strong>
+                {(player?.credits ?? 0).toLocaleString("es-AR")}
+              </strong>
+            </div>
+
+            <div className="grand-account-v2__actions">
+              {isAdmin && (
+                <button
+                  type="button"
+                  className="grand-action-v2 grand-action-v2--admin"
+                  onClick={onOpenAdmin}
+                >
+                  👑 PANEL
+                </button>
+              )}
+
+              <button
+                type="button"
+                className="grand-action-v2 grand-action-v2--logout"
+                onClick={onLogout}
+              >
+                SALIR
+              </button>
+            </div>
+          </section>
+        </header>
+
+        <div className="grand-title-v2">
+          <span>✦</span>
+
+          <div>
+            <p>SELECCIÓN EXCLUSIVA</p>
+            <h1>SALÓN DE JUEGOS</h1>
+            <small>Elegí una máquina y empezá a jugar</small>
+          </div>
+
+          <span>✦</span>
+        </div>
+
+        <section className="grand-grid-v2">
+          {games.map((game) => (
+            <article
+              key={game.id}
+              className={[
+                "grand-machine-v2",
+                `grand-machine-v2--${game.theme}`,
+                game.available
+                  ? "grand-machine-v2--available"
+                  : "grand-machine-v2--locked",
+              ].join(" ")}
+            >
+              <div className="grand-machine-v2__neon" aria-hidden="true" />
+
+              <div className="grand-machine-v2__bulbs" aria-hidden="true">
+                {Array.from({ length: 24 }).map((_, index) => (
+                  <span key={index} />
+                ))}
+              </div>
+
+              <div className="grand-machine-v2__badge">{game.badge}</div>
+
+              <div className="grand-machine-v2__marquee">
+                <span>{game.subtitle}</span>
+              </div>
+
+              <div className="grand-machine-v2__screen">
+                <div className="grand-machine-v2__glass" aria-hidden="true" />
+                <div className="grand-machine-v2__halo" aria-hidden="true" />
+
+                <div className="grand-machine-v2__icon">
+                  <span>{game.icon}</span>
+                </div>
+
+                <h2>{game.name}</h2>
+                <p>{game.description}</p>
+              </div>
+
+              <div className="grand-machine-v2__console">
+                <button
+                  type="button"
+                  disabled={!game.available}
+                  onClick={() =>
+                    game.available && onOpenGame(game.id)
+                  }
+                >
+                  <span>
+                    {game.available ? "JUGAR AHORA" : "PRÓXIMAMENTE"}
+                  </span>
+                </button>
+
+                <div className="grand-machine-v2__console-lights" aria-hidden="true">
+                  {Array.from({ length: 8 }).map((_, index) => (
+                    <span key={index} />
+                  ))}
+                </div>
+              </div>
+            </article>
+          ))}
+        </section>
+
+        <footer className="grand-footer-v2">
+          <div>
+            <span>◈</span>
+            <p>
+              <strong>CRÉDITOS COMPARTIDOS</strong>
+              <small>Entre todas las máquinas</small>
+            </p>
+          </div>
+
+          <div>
+            <span>🛡</span>
+            <p>
+              <strong>SESIÓN PROTEGIDA</strong>
+              <small>Acceso seguro</small>
+            </p>
+          </div>
+
+          <div>
+            <span>✦</span>
+            <p>
+              <strong>NUEVOS JUEGOS</strong>
+              <small>Más máquinas próximamente</small>
+            </p>
+          </div>
+        </footer>
+
+        <div className="grand-lobby-v2__stamp">GRAND LOBBY V2</div>
+      </section>
+    </main>
+  );
+}

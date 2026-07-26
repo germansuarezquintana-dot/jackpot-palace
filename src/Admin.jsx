@@ -1,4 +1,5 @@
 import DashboardCards from "./components/DashboardCards";
+import CashierManager from "./CashierManager";
 import AdminStatusBar from "./components/AdminStatusBar";
 import {
   changePlayerPassword,
@@ -15,6 +16,10 @@ function formatNumber(value) {
   return Number(value || 0).toLocaleString("es-AR");
 }
 
+function isSuperAdminPlayer(player) {
+  return player?.role === "super_admin";
+}
+
 export default function Admin({ onClose }) {
   const [players, setPlayers] = useState([]);
   const [transactions, setTransactions] = useState([]);
@@ -22,6 +27,7 @@ export default function Admin({ onClose }) {
   const [search, setSearch] = useState("");
   const [filter, setFilter] = useState("all");
   const [loading, setLoading] = useState(true);
+  const [currentAdminRole, setCurrentAdminRole] = useState(null);
   const [workingId, setWorkingId] = useState(null);
   const [message, setMessage] = useState("");
   const [customAmounts, setCustomAmounts] = useState({});
@@ -34,6 +40,11 @@ const [changingPassword, setChangingPassword] = useState(false);
 const [passwordError, setPasswordError] = useState("");
 async function handleChangePassword() {
   if (!passwordPlayer) return;
+
+  if (isSuperAdminPlayer(passwordPlayer)) {
+    setPasswordError("El Super Admin está protegido y no puede ser modificado.");
+    return;
+  }
 
   if (newPassword.trim().length < 8) {
     setPasswordError("La contraseña debe tener al menos 8 caracteres.");
@@ -59,11 +70,24 @@ async function handleChangePassword() {
 async function loadAdminData() {
     setLoading(true);
     setMessage("");
+const {
+  data: { user },
+} = await supabase.auth.getUser();
 
+if (user) {
+  const { data: currentAdmin } = await supabase
+    .from("players")
+    .select("role")
+    .eq("auth_user_id", user.id)
+    .maybeSingle();
+
+  setCurrentAdminRole(currentAdmin?.role || null);
+}
     const [playersResult, transactionsResult, jackpotResult] = await Promise.all([
       supabase
         .from("players")
-        .select("id,username,display_name,credits,is_admin,is_blocked,total_bet,total_win,total_spins,created_at")
+      
+        .select("id,username,display_name,credits,is_admin,is_super_admin,role,is_blocked,total_bet,total_win,total_spins,created_at")
         .order("created_at", { ascending: true }),
       supabase
         .from("credit_transactions")
@@ -91,13 +115,16 @@ async function loadAdminData() {
   }
 
   useEffect(() => {
-    loadAdminData();
+    const initialTimer = window.setTimeout(loadAdminData, 0);
 
     const refreshTimer = window.setInterval(() => {
       loadAdminData();
     }, 15000);
 
-    return () => window.clearInterval(refreshTimer);
+    return () => {
+      window.clearTimeout(initialTimer);
+      window.clearInterval(refreshTimer);
+    };
   }, []);
 
   const dashboard = useMemo(() => {
@@ -143,7 +170,7 @@ async function loadAdminData() {
         filter === "all" ||
         (filter === "active" && !player.is_blocked) ||
         (filter === "blocked" && player.is_blocked) ||
-        (filter === "admins" && player.is_admin);
+        (filter === "admins" && (player.role === "admin" || player.role === "super_admin" || player.is_admin));
 
       return matchesSearch && matchesFilter;
     });
@@ -155,6 +182,11 @@ async function loadAdminData() {
   );
 
   async function adjustCredits(player, amount) {
+    if (isSuperAdminPlayer(player)) {
+      setMessage("El Super Admin está protegido y no puede ser modificado.");
+      return;
+    }
+
     if (!Number.isInteger(amount) || amount === 0) {
       setMessage("Ingresá un monto entero distinto de cero.");
       return;
@@ -204,6 +236,11 @@ async function loadAdminData() {
     await adjustCredits(player, absoluteAmount * sign);
   }
 async function forceLogout(player) {
+  if (isSuperAdminPlayer(player)) {
+    setMessage("El Super Admin está protegido y no puede ser modificado.");
+    return;
+  }
+
   const confirmed = window.confirm(
     `¿Forzar el cierre de sesión de ${
       player.display_name || player.username
@@ -234,6 +271,11 @@ async function forceLogout(player) {
   }
 }
   async function toggleBlocked(player) {
+    if (isSuperAdminPlayer(player)) {
+      setMessage("El Super Admin está protegido y no puede ser modificado.");
+      return;
+    }
+
     const action = player.is_blocked ? "desbloquear" : "bloquear";
     if (!window.confirm(`¿Confirmás ${action} a ${player.display_name || player.username}?`)) return;
 
@@ -254,11 +296,22 @@ async function forceLogout(player) {
   }
 
   function beginEdit(player) {
+    if (isSuperAdminPlayer(player)) {
+      setMessage("El Super Admin está protegido y no puede ser modificado.");
+      return;
+    }
+
     setEditingId(player.id);
     setEditName(player.display_name || player.username || "");
   }
 
   async function savePlayerName(player) {
+    if (isSuperAdminPlayer(player)) {
+      setMessage("El Super Admin está protegido y no puede ser modificado.");
+      setEditingId(null);
+      return;
+    }
+
     const cleanName = editName.trim();
     if (cleanName.length < 2 || cleanName.length > 40) {
       setMessage("El nombre visible debe tener entre 2 y 40 caracteres.");
@@ -283,6 +336,7 @@ async function forceLogout(player) {
   return (
     <main className="admin-page">
       <section className="admin-card">
+        <CashierManager />
         <header className="admin-header">
           <div>
             <p>👑 JACKPOT PALACE</p>
@@ -319,7 +373,10 @@ async function forceLogout(player) {
     )}
 
     {filteredPlayers.map((player) => {
-      const disabled = workingId === player.id;
+      const isProtectedSuperAdmin = isSuperAdminPlayer(player);
+      const disabled =
+  workingId === player.id ||
+  (isProtectedSuperAdmin && currentAdminRole !== "super_admin");
 
       return (
         <article className="player-row" key={player.id}>
@@ -352,9 +409,11 @@ async function forceLogout(player) {
                   {player.display_name || player.username}
                 </strong>
 
-                {player.is_admin && (
+                {isProtectedSuperAdmin ? (
+                  <span className="admin-badge">SUPER ADMIN</span>
+                ) : player.role === "admin" || player.is_admin ? (
                   <span className="admin-badge">ADMIN</span>
-                )}
+                ) : null}
 
                 <span
                   className={
@@ -369,6 +428,7 @@ async function forceLogout(player) {
                 <button
                   className="edit-button"
                   onClick={() => beginEdit(player)}
+                  disabled={disabled}
                 >
                   EDITAR NOMBRE
                 </button>
@@ -431,6 +491,7 @@ async function forceLogout(player) {
                     [player.id]: event.target.value,
                   }))
                 }
+                disabled={disabled}
               />
 
               <button
@@ -461,30 +522,28 @@ async function forceLogout(player) {
                   [player.id]: event.target.value,
                 }))
               }
+              disabled={disabled}
             />
+            <button
+              className="password-button"
+              onClick={() => {
+                setPasswordPlayer(player);
+                setNewPassword("");
+                setPasswordError("");
+              }}
+              disabled={disabled}
+            >
+              🔑 CONTRASEÑA
+            </button>
 
-            {!player.is_admin && (
-              <button
-className="password-button"                onClick={() => {
-                  setPasswordPlayer(player);
-                  setNewPassword("");
-                  setPasswordError("");
-                }}
-                disabled={disabled}
-              >
-                🔑 CONTRASEÑA
-              </button>
-            )}
-{!player.is_admin && (
-  <button
-    className="logout-button"
-    onClick={() => forceLogout(player)}
-    disabled={disabled}
-  >
-    🚪 CERRAR SESIÓN
-  </button>
-)}
-            {!player.is_admin && (
+            <button
+              className="logout-button"
+              onClick={() => forceLogout(player)}
+              disabled={disabled}
+            >
+              🚪 CERRAR SESIÓN
+            </button>
+            {!(player.role === "admin" || player.role === "super_admin" || player.is_admin) && (
               <button
                 className={
                   player.is_blocked

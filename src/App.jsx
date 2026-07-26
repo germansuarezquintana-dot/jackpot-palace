@@ -3,13 +3,17 @@ import { useEffect, useRef, useState } from "react";
 import { supabase } from "./supabase";
 import Login from "./Login";
 import Game from "./Game";
+import ClownParty from "./ClownParty";
+import Lobby from "./Lobby";
 import Admin from "./Admin";
+import Cashier from "./Cashier";
 
 export default function App() {
   const [session, setSession] = useState(null);
   const [player, setPlayer] = useState(null);
   const [loading, setLoading] = useState(true);
   const [showAdmin, setShowAdmin] = useState(false);
+  const [screen, setScreen] = useState("lobby");
   const [error, setError] = useState("");
 
   const forceLogoutVersionRef = useRef(null);
@@ -68,6 +72,7 @@ export default function App() {
       (_event, nextSession) => {
         setSession(nextSession);
         setShowAdmin(false);
+        setScreen("lobby");
 
         if (nextSession) {
           loadPlayer(nextSession.user.id);
@@ -84,7 +89,11 @@ export default function App() {
   }, []);
 
   useEffect(() => {
-    if (!session?.user?.id || !player?.id || player.is_admin) {
+    if (
+      !session?.user?.id ||
+      !player?.id ||
+      ["admin", "super_admin"].includes(player.role)
+    ) {
       return;
     }
 
@@ -164,7 +173,7 @@ export default function App() {
   }, [
     session?.user?.id,
     player?.id,
-    player?.is_admin,
+    player?.role,
     player?.force_logout_version,
   ]);
 
@@ -172,11 +181,12 @@ export default function App() {
     return (
       <main className="login-page">
         <section className="login-card">
-        <img
-  src={logoJackpotPalace}
-  alt="Jackpot Palace"
-  className="main-logo"
-/>
+          <img
+            src={logoJackpotPalace}
+            alt="Jackpot Palace"
+            className="main-logo"
+          />
+
           <p>Cargando...</p>
         </section>
       </main>
@@ -209,7 +219,10 @@ export default function App() {
     );
   }
 
-  if (showAdmin && player.is_admin) {
+  if (
+    showAdmin &&
+    ["super_admin", "admin"].includes(player.role)
+  ) {
     return (
       <Admin
         onClose={() => setShowAdmin(false)}
@@ -217,8 +230,17 @@ export default function App() {
     );
   }
 
+  if (player?.role === "cashier") {
+    return (
+      <Cashier
+        player={player}
+        onLogout={() => supabase.auth.signOut()}
+      />
+    );
+  }
+if (screen === "clown-party") {
   return (
-    <Game
+    <ClownParty
       player={player}
       onCreditsChange={(credits) =>
         setPlayer((current) => ({
@@ -226,8 +248,58 @@ export default function App() {
           credits,
         }))
       }
+      onBack={() => setScreen("lobby")}
       onLogout={() => supabase.auth.signOut()}
+    />
+  );
+}
+  if (screen === "jackpot-palace") {
+    return (
+      <>
+        <button
+          type="button"
+          onClick={() => setScreen("lobby")}
+          disabled={false}
+          style={{
+            position: "fixed",
+            top: 12,
+            left: 12,
+            zIndex: 9999,
+            padding: "10px 15px",
+            border: "2px solid #ffd45c",
+            borderRadius: 12,
+            color: "#fff",
+            background:
+              "linear-gradient(180deg, #5c1d91, #26063f)",
+            fontWeight: 900,
+            cursor: "pointer",
+            boxShadow: "0 0 15px rgba(255, 212, 92, 0.5)",
+          }}
+        >
+          ← CASINO
+        </button>
+
+        <Game
+          player={player}
+          onCreditsChange={(credits) =>
+            setPlayer((current) => ({
+              ...current,
+              credits,
+            }))
+          }
+          onLogout={() => supabase.auth.signOut()}
+          onOpenAdmin={() => setShowAdmin(true)}
+        />
+      </>
+    );
+  }
+
+  return (
+    <Lobby
+      player={player}
+      onOpenGame={(gameId) => setScreen(gameId)}
       onOpenAdmin={() => setShowAdmin(true)}
+      onLogout={() => supabase.auth.signOut()}
     />
   );
 }

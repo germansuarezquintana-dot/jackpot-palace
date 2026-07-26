@@ -1,14 +1,15 @@
 {
   "name": "retrospin1991",
   "private": true,
-  "version": "0.0.0",
+  "version": "1.0.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "create:users": "node --env-file=.env scripts/create-users.mjs"
+    "create:users": "node --env-file=.env scripts/create-users.mjs",
+    "test:rtp": "node scripts/simulate-rtp.mjs"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.110.7",
