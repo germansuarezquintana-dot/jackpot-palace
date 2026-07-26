@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { supabase } from "./supabase";
 import "./ClownParty.css";
+import ClownHeader from "./clown/ClownHeader";
 
 const ROWS = 3;
 const COLUMNS = 5;
@@ -666,6 +667,11 @@ export default function ClownParty({
 
   return (
     <main className="clown-page">
+      <div className="clown-tent-bg" aria-hidden="true" />
+      <div className="clown-spotlight clown-spotlight-left" aria-hidden="true" />
+      <div className="clown-spotlight clown-spotlight-right" aria-hidden="true" />
+      <div className="clown-cloud clown-cloud-left" aria-hidden="true" />
+      <div className="clown-cloud clown-cloud-right" aria-hidden="true" />
       <div className="clown-confetti" aria-hidden="true">
         {Array.from({ length: 35 }).map(
           (_, index) => (
@@ -702,6 +708,33 @@ export default function ClownParty({
             : ""
         }`}
       >
+        <div className="clown-machine-neon" aria-hidden="true" />
+        <div className="clown-win-flash" aria-hidden="true" />
+        <div className="clown-side-decor clown-side-decor-left" aria-hidden="true">
+          <span>★</span>
+          <span>🎈</span>
+          <span>✦</span>
+          <span>🎟️</span>
+        </div>
+        <div className="clown-side-decor clown-side-decor-right" aria-hidden="true">
+          <span>🎟️</span>
+          <span>✦</span>
+          <span>🎈</span>
+          <span>★</span>
+        </div>
+
+        <div className="clown-frame-bulbs clown-frame-bulbs-top" aria-hidden="true">
+          {Array.from({ length: 30 }).map((_, index) => (
+            <span key={`top-${index}`} />
+          ))}
+        </div>
+
+        <div className="clown-frame-bulbs clown-frame-bulbs-bottom" aria-hidden="true">
+          {Array.from({ length: 30 }).map((_, index) => (
+            <span key={`bottom-${index}`} />
+          ))}
+        </div>
+
         <button
           type="button"
           className="clown-sound-button"
@@ -717,77 +750,25 @@ export default function ClownParty({
           {soundEnabled ? "🔊" : "🔇"}
         </button>
 
-        <header className="clown-header">
-          <div className="clown-light">
-            ⭐
-          </div>
+      
 
-          <div>
-            <p className="clown-kicker">
-              JACKPOT PALACE PRESENTA
-            </p>
-
-            <h1>CLOWN PARTY</h1>
-
-            <p className="clown-subtitle">
-              PAYASOS · CIRCO · PREMIOS
-              SORPRESA
-            </p>
-          </div>
-
-          <div className="clown-light">
-            ⭐
-          </div>
-        </header>
-
-        <div className="clown-prize-panel">
-          <div>
-            <span>CRÉDITOS</span>
-            <strong>
-              {displayCredits.toLocaleString(
-                "es-AR"
-              )}
-            </strong>
-          </div>
-
-          <div>
-            <span>APUESTA</span>
-            <strong>
-              {bet.toLocaleString("es-AR")}
-            </strong>
-          </div>
-
-          <div>
-            <span>PREMIO</span>
-            <strong>
-              {lastPrize.toLocaleString(
-                "es-AR"
-              )}
-            </strong>
-          </div>
-
-          <div>
-            <span>GIROS GRATIS</span>
-            <strong>{freeSpins}</strong>
-          </div>
-        </div>
-
-        <div className="clown-paylines">
-          {PAYLINES.map((_, index) => (
-            <span
-              key={index}
-              className={
-                winningLines.includes(index)
-                  ? "clown-line-active"
-                  : ""
-              }
-            >
-              L{index + 1}
-            </span>
-          ))}
-        </div>
+        <ClownHeader
+  displayCredits={displayCredits}
+  bet={bet}
+  lastPrize={lastPrize}
+  freeSpins={freeSpins}
+  soundEnabled={soundEnabled}
+  onToggleSound={() =>
+    setSoundEnabled((current) => !current)
+  }
+/>
 
         <div className="clown-reels">
+          <div className="clown-reels-glass" aria-hidden="true" />
+          <div className="clown-reels-corner clown-reels-corner-tl" aria-hidden="true" />
+          <div className="clown-reels-corner clown-reels-corner-tr" aria-hidden="true" />
+          <div className="clown-reels-corner clown-reels-corner-bl" aria-hidden="true" />
+          <div className="clown-reels-corner clown-reels-corner-br" aria-hidden="true" />
           {grid.map(
             (column, columnIndex) => (
               <div
@@ -850,7 +831,14 @@ export default function ClownParty({
             : message}
         </div>
 
-        <div className="clown-controls">
+        <div className="clown-control-deck">
+          <div className="clown-control-lights" aria-hidden="true">
+            {Array.from({ length: 12 }).map((_, index) => (
+              <span key={index} />
+            ))}
+          </div>
+
+          <div className="clown-controls">
           <button
             type="button"
             className="clown-small-button"
@@ -897,6 +885,7 @@ export default function ClownParty({
           >
             +
           </button>
+          </div>
         </div>
 
         <div className="clown-bottom-actions">
@@ -933,6 +922,8 @@ export default function ClownParty({
             sorpresa
           </span>
         </div>
+
+        <div className="clown-phase-stamp">CLOWN PARTY · FASE 2</div>
       </section>
 
       {celebration && (

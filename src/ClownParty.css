@@ -1,140 +1,463 @@
+/* =========================================================
+   CLOWN PARTY — FASE 1 VISUAL
+   Mantiene intacta la lógica del juego.
+   ========================================================= */
+
+:root {
+  --clown-red: #d91d35;
+  --clown-red-dark: #650719;
+  --clown-yellow: #ffe76a;
+  --clown-yellow-soft: #fff5b2;
+  --clown-blue: #38d8ff;
+  --clown-pink: #ff45b8;
+  --clown-purple: #7a168e;
+  --clown-green: #58ef8b;
+  --clown-ink: #120217;
+}
+
+* {
+  box-sizing: border-box;
+}
+
 .clown-page {
+  position: relative;
+  width: 100%;
   min-height: 100vh;
-  height: 100vh;
-
-  overflow-y: auto;
-  overflow-x: hidden;
-
+  min-height: 100svh;
+  min-height: 100dvh;
   display: flex;
   justify-content: center;
   align-items: flex-start;
-
-  padding: 15px;
-
-  box-sizing: border-box;
-
-  color: white;
-
+  overflow-x: hidden;
+  overflow-y: auto;
+  padding: 14px;
+  color: #fff;
+  font-family: Arial, Helvetica, sans-serif;
   background:
-    radial-gradient(circle at top, rgba(255,225,74,.25), transparent 30%),
-    linear-gradient(180deg,#4d0b6e,#12011d);
+    radial-gradient(circle at 50% -8%, rgba(255, 226, 92, 0.28), transparent 27%),
+    radial-gradient(circle at 8% 70%, rgba(255, 49, 123, 0.22), transparent 30%),
+    radial-gradient(circle at 92% 72%, rgba(45, 211, 255, 0.2), transparent 30%),
+    linear-gradient(180deg, #50061c 0%, #26042e 52%, #0c0212 100%);
+}
+
+.clown-page::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(circle at center, transparent 38%, rgba(0, 0, 0, 0.68) 100%),
+    repeating-linear-gradient(
+      90deg,
+      transparent 0,
+      transparent 99px,
+      rgba(255, 235, 135, 0.018) 100px
+    );
+}
+
+.clown-tent-bg {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.32;
+  background:
+    repeating-conic-gradient(
+      from -18deg at 50% -5%,
+      rgba(255, 255, 255, 0.18) 0deg 10deg,
+      rgba(211, 23, 48, 0.26) 10deg 20deg
+    );
+  -webkit-mask-image: linear-gradient(180deg, #000 0%, transparent 72%);
+  mask-image: linear-gradient(180deg, #000 0%, transparent 72%);
+}
+
+.clown-spotlight {
+  position: fixed;
+  top: -100px;
+  width: 270px;
+  height: 120vh;
+  pointer-events: none;
+  opacity: 0.16;
+  filter: blur(12px);
+}
+
+.clown-spotlight-left {
+  left: 5%;
+  transform: rotate(13deg);
+  background: linear-gradient(180deg, rgba(255, 236, 130, 0.78), transparent 72%);
+  animation: clownSpotLeft 6s ease-in-out infinite alternate;
+}
+
+.clown-spotlight-right {
+  right: 5%;
+  transform: rotate(-13deg);
+  background: linear-gradient(180deg, rgba(67, 220, 255, 0.64), transparent 72%);
+  animation: clownSpotRight 7s ease-in-out infinite alternate;
+}
+
+.clown-cloud {
+  position: fixed;
+  width: 420px;
+  height: 260px;
+  border-radius: 50%;
+  pointer-events: none;
+  filter: blur(85px);
+  opacity: 0.28;
+}
+
+.clown-cloud-left {
+  left: -140px;
+  bottom: -60px;
+  background: #ff2f8b;
+  animation: clownCloud 8s ease-in-out infinite alternate;
+}
+
+.clown-cloud-right {
+  right: -140px;
+  bottom: -60px;
+  background: #25ccff;
+  animation: clownCloud 9s ease-in-out infinite alternate-reverse;
 }
 
 .clown-machine {
-  width: min(780px, 100%);
   position: relative;
   z-index: 2;
+  width: min(920px, 98vw);
   margin: 0 auto;
-  padding: 20px;
-  box-sizing: border-box;
-  border: 5px solid #ffe55b;
-  border-radius: 30px;
+  padding: 22px 22px 18px;
+  overflow: hidden;
+
+  border: 4px solid #ffe76a;
+  border-radius: 34px;
+
   background:
-    linear-gradient(180deg, rgba(255, 66, 174, 0.24), transparent 24%),
-    linear-gradient(145deg, #7b146c, #29043b);
+    linear-gradient(
+      180deg,
+      rgba(255,255,255,.16) 0%,
+      rgba(255,255,255,.04) 16%,
+      transparent 30%
+    ),
+    radial-gradient(
+      circle at 50% 0%,
+      rgba(255,225,100,.24),
+      transparent 32%
+    ),
+    linear-gradient(
+      145deg,
+      #9d175f 0%,
+      #510952 38%,
+      #27042f 68%,
+      #120218 100%
+    );
+
   box-shadow:
-    0 0 20px rgba(255, 229, 91, 0.75),
-    0 0 55px rgba(255, 53, 185, 0.35),
-    inset 0 0 26px rgba(0, 0, 0, 0.65);
+    0 0 0 3px #a90f37,
+    0 0 0 7px rgba(255,231,106,.30),
+    0 0 18px rgba(255,255,255,.28),
+    0 0 38px rgba(255,231,106,.72),
+    0 0 85px rgba(255,50,176,.48),
+    inset 0 3px 0 rgba(255,255,255,.22),
+    inset 0 -25px 45px rgba(0,0,0,.48),
+    inset 0 0 55px rgba(0,0,0,.62);
+}
+
+.clown-machine::before {
+  content: "";
+  position: absolute;
+  inset: 10px;
+  border: 1px solid rgba(255, 246, 190, 0.34);
+  border-radius: 23px;
+  pointer-events: none;
+}
+
+.clown-machine::after {
+  content: "";
+  position: absolute;
+  top: -75%;
+  left: -70%;
+  width: 42%;
+  height: 240%;
+  pointer-events: none;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.18),
+    transparent
+  );
+  transform: rotate(20deg);
+  animation: clownMachineShine 5s ease-in-out infinite;
+}
+
+.clown-machine-neon {
+  position: absolute;
+  inset: -1px;
+  border-radius: 35px;
+  pointer-events: none;
+  box-shadow:
+    0 0 14px #ffe76a,
+    0 0 28px #ff3cb6,
+    0 0 50px rgba(58, 217, 255, 0.55);
+  animation: clownMachinePulse 1.25s ease-in-out infinite alternate;
 }
 
 .clown-machine-winning {
   animation: clownMachineWin 0.65s infinite alternate;
 }
 
+.clown-frame-bulbs {
+  position: absolute;
+  left: 26px;
+  right: 26px;
+  z-index: 7;
+  display: grid;
+  grid-template-columns: repeat(30, 1fr);
+  pointer-events: none;
+}
+
+.clown-frame-bulbs-top {
+  top: 7px;
+}
+
+.clown-frame-bulbs-bottom {
+  bottom: 7px;
+}
+
+.clown-frame-bulbs span {
+  width: 7px;
+  height: 7px;
+  justify-self: center;
+  border-radius: 50%;
+  background: var(--clown-yellow);
+  box-shadow:
+    0 0 4px #fff,
+    0 0 11px var(--clown-yellow);
+  animation: clownBulbChase 1s linear infinite;
+}
+
+.clown-frame-bulbs span:nth-child(4n + 1) {
+  background: var(--clown-red);
+  box-shadow: 0 0 4px #fff, 0 0 12px var(--clown-red);
+}
+
+.clown-frame-bulbs span:nth-child(4n + 2) {
+  background: var(--clown-blue);
+  box-shadow: 0 0 4px #fff, 0 0 12px var(--clown-blue);
+}
+
+.clown-frame-bulbs span:nth-child(4n + 3) {
+  background: var(--clown-green);
+  box-shadow: 0 0 4px #fff, 0 0 12px var(--clown-green);
+}
+
+.clown-frame-bulbs span:nth-child(3n) {
+  animation-delay: -0.34s;
+}
+
+.clown-frame-bulbs span:nth-child(4n) {
+  animation-delay: -0.68s;
+}
+
 .clown-sound-button {
   position: absolute;
-  top: 13px;
-  right: 13px;
-  z-index: 5;
-  width: 44px;
-  height: 44px;
-  border: 2px solid #fff099;
+  top: 17px;
+  right: 18px;
+  z-index: 10;
+  width: 46px;
+  height: 46px;
+  border: 2px solid var(--clown-yellow-soft);
   border-radius: 50%;
   color: #fff;
-  background: linear-gradient(180deg, #9a288a, #48094d);
+  background: linear-gradient(180deg, #b92a83, #54094f);
   font-size: 20px;
   cursor: pointer;
-  box-shadow: 0 0 12px rgba(255, 240, 153, 0.5);
+  box-shadow:
+    0 0 13px rgba(255, 240, 153, 0.65),
+    inset 0 0 9px rgba(0, 0, 0, 0.5);
+  transition: transform 0.18s ease, filter 0.18s ease;
+}
+
+.clown-sound-button:hover {
+  transform: scale(1.08);
+  filter: brightness(1.2);
 }
 
 .clown-header {
-  display: flex;
+  position: relative;
+  z-index: 4;
+  display: grid;
+  grid-template-columns: 1fr minmax(280px, 470px) 1fr;
   align-items: center;
-  justify-content: center;
-  gap: 18px;
-  padding-right: 40px;
+  gap: 14px;
+  min-height: 118px;
+  padding-right: 46px;
   text-align: center;
+}
+
+.clown-title-wrap {
+  position: relative;
+}
+
+.clown-title-halo {
+  position: absolute;
+  inset: -22px -35px;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle, rgba(255, 234, 111, 0.36), transparent 66%);
+  filter: blur(2px);
+  animation: clownTitleHalo 1.8s ease-in-out infinite alternate;
 }
 
 .clown-header h1 {
-  margin: 3px 0;
-  font-size: clamp(39px, 8vw, 73px);
-  line-height: 0.95;
-  color: #fff05b;
+  position: relative;
+  z-index: 2;
+  margin: 2px 0 3px;
+  color: #fff8b6;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(46px, 8vw, 78px);
+  line-height: 0.92;
+  letter-spacing: 2px;
+  background: linear-gradient(
+    180deg,
+    #fffbd5 0%,
+    #ffe76a 32%,
+    #ff7e39 62%,
+    #be103d 100%
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  filter: drop-shadow(0 4px 0 #7b0d33);
   text-shadow:
-    3px 3px 0 #d90c80,
-    -2px -2px 0 #ff582f,
-    0 0 20px #ff74d4;
+    0 0 8px rgba(255, 247, 185, 0.8),
+    0 0 24px rgba(255, 66, 181, 0.55);
+  animation: clownTitleGlow 1.45s ease-in-out infinite alternate;
 }
 
 .clown-kicker {
+  position: relative;
+  z-index: 2;
   margin: 0;
-  color: #ffd9f4;
-  font-size: 12px;
-  font-weight: 900;
-  letter-spacing: 2px;
+  color: #ffd8f1;
+  font-size: 11px;
+  font-weight: 1000;
+  letter-spacing: 3px;
+  text-shadow: 0 0 10px rgba(255, 104, 202, 0.45);
 }
 
 .clown-subtitle {
+  position: relative;
+  z-index: 2;
   margin: 8px 0 0;
   color: #fff;
-  font-size: 12px;
-  font-weight: 900;
-  letter-spacing: 1px;
+  font-size: 11px;
+  font-weight: 1000;
+  letter-spacing: 1.4px;
+}
+
+.clown-marquee-wing {
+  display: flex;
+  justify-content: center;
+  gap: 7px;
+}
+
+.clown-marquee-wing span {
+  width: 13px;
+  height: 13px;
+  border: 2px solid rgba(255, 255, 255, 0.78);
+  border-radius: 50%;
+  background: var(--clown-yellow);
+  box-shadow:
+    0 0 6px #fff,
+    0 0 15px var(--clown-yellow);
+  animation: clownWingBlink 0.9s ease-in-out infinite alternate;
+}
+
+.clown-marquee-wing span:nth-child(2) {
+  background: var(--clown-red);
+  box-shadow: 0 0 6px #fff, 0 0 15px var(--clown-red);
+  animation-delay: -0.2s;
+}
+
+.clown-marquee-wing span:nth-child(3) {
+  background: var(--clown-blue);
+  box-shadow: 0 0 6px #fff, 0 0 15px var(--clown-blue);
+  animation-delay: -0.4s;
+}
+
+.clown-marquee-wing span:nth-child(4) {
+  background: var(--clown-green);
+  box-shadow: 0 0 6px #fff, 0 0 15px var(--clown-green);
+  animation-delay: -0.6s;
+}
+
+.clown-marquee-wing span:nth-child(5) {
+  background: var(--clown-pink);
+  box-shadow: 0 0 6px #fff, 0 0 15px var(--clown-pink);
+  animation-delay: -0.8s;
 }
 
 .clown-light {
-  font-size: 37px;
-  animation: clownBlink 0.7s infinite alternate;
+  display: none;
 }
 
 .clown-prize-panel {
+  position: relative;
+  z-index: 4;
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 8px;
-  margin: 18px 0 12px;
+  gap: 9px;
+  margin: 10px 0 12px;
 }
 
 .clown-prize-panel > div {
+  position: relative;
   min-width: 0;
-  padding: 9px 5px;
+  overflow: hidden;
+  padding: 10px 5px;
   text-align: center;
-  border: 2px solid #ffd75a;
-  border-radius: 13px;
-  background: linear-gradient(180deg, #491051, #1b061e);
-  box-shadow: inset 0 0 10px #000;
+  border: 2px solid var(--clown-yellow);
+  border-radius: 14px;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.05), transparent),
+    linear-gradient(180deg, #57125d, #1b061e);
+  box-shadow:
+    inset 0 0 12px #000,
+    0 0 12px rgba(255, 216, 90, 0.14);
 }
 
 .clown-prize-panel span {
   display: block;
   overflow: hidden;
-  color: #ffbee9;
-  font-size: 10px;
-  font-weight: 900;
+  color: #fff3c4;
+  font-size: 11px;
+  font-weight: 1000;
+  letter-spacing: 1.2px;
   white-space: nowrap;
+  text-shadow:
+    0 0 6px rgba(255, 220, 110, 0.45),
+    0 1px 0 rgba(0, 0, 0, 0.55);
 }
 
 .clown-prize-panel strong {
   display: block;
-  margin-top: 4px;
+  margin-top: 5px;
   overflow: hidden;
-  color: #fff25d;
-  font-size: clamp(15px, 3.6vw, 24px);
+
+  color: #ffe96d;
+
+  font-size: clamp(20px, 4vw, 30px);
+  font-weight: 900;
+
   text-overflow: ellipsis;
+
+  text-shadow:
+    0 0 8px rgba(255,255,255,.45),
+    0 0 16px rgba(255,232,105,.75),
+    0 2px 2px rgba(0,0,0,.55);
 }
 
 .clown-paylines {
+  position: relative;
+  z-index: 4;
   display: flex;
   justify-content: center;
   gap: 7px;
@@ -142,76 +465,272 @@
 }
 
 .clown-paylines span {
-  padding: 4px 9px;
-  border: 1px solid #ffb9e8;
+  padding: 4px 10px;
+  border: 1px solid #ffc3e9;
   border-radius: 20px;
-  color: #ffb9e8;
-  background: rgba(0, 0, 0, 0.35);
+  color: #ffc3e9;
+  background: rgba(0, 0, 0, 0.42);
   font-size: 11px;
-  font-weight: 900;
+  font-weight: 1000;
+  box-shadow: inset 0 0 8px rgba(0, 0, 0, 0.55);
 }
 
 .clown-paylines .clown-line-active {
   color: #3b1500;
-  background: #fff05b;
-  box-shadow: 0 0 14px #fff05b;
+  background: var(--clown-yellow);
+  box-shadow:
+    0 0 8px #fff,
+    0 0 17px var(--clown-yellow);
 }
 
 .clown-reels {
+  position: relative;
+  z-index: 4;
   display: grid;
   grid-template-columns: repeat(5, 1fr);
-  gap: 7px;
-  padding: 11px;
-  border: 5px solid #ffec85;
-  border-radius: 22px;
-  background: #140419;
+  gap: 8px;
+  padding: 14px;
+  overflow: hidden;
+  border: 5px solid #ffe76a;
+  border-radius: 26px;
+
+  background:
+    linear-gradient(
+      180deg,
+      rgba(255,255,255,.18) 0%,
+      rgba(255,255,255,.05) 12%,
+      rgba(28,7,35,.96) 18%,
+      #120115 100%
+    );
+
   box-shadow:
-    inset 0 0 27px #000,
-    0 0 20px rgba(255, 236, 133, 0.4);
+    inset 0 2px 0 rgba(255,255,255,.35),
+    inset 0 -18px 30px rgba(0,0,0,.70),
+    inset 0 0 70px rgba(255,255,255,.05),
+    0 0 15px rgba(255,225,120,.55),
+    0 0 45px rgba(255,90,190,.28);
+}
+
+.clown-reels::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+
+  background:linear-gradient(
+    180deg,
+    rgba(255,255,255,.28) 0%,
+    rgba(255,255,255,.08) 10%,
+    transparent 24%,
+    transparent 76%,
+    rgba(0,0,0,.20) 92%,
+    rgba(0,0,0,.45) 100%
+  );
+}
+
+.clown-reels::after{
+  content:"";
+  position:absolute;
+  left:0;
+  right:0;
+  top:50%;
+  height:3px;
+  background:rgba(255,255,255,.18);
+  box-shadow:0 0 15px rgba(255,255,255,.35);
+  pointer-events:none;
+}
+
+.clown-reels-glass {
+  position: absolute;
+  top: -45%;
+  left: -55%;
+  z-index: 5;
+  width: 35%;
+  height: 190%;
+  pointer-events: none;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.14),
+    transparent
+  );
+  transform: rotate(18deg);
+  animation: clownGlassSweep 5.2s ease-in-out infinite;
+}
+
+.clown-reels::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.07), transparent 22%),
+    repeating-linear-gradient(
+      0deg,
+      rgba(255, 255, 255, 0.018) 0 1px,
+      transparent 1px 4px
+    );
+}
+
+.clown-reels-corner {
+  position: absolute;
+  z-index: 6;
+  width: 20px;
+  height: 20px;
+  border-color: var(--clown-blue);
+  filter: drop-shadow(0 0 5px var(--clown-blue));
+  pointer-events: none;
+}
+
+.clown-reels-corner-tl {
+  top: 6px;
+  left: 6px;
+  border-top: 3px solid;
+  border-left: 3px solid;
+  border-radius: 8px 0 0 0;
+}
+
+.clown-reels-corner-tr {
+  top: 6px;
+  right: 6px;
+  border-top: 3px solid;
+  border-right: 3px solid;
+  border-radius: 0 8px 0 0;
+}
+
+.clown-reels-corner-bl {
+  bottom: 6px;
+  left: 6px;
+  border-bottom: 3px solid;
+  border-left: 3px solid;
+  border-radius: 0 0 0 8px;
+}
+
+.clown-reels-corner-br {
+  right: 6px;
+  bottom: 6px;
+  border-right: 3px solid;
+  border-bottom: 3px solid;
+  border-radius: 0 0 8px 0;
 }
 
 .clown-reel {
+  position: relative;
+  z-index: 2;
   display: grid;
   gap: 7px;
 }
 
 .clown-symbol {
+  position: relative;
   aspect-ratio: 1 / 1;
   display: grid;
   place-items: center;
   overflow: hidden;
-  border: 3px solid #ff7ace;
-  border-radius: 13px;
+
+  border: 3px solid #ffd86c;
+  border-radius: 16px;
+
   background:
-    radial-gradient(circle, #fff 0%, #ffe5f8 38%, #f993d5 100%);
+    radial-gradient(circle at 30% 18%,
+      rgba(255,255,255,.95) 0%,
+      rgba(255,255,255,.55) 18%,
+      rgba(255,235,248,.95) 42%,
+      #ffb7e8 68%,
+      #f26bc4 100%);
+
   box-shadow:
-    inset 0 0 10px rgba(255, 255, 255, 0.9),
-    0 0 8px rgba(255, 80, 190, 0.4);
-  font-size: clamp(31px, 6.5vw, 57px);
+    inset 0 3px 0 rgba(255,255,255,.75),
+    inset 0 -12px 18px rgba(150,0,80,.18),
+    inset 0 0 18px rgba(255,255,255,.45),
+    0 0 10px rgba(255,210,90,.40),
+    0 4px 12px rgba(0,0,0,.28);
+
+  font-size: clamp(38px, 7vw, 68px);
+
   transition:
-    transform 0.2s,
-    filter 0.2s;
+    transform .18s ease,
+    filter .18s ease,
+    box-shadow .18s ease;
+}
+.clown-symbol::before{
+  content:"";
+  position:absolute;
+  top:0;
+  left:8%;
+  width:84%;
+  height:38%;
+
+  border-radius:0 0 40px 40px;
+
+  background:linear-gradient(
+      180deg,
+      rgba(255,255,255,.72),
+      rgba(255,255,255,0)
+  );
+
+  pointer-events:none;
+}
+.clown-symbol:hover {
+  transform: translateY(-4px) scale(1.06);
+  filter:
+    brightness(1.18)
+    saturate(1.15);
+
+  box-shadow:
+    inset 0 2px 0 rgba(255,255,255,.75),
+    0 0 10px rgba(255,255,255,.35),
+    0 0 22px rgba(255,220,90,.75),
+    0 0 38px rgba(255,90,180,.45);
 }
 
 .clown-spinning {
-  animation: clownShake 0.11s infinite;
-  filter: blur(1.5px);
+  animation: clownShake .08s linear infinite;
+
+  filter:
+    blur(2.2px)
+    brightness(1.15)
+    saturate(1.18);
+
+  transform-origin:center center;
+
+  will-change:
+    transform,
+    filter;
 }
 
 .clown-winning-symbol {
-  z-index: 2;
-  border-color: #fff34e;
-  animation: clownSymbolWin 0.55s infinite alternate;
+  position: relative;
+  z-index: 5;
+
+  border-color: #fff68a;
+
+  animation: clownSymbolWin .45s infinite alternate;
+
   box-shadow:
-    0 0 19px #fff34e,
-    inset 0 0 14px #fff;
+    0 0 10px #ffffff,
+    0 0 24px #fff36a,
+    0 0 46px #ffdd44,
+    0 0 70px rgba(255,215,0,.70),
+    inset 0 0 22px rgba(255,255,255,.95);
+}
+
+.clown-winning-symbol::after{
+  content:"";
+  position:absolute;
+  inset:-4px;
+  border-radius:16px;
+  border:2px solid rgba(255,255,255,.55);
+  animation: clownWinningRing .8s linear infinite;
 }
 
 .clown-scatter-symbol {
   border-color: #49ecff;
   background:
     radial-gradient(circle, #fff 0%, #acf6ff 40%, #34aede 100%);
-  box-shadow: 0 0 18px #49ecff;
+  box-shadow:
+    0 0 10px #fff,
+    0 0 21px #49ecff;
 }
 
 .clown-wild-symbol {
@@ -220,61 +739,182 @@
 }
 
 .clown-message {
-  min-height: 28px;
-  margin: 15px 0 10px;
+  position: relative;
+  z-index: 4;
+  min-height: 30px;
+  margin: 14px 0 10px;
   text-align: center;
   color: #ffe99a;
   font-size: 17px;
-  font-weight: 900;
+  font-weight: 1000;
+  text-shadow: 0 0 10px rgba(255, 100, 198, 0.36);
 }
 
 .clown-message-win {
   color: #fff34e;
-  text-shadow: 0 0 12px #ff44b7;
+  text-shadow:
+    0 0 8px #fff,
+    0 0 16px #ff44b7;
+}
+
+.clown-control-deck {
+  position: relative;
+  z-index: 4;
+  padding: 11px 10px 8px;
+  border: 2px solid rgba(255, 232, 105, 0.55);
+  border-radius: 17px;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.07), transparent),
+    linear-gradient(180deg, #4b0d50, #1a061e);
+  box-shadow:
+    inset 0 0 14px rgba(0, 0, 0, 0.62),
+    0 0 14px rgba(255, 215, 90, 0.16);
+}
+
+.clown-control-lights {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  height: 9px;
+  margin-bottom: 7px;
+}
+
+.clown-control-lights span {
+  width: 9px;
+  height: 5px;
+  border-radius: 5px;
+  background: var(--clown-yellow);
+  box-shadow: 0 0 8px var(--clown-yellow);
+  animation: clownDeckBlink 0.85s ease-in-out infinite alternate;
+}
+
+.clown-control-lights span:nth-child(4n + 1) {
+  background: var(--clown-red);
+  box-shadow: 0 0 8px var(--clown-red);
+}
+
+.clown-control-lights span:nth-child(4n + 2) {
+  background: var(--clown-blue);
+  box-shadow: 0 0 8px var(--clown-blue);
+}
+
+.clown-control-lights span:nth-child(4n + 3) {
+  background: var(--clown-green);
+  box-shadow: 0 0 8px var(--clown-green);
+}
+
+.clown-control-lights span:nth-child(2n) {
+  animation-delay: -0.35s;
 }
 
 .clown-controls {
   display: grid;
-  grid-template-columns: 72px 1fr 72px;
+  grid-template-columns: 74px 1fr 74px;
   gap: 10px;
 }
 
 .clown-controls button {
-  min-height: 57px;
+  min-height: 59px;
   border-radius: 15px;
-  font-weight: 900;
+  font-weight: 1000;
+  transition:
+    transform 0.16s ease,
+    filter 0.16s ease;
+}
+
+.clown-controls button:not(:disabled):active {
+  transform: scale(0.97);
 }
 
 .clown-small-button {
-  border: 3px solid #ffd75a;
+  border: 3px solid var(--clown-yellow);
   color: #fff;
-  background: linear-gradient(180deg, #9c298c, #450849);
+  background: linear-gradient(180deg, #b42a89, #4a084c);
   font-size: 30px;
   cursor: pointer;
+  box-shadow:
+    0 0 12px rgba(255, 224, 91, 0.28),
+    inset 0 0 8px rgba(255, 255, 255, 0.11);
+}
+
+.clown-small-button:hover {
+  filter: brightness(1.18);
 }
 
 .clown-spin-button {
-  border: 4px solid #fff25d;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 4px solid #ffe76a;
+  border-radius: 18px;
   color: #fff;
-  background: linear-gradient(180deg, #ff4c50, #a90025);
-  font-size: 23px;
+  background:
+    linear-gradient(180deg,
+      #fff6b3 0%,
+      #ffd74e 8%,
+      #ff8a52 22%,
+      #ff4b63 50%,
+      #bb102b 72%,
+      #62040f 100%);
+  font-size: 25px;
+  font-weight: 900;
+  letter-spacing: 2px;
+  text-transform: uppercase;
   cursor: pointer;
+  text-shadow:
+    0 2px 0 rgba(0,0,0,.65),
+    0 0 10px rgba(255,255,255,.45);
   box-shadow:
-    0 0 18px rgba(255, 242, 93, 0.6),
-    inset 0 0 10px rgba(255, 255, 255, 0.25);
+    0 0 8px #fff,
+    0 0 18px #ffe76a,
+    0 0 40px rgba(255,215,0,.75),
+    inset 0 2px 0 rgba(255,255,255,.75),
+    inset 0 -12px 18px rgba(90,0,18,.45);
+  transition:
+    transform .15s ease,
+    box-shadow .25s ease;
+  animation: clownSpinBreathe 1.3s ease-in-out infinite;
+}
+.clown-spin-button::before {
+  content: "";
+  position: absolute;
+  top: -40%;
+  left: -160%;
+  width: 70%;
+  height: 180%;
+  background: linear-gradient(
+    90deg,
+    rgba(255,255,255,0) 0%,
+    rgba(255,255,255,.20) 25%,
+    rgba(255,255,255,.95) 50%,
+    rgba(255,255,255,.20) 75%,
+    rgba(255,255,255,0) 100%
+  );
+  transform: rotate(18deg);
+  animation: clownButtonSweep 2.2s linear infinite;
+  pointer-events: none;
+}
+
+.clown-spin-button:disabled::before {
+  display: none;
 }
 
 .clown-free-spin-button {
-  background: linear-gradient(180deg, #17c6e0, #086b9a);
+  background: linear-gradient(180deg, #28d8ef, #08749e);
   animation: clownFreeSpin 0.65s infinite alternate;
 }
 
 .clown-controls button:disabled {
   opacity: 0.55;
   cursor: default;
+  animation: none;
 }
 
 .clown-bottom-actions {
+  position: relative;
+  z-index: 4;
   display: flex;
   justify-content: center;
   gap: 10px;
@@ -285,30 +925,51 @@
   padding: 10px 16px;
   border-radius: 12px;
   color: #fff;
-  font-weight: 900;
+  font-weight: 1000;
   cursor: pointer;
+  transition:
+    transform 0.18s ease,
+    filter 0.18s ease;
+}
+
+.clown-bottom-actions button:hover {
+  transform: translateY(-1px);
+  filter: brightness(1.16);
 }
 
 .clown-back-button {
-  border: 2px solid #ffd75a;
-  background: linear-gradient(180deg, #6f2288, #300743);
+  border: 2px solid var(--clown-yellow);
+  background: linear-gradient(180deg, #792894, #310744);
 }
 
 .clown-logout-button {
-  border: 2px solid #ff7d8b;
-  background: linear-gradient(180deg, #9d2338, #510a18);
+  border: 2px solid #ff8994;
+  background: linear-gradient(180deg, #a8253e, #510a18);
 }
 
 .clown-help {
+  position: relative;
+  z-index: 4;
   display: flex;
   justify-content: center;
   gap: 14px;
   flex-wrap: wrap;
-  margin-top: 15px;
-  color: #ffd5f2;
+  margin-top: 14px;
+  color: #ffd9f3;
   font-size: 11px;
-  font-weight: 800;
+  font-weight: 900;
   text-align: center;
+}
+
+.clown-phase-stamp {
+  position: relative;
+  z-index: 4;
+  margin-top: 8px;
+  color: rgba(255, 238, 171, 0.38);
+  font-size: 7px;
+  font-weight: 1000;
+  letter-spacing: 1.2px;
+  text-align: right;
 }
 
 .clown-confetti {
@@ -325,6 +986,7 @@
   left: var(--confetti-left);
   color: #ffe94f;
   font-size: 13px;
+  opacity: 0.58;
   animation: clownConfettiFall var(--confetti-duration) linear infinite;
   animation-delay: var(--confetti-delay);
 }
@@ -350,22 +1012,23 @@
   padding: 20px;
   border: 0;
   color: #fff;
-  background: rgba(15, 0, 24, 0.82);
+  background: rgba(15, 0, 24, 0.84);
   cursor: pointer;
 }
 
 .clown-celebration-card {
-  width: min(440px, 92vw);
-  padding: 34px 20px;
-  border: 5px solid #fff05b;
-  border-radius: 28px;
+  width: min(460px, 92vw);
+  padding: 36px 20px;
+  border: 5px solid var(--clown-yellow);
+  border-radius: 30px;
   text-align: center;
   background:
-    radial-gradient(circle at top, #ff4fb8, transparent 55%),
-    linear-gradient(180deg, #821071, #250332);
+    radial-gradient(circle at top, #ff56bd, transparent 55%),
+    linear-gradient(180deg, #8b1277, #250332);
   box-shadow:
-    0 0 35px #fff05b,
-    0 0 80px #ff36b1;
+    0 0 16px #fff,
+    0 0 40px var(--clown-yellow),
+    0 0 90px #ff36b1;
   animation: clownCelebrationPop 0.55s ease-out;
 }
 
@@ -381,55 +1044,199 @@
   margin: 12px 0;
   color: #fff34e;
   font-size: clamp(49px, 13vw, 84px);
-  text-shadow: 0 0 18px #ff4eb8;
+  text-shadow:
+    0 0 8px #fff,
+    0 0 20px #ff4eb8;
 }
 
 .clown-celebration-card p {
   margin: 7px 0;
   color: #8ff8ff;
   font-size: 20px;
-  font-weight: 900;
+  font-weight: 1000;
 }
 
 .clown-celebration-card small {
   display: block;
   margin-top: 15px;
   color: #ffd8f2;
-  font-weight: 900;
+  font-weight: 1000;
 }
 
-@keyframes clownShake {
-  from {
-    transform: translateY(-5px);
+@keyframes clownSpotLeft {
+  from { transform: rotate(10deg) translateX(-35px); }
+  to { transform: rotate(18deg) translateX(45px); }
+}
+
+@keyframes clownSpotRight {
+  from { transform: rotate(-10deg) translateX(35px); }
+  to { transform: rotate(-18deg) translateX(-45px); }
+}
+
+@keyframes clownCloud {
+  from { transform: translateY(-12px) scale(0.95); }
+  to { transform: translateY(18px) scale(1.08); }
+}
+
+@keyframes clownMachineShine {
+  0%, 70% { transform: translateX(-140%) rotate(20deg); }
+  100% { transform: translateX(520%) rotate(20deg); }
+}
+
+@keyframes clownMachinePulse {
+  from { opacity: 0.48; filter: brightness(0.9); }
+  to { opacity: 1; filter: brightness(1.35); }
+}
+
+@keyframes clownBulbChase {
+  0%, 100% { opacity: 0.3; transform: scale(0.7); }
+  50% { opacity: 1; transform: scale(1.35); background: #fff; }
+}
+
+@keyframes clownTitleHalo {
+  from { opacity: 0.45; transform: scale(0.92); }
+  to { opacity: 1; transform: scale(1.08); }
+}
+
+@keyframes clownTitleGlow {
+  from { filter: drop-shadow(0 4px 0 #7b0d33) brightness(0.95); }
+  to { filter: drop-shadow(0 4px 0 #7b0d33) brightness(1.18); }
+}
+
+@keyframes clownWingBlink {
+  from { opacity: 0.35; transform: scale(0.75); }
+  to { opacity: 1; transform: scale(1.15); }
+}
+
+@keyframes clownGlassSweep {
+  0%, 72% { transform: translateX(-145%) rotate(18deg); }
+  100% { transform: translateX(520%) rotate(18deg); }
+}
+
+@keyframes clownDeckBlink {
+  from { opacity: 0.25; transform: scaleX(0.55); }
+  to { opacity: 1; transform: scaleX(1.25); }
+}
+
+@keyframes clownSpinBreathe {
+  0%, 100% {
+    transform: scale(1);
+    box-shadow:
+      0 0 14px rgba(255, 242, 93, 0.48),
+      inset 0 1px 0 rgba(255, 255, 255, 0.38);
   }
 
-  to {
-    transform: translateY(5px);
+  50% {
+    transform: scale(1.035);
+    box-shadow:
+      0 0 28px rgba(255, 242, 93, 0.8),
+      inset 0 1px 0 rgba(255, 255, 255, 0.38);
   }
 }
 
-@keyframes clownBlink {
-  from {
-    opacity: 0.45;
-    transform: scale(0.9);
+@keyframes clownButtonSweep {
+  0% {
+    left: -180%;
+    opacity: 0;
   }
 
-  to {
+  8% {
+    opacity: .25;
+  }
+
+  25% {
     opacity: 1;
-    transform: scale(1.15);
   }
+
+  55% {
+    opacity: .9;
+  }
+
+  80% {
+    opacity: .25;
+  }
+
+  100% {
+    left: 220%;
+    opacity: 0;
+  }
+}
+.clown-spin-button:hover {
+  transform: translateY(-3px) scale(1.03);
+  box-shadow:
+    0 0 12px #fff,
+    0 0 28px #ffe76a,
+    0 0 60px rgba(255,215,0,.95),
+    0 0 90px rgba(255,60,120,.45);
+}
+
+.clown-spin-button:active {
+  transform: translateY(2px) scale(.98);
+}
+@keyframes clownShake {
+
+  0%{
+    transform:translateY(-9px) scaleY(.98);
+  }
+
+  20%{
+    transform:translateY(7px) scaleY(1.02);
+  }
+
+  40%{
+    transform:translateY(-6px);
+  }
+
+  60%{
+    transform:translateY(5px);
+  }
+
+  80%{
+    transform:translateY(-3px);
+  }
+
+  100%{
+    transform:translateY(3px);
+  }
+
 }
 
 @keyframes clownSymbolWin {
-  from {
-    transform: scale(0.94);
+
+  0%{
+    transform:scale(.94) rotate(-2deg);
+    filter:brightness(1);
   }
 
-  to {
-    transform: scale(1.1);
+  35%{
+    transform:scale(1.05) rotate(2deg);
+    filter:brightness(1.18);
   }
+
+  65%{
+    transform:scale(1.12) rotate(-1deg);
+    filter:brightness(1.35);
+  }
+
+  100%{
+    transform:scale(1.18);
+    filter:brightness(1.55);
+  }
+
 }
+@keyframes clownWinningRing {
 
+  from{
+    opacity:1;
+    transform:scale(.92);
+  }
+
+  to{
+    opacity:0;
+    transform:scale(1.28);
+  }
+
+}
 @keyframes clownMachineWin {
   from {
     box-shadow:
@@ -445,23 +1252,13 @@
 }
 
 @keyframes clownFreeSpin {
-  from {
-    box-shadow: 0 0 8px #45efff;
-  }
-
-  to {
-    box-shadow: 0 0 28px #45efff;
-  }
+  from { box-shadow: 0 0 8px #45efff; }
+  to { box-shadow: 0 0 28px #45efff; }
 }
 
 @keyframes clownConfettiFall {
-  from {
-    transform: translateY(-30px) rotate(0deg);
-  }
-
-  to {
-    transform: translateY(110vh) rotate(720deg);
-  }
+  from { transform: translateY(-30px) rotate(0deg); }
+  to { transform: translateY(110vh) rotate(720deg); }
 }
 
 @keyframes clownCelebrationPop {
@@ -475,37 +1272,44 @@
     transform: scale(1) rotate(0);
   }
 }
+
+/* Notebook y escritorio bajo */
 @media (max-height: 900px) and (min-width: 601px) {
   .clown-page {
-    padding: 8px 10px 18px;
+    padding: 7px 10px 14px;
   }
 
   .clown-machine {
-    width: min(700px, 96vw);
-    padding: 12px;
+    width: min(720px, 96vw);
+    padding: 12px 13px 10px;
     border-width: 3px;
-    border-radius: 22px;
+    border-radius: 23px;
+  }
+
+  .clown-frame-bulbs {
+    left: 18px;
+    right: 18px;
+  }
+
+  .clown-header {
+    min-height: 83px;
   }
 
   .clown-header h1 {
-    font-size: 50px;
+    font-size: 51px;
   }
 
   .clown-kicker,
   .clown-subtitle {
-    font-size: 9px;
-  }
-
-  .clown-light {
-    font-size: 26px;
+    font-size: 8px;
   }
 
   .clown-prize-panel {
-    margin: 10px 0 7px;
+    margin: 6px 0 6px;
   }
 
   .clown-prize-panel > div {
-    padding: 6px 4px;
+    padding: 5px 3px;
   }
 
   .clown-reels {
@@ -519,83 +1323,143 @@
   }
 
   .clown-symbol {
-    font-size: 38px;
+    height: 68px;
+    aspect-ratio: auto;
     border-width: 2px;
     border-radius: 9px;
+    font-size: 38px;
   }
 
   .clown-message {
-    margin: 8px 0 6px;
     min-height: 20px;
+    margin: 6px 0 5px;
     font-size: 13px;
   }
 
+  .clown-control-deck {
+    padding: 7px 7px 5px;
+  }
+
+  .clown-control-lights {
+    margin-bottom: 4px;
+  }
+
   .clown-controls button {
-    min-height: 45px;
+    min-height: 42px;
   }
 
   .clown-bottom-actions {
-    margin-top: 8px;
+    margin-top: 6px;
   }
 
   .clown-bottom-actions button {
-    padding: 7px 12px;
+    padding: 6px 10px;
+    font-size: 10px;
   }
 
   .clown-help {
-    margin-top: 8px;
-    font-size: 9px;
+    margin-top: 6px;
+    font-size: 8px;
+  }
+
+  .clown-phase-stamp {
+    margin-top: 3px;
   }
 }
+
+/* Celulares */
 @media (max-width: 600px) {
   .clown-page {
-    padding: 8px 5px 25px;
+    padding:
+      max(6px, env(safe-area-inset-top))
+      max(5px, env(safe-area-inset-right))
+      max(18px, env(safe-area-inset-bottom))
+      max(5px, env(safe-area-inset-left));
   }
 
   .clown-machine {
-    padding: 12px 7px 17px;
+    width: 100%;
+    padding: 13px 7px 15px;
     border-width: 3px;
-    border-radius: 20px;
+    border-radius: 21px;
+  }
+
+  .clown-machine::before {
+    inset: 6px;
+    border-radius: 15px;
+  }
+
+  .clown-frame-bulbs {
+    left: 12px;
+    right: 12px;
+    grid-template-columns: repeat(18, 1fr);
+  }
+
+  .clown-frame-bulbs span {
+    width: 5px;
+    height: 5px;
   }
 
   .clown-sound-button {
-    top: 7px;
-    right: 7px;
-    width: 38px;
-    height: 38px;
+    top: 8px;
+    right: 8px;
+    width: 39px;
+    height: 39px;
     font-size: 17px;
   }
 
   .clown-header {
-    gap: 3px;
-    padding-right: 30px;
+    grid-template-columns: 28px 1fr 28px;
+    min-height: 94px;
+    gap: 4px;
+    padding-right: 29px;
   }
 
   .clown-header h1 {
-    font-size: clamp(34px, 12vw, 53px);
+    font-size: clamp(36px, 12vw, 54px);
+    letter-spacing: 0;
   }
 
-  .clown-light {
-    font-size: 23px;
+  .clown-marquee-wing {
+    gap: 3px;
+  }
+
+  .clown-marquee-wing span {
+    width: 6px;
+    height: 6px;
+    border-width: 1px;
   }
 
   .clown-kicker,
   .clown-subtitle {
-    font-size: 8px;
+    font-size: 7px;
+  }
+
+  .clown-kicker {
+    letter-spacing: 1.6px;
+  }
+
+  .clown-subtitle {
+    margin-top: 5px;
   }
 
   .clown-prize-panel {
     gap: 4px;
-    margin-top: 13px;
+    margin: 8px 0 7px;
   }
 
   .clown-prize-panel > div {
     padding: 7px 2px;
     border-width: 1px;
+    border-radius: 10px;
   }
 
   .clown-prize-panel span {
     font-size: 7px;
+  }
+
+  .clown-prize-panel strong {
+    font-size: clamp(14px, 5vw, 20px);
   }
 
   .clown-paylines {
@@ -611,6 +1475,7 @@
     gap: 3px;
     padding: 5px;
     border-width: 3px;
+    border-radius: 15px;
   }
 
   .clown-reel {
@@ -625,8 +1490,20 @@
 
   .clown-message {
     min-height: 24px;
-    margin: 10px 0 7px;
+    margin: 9px 0 7px;
     font-size: 13px;
+  }
+
+  .clown-control-deck {
+    padding: 8px 6px 6px;
+  }
+
+  .clown-control-lights {
+    gap: 6px;
+  }
+
+  .clown-control-lights span {
+    width: 6px;
   }
 
   .clown-controls {
@@ -635,7 +1512,7 @@
   }
 
   .clown-controls button {
-    min-height: 50px;
+    min-height: 51px;
   }
 
   .clown-small-button {
@@ -643,6 +1520,7 @@
   }
 
   .clown-spin-button {
+    border-width: 3px;
     font-size: 18px;
   }
 
@@ -655,151 +1533,539 @@
     gap: 5px;
     font-size: 8px;
   }
+
+  .clown-phase-stamp {
+    display: none;
+  }
 }
 
-/* Ajuste final para navegador de escritorio: entra completa sin scroll */
-@media (min-width: 601px) and (max-height: 850px) {
-  .clown-page {
-    width: 100%;
-    height: 100dvh;
-    min-height: 0;
-    overflow: hidden;
-    padding: 6px 10px;
-    align-items: center;
-  }
-
-  .clown-machine {
-    width: min(720px, 96vw);
-    height: auto;
-    margin: 0 auto;
-    padding: 9px 11px;
-    border-width: 3px;
-    border-radius: 19px;
-  }
-
-  .clown-sound-button {
-    top: 8px;
-    right: 8px;
-    width: 38px;
-    height: 38px;
-    font-size: 17px;
-  }
-
+/* Celulares chicos */
+@media (max-width: 380px) {
   .clown-header {
-    gap: 7px;
-    padding-right: 34px;
+    grid-template-columns: 20px 1fr 20px;
   }
 
   .clown-header h1 {
-    margin: 0;
-    font-size: 42px;
-    line-height: 0.92;
+    font-size: 34px;
   }
 
-  .clown-kicker,
-  .clown-subtitle {
-    font-size: 8px;
-    line-height: 1.1;
-  }
-
-  .clown-subtitle {
-    margin-top: 4px;
-  }
-
-  .clown-light {
-    font-size: 22px;
+  .clown-marquee-wing span:nth-child(n + 4) {
+    display: none;
   }
 
   .clown-prize-panel {
-    gap: 5px;
-    margin: 7px 0 5px;
-  }
-
-  .clown-prize-panel > div {
-    padding: 4px 3px;
-    border-width: 1px;
-    border-radius: 9px;
-  }
-
-  .clown-prize-panel span {
-    font-size: 8px;
-  }
-
-  .clown-prize-panel strong {
-    margin-top: 1px;
-    font-size: 18px;
-  }
-
-  .clown-paylines {
-    gap: 4px;
-    margin-bottom: 4px;
-  }
-
-  .clown-paylines span {
-    padding: 2px 7px;
-    font-size: 9px;
-  }
-
-  .clown-reels {
-    gap: 4px;
-    padding: 5px;
-    border-width: 3px;
-    border-radius: 14px;
-  }
-
-  .clown-reel {
-    gap: 4px;
-  }
-
-  .clown-symbol {
-    width: 100%;
-    height: 68px;
-    aspect-ratio: auto;
-    border-width: 2px;
-    border-radius: 8px;
-    font-size: 37px;
-  }
-
-  .clown-message {
-    min-height: 18px;
-    margin: 5px 0 4px;
-    font-size: 12px;
-    line-height: 1.2;
-  }
-
-  .clown-controls {
-    grid-template-columns: 54px 1fr 54px;
-    gap: 6px;
-  }
-
-  .clown-controls button {
-    min-height: 40px;
-    border-radius: 10px;
-  }
-
-  .clown-small-button {
-    font-size: 24px;
-  }
-
-  .clown-spin-button {
-    border-width: 3px;
-    font-size: 18px;
+    grid-template-columns: repeat(2, 1fr);
   }
 
   .clown-bottom-actions {
-    gap: 7px;
-    margin-top: 5px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
   }
 
   .clown-bottom-actions button {
-    padding: 6px 10px;
-    font-size: 10px;
+    width: 100%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .clown-page *,
+  .clown-page *::before,
+  .clown-page *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+  }
+}
+
+
+/* =========================================================
+   CLOWN PARTY — FASE 2
+   Profundidad, perímetro completo, displays LED y victoria.
+   ========================================================= */
+
+.clown-machine {
+  padding-left: 28px;
+  padding-right: 28px;
+  box-shadow:
+    0 0 0 4px rgba(214, 29, 57, 0.76),
+    0 0 0 8px rgba(255, 231, 106, 0.2),
+    0 0 32px rgba(255, 231, 106, 0.68),
+    0 0 82px rgba(255, 50, 176, 0.42),
+    inset 0 0 42px rgba(0, 0, 0, 0.78);
+}
+
+.clown-machine::before {
+  box-shadow:
+    inset 0 0 18px rgba(255, 255, 255, 0.04),
+    0 0 12px rgba(255, 230, 110, 0.18);
+}
+
+.clown-machine-neon {
+  box-shadow:
+    0 0 12px #ffe76a,
+    0 0 28px #ff3cb6,
+    0 0 52px rgba(58, 217, 255, 0.72),
+    inset 0 0 20px rgba(255, 255, 255, 0.08);
+}
+
+.clown-machine-neon::before,
+.clown-machine-neon::after {
+  content: "";
+  position: absolute;
+  top: 34px;
+  bottom: 34px;
+  width: 8px;
+  border-radius: 10px;
+  background:
+    repeating-linear-gradient(
+      180deg,
+      #fff 0 6px,
+      var(--clown-red) 7px 14px,
+      var(--clown-yellow) 15px 22px,
+      var(--clown-blue) 23px 30px,
+      var(--clown-green) 31px 38px
+    );
+  box-shadow:
+    0 0 7px #fff,
+    0 0 16px var(--clown-pink);
+  animation: clownSideBulbs 1.2s linear infinite;
+}
+
+.clown-machine-neon::before {
+  left: 8px;
+}
+
+.clown-machine-neon::after {
+  right: 8px;
+  animation-delay: -0.6s;
+}
+
+.clown-side-decor {
+  position: absolute;
+  top: 130px;
+  bottom: 112px;
+  z-index: 5;
+  width: 34px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-around;
+  pointer-events: none;
+}
+
+.clown-side-decor-left {
+  left: 2px;
+}
+
+.clown-side-decor-right {
+  right: 2px;
+}
+
+.clown-side-decor span {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border: 1px solid rgba(255, 244, 185, 0.72);
+  border-radius: 50%;
+  color: var(--clown-yellow-soft);
+  background: rgba(45, 4, 52, 0.86);
+  font-size: 15px;
+  box-shadow:
+    0 0 7px #fff,
+    0 0 14px var(--clown-pink);
+  animation: clownSideDecorFloat 2.4s ease-in-out infinite;
+}
+
+.clown-side-decor span:nth-child(2) {
+  animation-delay: -0.6s;
+}
+
+.clown-side-decor span:nth-child(3) {
+  animation-delay: -1.2s;
+}
+
+.clown-side-decor span:nth-child(4) {
+  animation-delay: -1.8s;
+}
+
+.clown-header {
+  min-height: 128px;
+}
+
+.clown-header h1 {
+  font-size: clamp(52px, 8.6vw, 86px);
+  text-shadow:
+    0 0 8px rgba(255, 247, 185, 0.92),
+    0 0 24px rgba(255, 66, 181, 0.68),
+    0 7px 0 rgba(92, 7, 31, 0.9);
+}
+
+.clown-title-wrap::before,
+.clown-title-wrap::after {
+  content: "✦";
+  position: absolute;
+  top: 50%;
+  z-index: 3;
+  color: #fff;
+  font-size: 16px;
+  text-shadow:
+    0 0 6px #fff,
+    0 0 15px var(--clown-yellow);
+  animation: clownTitleSpark 1.15s ease-in-out infinite alternate;
+}
+
+.clown-title-wrap::before {
+  left: -22px;
+}
+
+.clown-title-wrap::after {
+  right: -22px;
+  animation-delay: -0.55s;
+}
+
+.clown-prize-panel > div {
+  position: relative;
+  overflow: hidden;
+  padding-top: 12px;
+  padding-bottom: 12px;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.07), transparent 24%),
+    linear-gradient(180deg, #4c0d56, #120316);
+}
+
+.clown-prize-panel > div::before {
+  content: "";
+  position: absolute;
+  inset: 5px;
+  border: 1px solid rgba(255, 241, 171, 0.12);
+  border-radius: 9px;
+  pointer-events: none;
+}
+
+.clown-prize-panel > div::after {
+  content: "";
+  position: absolute;
+  top: -60%;
+  left: -70%;
+  width: 35%;
+  height: 220%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.16),
+    transparent
+  );
+  transform: rotate(20deg);
+  animation: clownDisplaySweep 4.8s ease-in-out infinite;
+  pointer-events: none;
+}
+
+.clown-led-value {
+  position: relative;
+  z-index: 2;
+  font-family: "Courier New", Consolas, monospace;
+  letter-spacing: 1px;
+  text-shadow:
+    0 0 6px currentColor,
+    0 0 14px currentColor;
+}
+
+.clown-led-value-credits {
+  color: #fff4a3 !important;
+}
+
+.clown-led-value-bet {
+  color: #8ff8ff !important;
+}
+
+.clown-led-value-prize {
+  color: #ff83d6 !important;
+}
+
+.clown-led-value-free {
+  color: #79ff9e !important;
+}
+
+.clown-reels {
+  transform: perspective(900px) rotateX(0.4deg);
+  border-width: 6px;
+  border-color: #fff7c0;
+  box-shadow:
+    inset 0 0 46px #000,
+    inset 0 12px 22px rgba(255, 255, 255, 0.05),
+    0 0 10px #fff,
+    0 0 24px var(--clown-yellow),
+    0 0 36px rgba(255, 61, 186, 0.28);
+}
+
+.clown-reels::before {
+  content: "";
+  position: absolute;
+  inset: 8px;
+  z-index: 1;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  box-shadow:
+    inset 0 0 22px rgba(0, 0, 0, 0.78),
+    0 0 10px rgba(60, 217, 255, 0.14);
+  pointer-events: none;
+}
+
+.clown-reel {
+  padding: 2px;
+  border-radius: 10px;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.04), transparent),
+    rgba(0, 0, 0, 0.18);
+  box-shadow:
+    inset 0 0 12px rgba(0, 0, 0, 0.54),
+    0 0 8px rgba(255, 82, 193, 0.08);
+}
+
+.clown-symbol {
+  position: relative;
+  box-shadow:
+    inset 0 0 13px rgba(255, 255, 255, 0.95),
+    inset 0 -12px 16px rgba(146, 20, 103, 0.18),
+    0 0 10px rgba(255, 80, 190, 0.5);
+}
+
+.clown-symbol::after {
+  content: "";
+  position: absolute;
+  top: 7%;
+  left: 10%;
+  right: 10%;
+  height: 18%;
+  border-radius: 50%;
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.38),
+    transparent
+  );
+  pointer-events: none;
+}
+
+.clown-control-deck {
+  border-width: 3px;
+  border-color: rgba(255, 232, 105, 0.72);
+  box-shadow:
+    inset 0 0 18px rgba(0, 0, 0, 0.72),
+    0 0 10px #fff,
+    0 0 20px rgba(255, 215, 90, 0.26);
+}
+
+.clown-spin-button {
+  min-height: 64px !important;
+  border-width: 5px;
+  font-size: 26px;
+  letter-spacing: 1.8px;
+  text-shadow:
+    0 2px 0 rgba(0, 0, 0, 0.6),
+    0 0 8px rgba(255, 255, 255, 0.34);
+  box-shadow:
+    0 0 12px #fff,
+    0 0 24px rgba(255, 242, 93, 0.8),
+    inset 0 1px 0 rgba(255, 255, 255, 0.45),
+    inset 0 -14px 18px rgba(94, 0, 21, 0.3);
+}
+
+.clown-spin-button-glow {
+  position: absolute;
+  inset: 5px;
+  border: 1px solid rgba(255, 255, 255, 0.38);
+  border-radius: 10px;
+  pointer-events: none;
+  box-shadow:
+    inset 0 0 12px rgba(255, 255, 255, 0.14),
+    0 0 10px rgba(255, 240, 110, 0.2);
+}
+
+.clown-spin-button-label {
+  position: relative;
+  z-index: 2;
+}
+
+.clown-win-flash {
+  position: absolute;
+  inset: 0;
+  z-index: 20;
+  border-radius: inherit;
+  pointer-events: none;
+  opacity: 0;
+  background:
+    radial-gradient(circle at center, rgba(255, 255, 255, 0.88), transparent 56%);
+}
+
+.clown-machine-winning .clown-win-flash {
+  animation: clownWinFlash 0.8s ease-out infinite;
+}
+
+.clown-machine-winning .clown-frame-bulbs span,
+.clown-machine-winning .clown-control-lights span {
+  animation-duration: 0.35s;
+}
+
+.clown-machine-winning .clown-side-decor span {
+  animation-duration: 0.75s;
+  filter: brightness(1.4);
+}
+
+.clown-celebration-card {
+  position: relative;
+  overflow: hidden;
+  border-width: 7px;
+  background:
+    radial-gradient(circle at 50% 0%, rgba(255, 241, 128, 0.26), transparent 36%),
+    radial-gradient(circle at top, #ff56bd, transparent 55%),
+    linear-gradient(180deg, #8b1277, #250332);
+}
+
+.clown-celebration-card::before {
+  content: "";
+  position: absolute;
+  inset: 10px;
+  border: 1px solid rgba(255, 247, 193, 0.34);
+  border-radius: 20px;
+  pointer-events: none;
+}
+
+.clown-celebration-card::after {
+  content: "";
+  position: absolute;
+  top: -75%;
+  left: -70%;
+  width: 42%;
+  height: 250%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.22),
+    transparent
+  );
+  transform: rotate(20deg);
+  animation: clownCelebrationSweep 2.2s ease-in-out infinite;
+  pointer-events: none;
+}
+
+@keyframes clownSideBulbs {
+  from { background-position-y: 0; }
+  to { background-position-y: 38px; }
+}
+
+@keyframes clownSideDecorFloat {
+  0%, 100% {
+    transform: translateY(0) rotate(-4deg) scale(0.94);
+  }
+  50% {
+    transform: translateY(-8px) rotate(4deg) scale(1.08);
+  }
+}
+
+@keyframes clownTitleSpark {
+  from {
+    opacity: 0.25;
+    transform: scale(0.7) rotate(0deg);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1.3) rotate(90deg);
+  }
+}
+
+@keyframes clownDisplaySweep {
+  0%, 72% {
+    transform: translateX(-140%) rotate(20deg);
+  }
+  100% {
+    transform: translateX(520%) rotate(20deg);
+  }
+}
+
+@keyframes clownWinFlash {
+  0% {
+    opacity: 0;
+  }
+  18% {
+    opacity: 0.72;
+  }
+  40%,
+  100% {
+    opacity: 0;
+  }
+}
+
+@keyframes clownCelebrationSweep {
+  0%, 50% {
+    transform: translateX(-150%) rotate(20deg);
+  }
+  100% {
+    transform: translateX(540%) rotate(20deg);
+  }
+}
+
+@media (max-height: 900px) and (min-width: 601px) {
+  .clown-machine {
+    padding-left: 18px;
+    padding-right: 18px;
   }
 
-  .clown-help {
-    gap: 8px;
-    margin-top: 5px;
-    font-size: 8px;
-    line-height: 1.1;
+  .clown-side-decor {
+    display: none;
+  }
+
+  .clown-header {
+    min-height: 88px;
+  }
+
+  .clown-header h1 {
+    font-size: 55px;
+  }
+
+  .clown-spin-button {
+    min-height: 46px !important;
+    font-size: 20px;
+  }
+}
+
+@media (max-width: 600px) {
+  .clown-machine {
+    padding-left: 9px;
+    padding-right: 9px;
+  }
+
+  .clown-machine-neon::before,
+  .clown-machine-neon::after,
+  .clown-side-decor {
+    display: none;
+  }
+
+  .clown-header {
+    min-height: 98px;
+  }
+
+  .clown-header h1 {
+    font-size: clamp(37px, 12.5vw, 56px);
+  }
+
+  .clown-title-wrap::before,
+  .clown-title-wrap::after {
+    display: none;
+  }
+
+  .clown-prize-panel > div {
+    padding-top: 8px;
+    padding-bottom: 8px;
+  }
+
+  .clown-reels {
+    border-width: 4px;
+    transform: none;
+  }
+
+  .clown-spin-button {
+    min-height: 54px !important;
+    border-width: 4px;
+    font-size: 19px;
   }
 }
