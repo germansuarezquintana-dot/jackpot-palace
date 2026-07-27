@@ -10,6 +10,8 @@ const BET_OPTIONS = [100, 250, 500, 1000, 2500, 5000];
 
 const WILD = "🤡";
 const SCATTER = "🎪";
+const TICKET = "🎟️";
+const CAROUSEL = "🎠";
 
 const SYMBOLS = [
   WILD,
@@ -20,35 +22,56 @@ const SYMBOLS = [
   "⭐",
   "🍭",
   "🎭",
+  TICKET,
+  CAROUSEL,
 ];
 
 const WEIGHTED_SYMBOLS = [
   "🎈",
   "🎈",
   "🎈",
+  "🎈",
+  "🎈",
+  "🎈",
+  "🎈",
   "🍿",
   "🍿",
   "🍿",
+  "🍿",
+  "🍿",
+  "🍿",
+  "🍭",
+  "🍭",
   "🍭",
   "🍭",
   "🍭",
   "🎭",
   "🎭",
+  "🎭",
+  "🎭",
+  "⭐",
   "⭐",
   "⭐",
   "🎁",
+  "🎁",
+  TICKET,
+  TICKET,
+  TICKET,
+  CAROUSEL,
+  CAROUSEL,
+  CAROUSEL,
   SCATTER,
   WILD,
 ];
 
 const SYMBOL_PAYS = {
-  "🎈": { 3: 1, 4: 2, 5: 4 },
-  "🍿": { 3: 1, 4: 3, 5: 5 },
-  "🍭": { 3: 2, 4: 4, 5: 7 },
-  "🎭": { 3: 2, 4: 5, 5: 9 },
-  "⭐": { 3: 3, 4: 7, 5: 12 },
-  "🎁": { 3: 4, 4: 10, 5: 18 },
-  [WILD]: { 3: 5, 4: 15, 5: 30 },
+  "🎈": { 3: 2.3, 4: 4.7, 5: 9 },
+  "🍿": { 3: 2.9, 4: 6, 5: 12 },
+  "🍭": { 3: 4.1, 4: 9, 5: 18 },
+  "🎭": { 3: 6, 4: 14, 5: 29 },
+  "⭐": { 3: 9, 4: 23, 5: 47 },
+  "🎁": { 3: 14, 4: 36, 5: 72 },
+  [WILD]: { 3: 23, 4: 59, 5: 119 },
 };
 
 const PAYLINES = [
@@ -168,14 +191,14 @@ function calculatePrize(grid, bet) {
   let bonusPrize = 0;
 
   if (scatterCount === 3) {
+    freeSpinsWon = 3;
+    bonusPrize = bet * 0.5;
+  } else if (scatterCount === 4) {
     freeSpinsWon = 5;
     bonusPrize = bet * 2;
-  } else if (scatterCount === 4) {
+  } else if (scatterCount >= 5) {
     freeSpinsWon = 8;
     bonusPrize = bet * 5;
-  } else if (scatterCount >= 5) {
-    freeSpinsWon = 12;
-    bonusPrize = bet * 10;
   }
 
   let surpriseMultiplier = 1;
@@ -183,11 +206,11 @@ function calculatePrize(grid, bet) {
   if (linePrize > 0) {
     const multiplierChance = Math.random();
 
-    if (multiplierChance < 0.03) {
-      surpriseMultiplier = 5;
-    } else if (multiplierChance < 0.1) {
+    if (multiplierChance < 0.01) {
+      surpriseMultiplier = 4;
+    } else if (multiplierChance < 0.04) {
       surpriseMultiplier = 3;
-    } else if (multiplierChance < 0.22) {
+    } else if (multiplierChance < 0.12) {
       surpriseMultiplier = 2;
     }
   }
@@ -1270,7 +1293,7 @@ export default function ClownParty({
           </span>
         </div>
 
-        <div className="clown-phase-stamp">CLOWN PARTY · CELEBRACIÓN PREMIUM</div>
+        <div className="clown-phase-stamp">CLOWN PARTY · PAGO MENOS SEGUIDO</div>
       </section>
 
       {celebration && (
