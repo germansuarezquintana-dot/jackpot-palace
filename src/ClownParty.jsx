@@ -28,10 +28,123 @@ function randomSymbol() {
   ];
 }
 
-function createGrid() {
-  return Array.from({ length: COLUMNS }, () =>
-    Array.from({ length: ROWS }, randomSymbol)
+const NORMAL_WIN_CHANCE = 0.13;
+const BONUS_CHANCE = 0.01;
+
+function hasPayingLine(grid) {
+  return PAYLINES.some((payline) => {
+    const result = evaluateLine(grid, payline, 1);
+    return result.amount > 0;
+  });
+}
+
+function createLosingGrid() {
+  const safeSymbols = [
+    TICKET,
+    CAROUSEL,
+    "🎈",
+    "🍿",
+    "🍭",
+    "🎭",
+    "⭐",
+    "🎁",
+  ];
+
+  for (let attempt = 0; attempt < 250; attempt += 1) {
+    const candidate = Array.from(
+      { length: COLUMNS },
+      () =>
+        Array.from(
+          { length: ROWS },
+          () =>
+            safeSymbols[
+              Math.floor(Math.random() * safeSymbols.length)
+            ]
+        )
+    );
+
+    if (
+      !hasPayingLine(candidate) &&
+      countScatters(candidate) < 3
+    ) {
+      return candidate;
+    }
+  }
+
+  // Respaldo seguro por si no encuentra una combinación.
+  return Array.from(
+    { length: COLUMNS },
+    (_, columnIndex) =>
+      Array.from(
+        { length: ROWS },
+        (_, rowIndex) =>
+          (columnIndex + rowIndex) % 2 === 0
+            ? TICKET
+            : CAROUSEL
+      )
   );
+}
+
+function createSmallWinningGrid() {
+  const grid = createLosingGrid();
+
+  const payline =
+    PAYLINES[
+      Math.floor(Math.random() * PAYLINES.length)
+    ];
+
+  const smallSymbols = ["🎈", "🍿", "🍭"];
+
+  const winningSymbol =
+    smallSymbols[
+      Math.floor(Math.random() * smallSymbols.length)
+    ];
+
+  // Premio de tres símbolos.
+  for (let columnIndex = 0; columnIndex < 3; columnIndex += 1) {
+    grid[columnIndex][payline[columnIndex]] =
+      winningSymbol;
+  }
+
+  // Bloquea el cuarto símbolo para que normalmente no forme 4 o 5.
+  grid[3][payline[3]] =
+    winningSymbol === "🎈" ? CAROUSEL : TICKET;
+
+  return grid;
+}
+
+function createBonusGrid() {
+  const grid = createLosingGrid();
+  const usedRows = new Set();
+
+  for (let columnIndex = 0; columnIndex < 3; columnIndex += 1) {
+    let rowIndex =
+      Math.floor(Math.random() * ROWS);
+
+    while (usedRows.has(`${columnIndex}-${rowIndex}`)) {
+      rowIndex =
+        Math.floor(Math.random() * ROWS);
+    }
+
+    usedRows.add(`${columnIndex}-${rowIndex}`);
+    grid[columnIndex][rowIndex] = SCATTER;
+  }
+
+  return grid;
+}
+
+function createGrid() {
+  const roll = Math.random();
+
+  if (roll < BONUS_CHANCE) {
+    return createBonusGrid();
+  }
+
+  if (roll < BONUS_CHANCE + NORMAL_WIN_CHANCE) {
+    return createSmallWinningGrid();
+  }
+
+  return createLosingGrid();
 }
 
 function countScatters(grid) {
@@ -552,26 +665,29 @@ export default function ClownParty({
 
     let activeColumn = 0;
 
-    spinTickerRef.current = window.setInterval(() => {
-      setGrid((currentGrid) => {
-        const updatedGrid = currentGrid.map((column) => [...column]);
+spinTickerRef.current = window.setInterval(() => {
+  setGrid((currentGrid) => {
+    const updatedGrid = currentGrid.map((column) => [...column]);
 
-        for (let attempt = 0; attempt < COLUMNS; attempt += 1) {
-          const columnIndex = (activeColumn + attempt) % COLUMNS;
+    for (let attempt = 0; attempt < COLUMNS; attempt += 1) {
+      const columnIndex = (activeColumn + attempt) % COLUMNS;
 
-          if (reelSpinningRef.current[columnIndex]) {
-            updatedGrid[columnIndex] =
-              Array.from({ length: ROWS }, randomSymbol);
+      if (reelSpinningRef.current[columnIndex]) {
+        const currentColumn = updatedGrid[columnIndex];
 
-            activeColumn = (columnIndex + 1) % COLUMNS;
-            break;
-          }
-        }
+        updatedGrid[columnIndex] = [
+          randomSymbol(),
+          ...currentColumn.slice(0, ROWS - 1),
+        ];
 
-        return updatedGrid;
-      });
-    }, 70);
+        activeColumn = (columnIndex + 1) % COLUMNS;
+        break;
+      }
+    }
 
+    return updatedGrid;
+  });
+}, 52);
     playSpinSound();
 
     const finalGrid = createGrid();
@@ -582,7 +698,7 @@ export default function ClownParty({
       columnIndex += 1
     ) {
       const stopTime =
-        800 + columnIndex * 260;
+        1100 + columnIndex * 320;
 
       const timeoutId = window.setTimeout(
         async () => {
@@ -784,16 +900,19 @@ export default function ClownParty({
           position: relative;
           min-width: 0;
           overflow: hidden;
+          isolation: isolate;
         }
 
         .clown-reel-strip {
           position: relative;
           width: 100%;
+          height: 100%;
           display: grid;
           grid-template-rows: repeat(5, minmax(0, 1fr));
           gap: 7px;
-          transform: translateY(0);
+          transform: translate3d(0, 0, 0);
           will-change: transform, filter;
+          backface-visibility: hidden;
         }
 
         .clown-reel-strip > .clown-symbol {
@@ -805,10 +924,12 @@ export default function ClownParty({
         }
 
         .clown-reel-running .clown-reel-strip {
-          animation: clownStripRoll .28s linear infinite;
+          height: 200%;
+          grid-template-rows: repeat(10, minmax(0, 1fr));
+          animation: clownStripRollPremium .34s linear infinite;
           animation-delay:
-            calc(var(--clown-reel-index) * -54ms);
-          filter: blur(.35px);
+            calc(var(--clown-reel-index) * -68ms);
+          filter: blur(.28px);
         }
 
         .clown-reel-running::after {
@@ -841,15 +962,12 @@ export default function ClownParty({
           animation: clownStripSettle .68s cubic-bezier(.15, .88, .2, 1.18);
         }
 
-        @keyframes clownStripRoll {
+        @keyframes clownStripRollPremium {
           0% {
-            transform: translateY(-7px) scaleY(1.018);
-          }
-          50% {
-            transform: translateY(7px) scaleY(.988);
+            transform: translate3d(0, -50%, 0);
           }
           100% {
-            transform: translateY(-7px) scaleY(1.018);
+            transform: translate3d(0, 0, 0);
           }
         }
 
@@ -897,8 +1015,8 @@ export default function ClownParty({
           }
 
           .clown-reel-running .clown-reel-strip {
-            animation-duration: .29s;
-            filter: blur(.25px);
+            animation-duration: .31s;
+            filter: blur(.18px);
           }
         }
 
@@ -1082,13 +1200,20 @@ export default function ClownParty({
                 key={columnIndex}
               >
                 <div className="clown-reel-strip">
-                  {column.map((symbol, rowIndex) => {
+                  {(reelSpinning[columnIndex]
+                    ? [...column, ...column]
+                    : column
+                  ).map((symbol, visualIndex) => {
+                    const rowIndex = visualIndex % ROWS;
                     const cellId = `${columnIndex}-${rowIndex}`;
+                    const isGhost = visualIndex >= ROWS;
 
                     const isWinning =
+                      !isGhost &&
                       winningCells.includes(cellId);
 
                     const isScatter =
+                      !isGhost &&
                       scatterCells.includes(cellId);
 
                     return (
@@ -1105,7 +1230,7 @@ export default function ClownParty({
                             ? "clown-wild-symbol"
                             : "",
                         ].join(" ")}
-                        key={cellId}
+                        key={`${cellId}-${visualIndex}`}
                       >
                         {symbol}
                       </div>
@@ -1234,7 +1359,7 @@ export default function ClownParty({
           </span>
         </div>
 
-        <div className="clown-phase-stamp">CLOWN PARTY · CONFIGURADO</div>
+        <div className="clown-phase-stamp">CLOWN PARTY · RODILLOS PREMIUM</div>
       </section>
 
       {celebration && (
