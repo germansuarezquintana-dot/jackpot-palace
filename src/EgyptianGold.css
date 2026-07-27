@@ -1,0 +1,10 @@
+body{
+    background:#0d0b06;
+}
+
+.egypt-machine{
+    background:linear-gradient(#23190d,#3c2b12,#23190d);
+    border:4px solid #d4af37;
+    border-radius:22px;
+    box-shadow:0 0 25px rgba(255,215,0,.45);
+}

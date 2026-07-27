@@ -1,6 +1,30 @@
 import logoJackpotPalace from "./assets/logo-jackpot-palace.png";
 import "./Lobby.css";
+const GAME_PREVIEWS = {
+  "jackpot-palace": [
+    ["💎", "7️⃣", "👑"],
+    ["🍒", "🔔", "💎"],
+    ["7️⃣", "👑", "🍒"],
+  ],
 
+  "clown-party": [
+    ["🎈", "🤡", "⭐"],
+    ["🍿", "🎭", "🍭"],
+    ["⭐", "🎁", "🤡"],
+  ],
+
+  "egyptian-gold": [
+    ["𓂀", "🐍", "💎"],
+    ["👑", "☀️", "🦅"],
+    ["🏺", "𓂀", "💎"],
+  ],
+
+  "wild-west": [
+    ["🤠", "⭐", "🐎"],
+    ["💰", "🧲", "🤠"],
+    ["⭐", "🐎", "💰"],
+  ],
+};
 const games = [
   {
     id: "jackpot-palace",
@@ -184,9 +208,21 @@ export default function Lobby({
                 <div className="grand-machine-v2__glass" aria-hidden="true" />
                 <div className="grand-machine-v2__halo" aria-hidden="true" />
 
-                <div className="grand-machine-v2__icon">
-                  <span>{game.icon}</span>
-                </div>
+                <div className="grand-machine-v2__icon grand-machine-v2__icon--preview">
+  <div className="slot-preview">
+    {(GAME_PREVIEWS[game.id] ?? [[game.icon], [game.icon], [game.icon]]).map(
+      (reel, reelIndex) => (
+        <div className="slot-reel" key={`${game.id}-reel-${reelIndex}`}>
+          {reel.map((symbol, symbolIndex) => (
+            <span key={`${game.id}-${reelIndex}-${symbolIndex}`}>
+              {symbol}
+            </span>
+          ))}
+        </div>
+      )
+    )}
+  </div>
+</div>
 
                 <h2>{game.name}</h2>
                 <p>{game.description}</p>
