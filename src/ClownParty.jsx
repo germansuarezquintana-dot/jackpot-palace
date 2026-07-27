@@ -218,6 +218,9 @@ export default function ClownParty({
   const [reelSpinning, setReelSpinning] = useState(
     Array(COLUMNS).fill(false)
   );
+  const [reelStopping, setReelStopping] = useState(
+    Array(COLUMNS).fill(false)
+  );
 
   const [spinning, setSpinning] = useState(false);
   const [credits, setCredits] = useState(
@@ -243,6 +246,8 @@ export default function ClownParty({
   const audioContextRef = useRef(null);
   const spinLockRef = useRef(false);
   const timeoutsRef = useRef([]);
+  const spinTickerRef = useRef(null);
+  const reelSpinningRef = useRef(Array(COLUMNS).fill(false));
   const displayCreditsRef = useRef(player?.credits ?? 0);
 
   const bet = BET_OPTIONS[betIndex];
@@ -296,6 +301,10 @@ export default function ClownParty({
       timeoutsRef.current.forEach((timeoutId) =>
         clearTimeout(timeoutId)
       );
+
+      if (spinTickerRef.current) {
+        clearInterval(spinTickerRef.current);
+      }
 
       if (audioContextRef.current) {
         audioContextRef.current.close();
@@ -515,7 +524,37 @@ export default function ClownParty({
       setMessage("Girando...");
     }
 
-    setReelSpinning(Array(COLUMNS).fill(true));
+    const allReelsSpinning = Array(COLUMNS).fill(true);
+
+    reelSpinningRef.current = allReelsSpinning;
+    setReelSpinning(allReelsSpinning);
+    setReelStopping(Array(COLUMNS).fill(false));
+
+    if (spinTickerRef.current) {
+      clearInterval(spinTickerRef.current);
+    }
+
+    let spinFrame = 0;
+
+    spinTickerRef.current = window.setInterval(() => {
+      spinFrame += 1;
+
+      setGrid((currentGrid) =>
+        currentGrid.map((column, columnIndex) => {
+          if (!reelSpinningRef.current[columnIndex]) {
+            return column;
+          }
+
+          // Cada rodillo cambia en un momento levemente distinto.
+          if ((spinFrame + columnIndex) % 2 !== 0) {
+            return column;
+          }
+
+          return Array.from({ length: ROWS }, randomSymbol);
+        })
+      );
+    }, 42);
+
     playSpinSound();
 
     const finalGrid = createGrid();
@@ -542,15 +581,38 @@ export default function ClownParty({
             return updatedGrid;
           });
 
+          reelSpinningRef.current[columnIndex] = false;
+
           setReelSpinning((current) => {
             const updated = [...current];
             updated[columnIndex] = false;
             return updated;
           });
 
+          setReelStopping((current) => {
+            const updated = [...current];
+            updated[columnIndex] = true;
+            return updated;
+          });
+
+          const settleTimeoutId = window.setTimeout(() => {
+            setReelStopping((current) => {
+              const updated = [...current];
+              updated[columnIndex] = false;
+              return updated;
+            });
+          }, 520);
+
+          timeoutsRef.current.push(settleTimeoutId);
+
           playReelStopSound(columnIndex);
 
           if (columnIndex === COLUMNS - 1) {
+            if (spinTickerRef.current) {
+              clearInterval(spinTickerRef.current);
+              spinTickerRef.current = null;
+            }
+
             const prize = calculatePrize(
               finalGrid,
               bet
@@ -667,6 +729,139 @@ export default function ClownParty({
 
   return (
     <main className="clown-page">
+      <style>{`
+        .clown-reel {
+          position: relative;
+          min-width: 0;
+          overflow: hidden;
+        }
+
+        .clown-reel-strip {
+          position: relative;
+          width: 100%;
+          display: grid;
+          grid-template-rows: repeat(3, minmax(0, 1fr));
+          gap: 7px;
+          transform: translateY(0);
+          will-change: transform, filter;
+        }
+
+        .clown-reel-strip > .clown-symbol {
+          min-height: 0;
+        }
+
+        .clown-reel-running {
+          filter: brightness(1.08) saturate(1.08);
+        }
+
+        .clown-reel-running .clown-reel-strip {
+          animation: clownStripRoll .28s linear infinite;
+          animation-delay:
+            calc(var(--clown-reel-index) * -54ms);
+          filter: blur(.35px);
+        }
+
+        .clown-reel-running::after {
+          content: "";
+          position: absolute;
+          inset: 0;
+          z-index: 8;
+          pointer-events: none;
+          border-radius: 10px;
+          background:
+            linear-gradient(
+              180deg,
+              rgba(0,0,0,.30) 0%,
+              transparent 18%,
+              transparent 78%,
+              rgba(0,0,0,.34) 100%
+            );
+          box-shadow:
+            inset 0 18px 20px rgba(0,0,0,.22),
+            inset 0 -18px 20px rgba(0,0,0,.26);
+        }
+
+        .clown-reel-stopping {
+          z-index: 6;
+          transform-origin: center top;
+          animation: clownReelStopPremium .68s cubic-bezier(.15, .88, .2, 1.18);
+        }
+
+        .clown-reel-stopping .clown-reel-strip {
+          animation: clownStripSettle .68s cubic-bezier(.15, .88, .2, 1.18);
+        }
+
+        @keyframes clownStripRoll {
+          0% {
+            transform: translateY(-7px) scaleY(1.018);
+          }
+          50% {
+            transform: translateY(7px) scaleY(.988);
+          }
+          100% {
+            transform: translateY(-7px) scaleY(1.018);
+          }
+        }
+
+        @keyframes clownReelStopPremium {
+          0% {
+            transform: translateY(-12px) scaleY(1.045);
+            filter: brightness(1.2);
+          }
+          36% {
+            transform: translateY(10px) scaleY(.96);
+          }
+          58% {
+            transform: translateY(-4.5px) scaleY(1.025);
+          }
+          76% {
+            transform: translateY(2px) scaleY(.99);
+          }
+          90% {
+            transform: translateY(-.8px) scaleY(1.006);
+          }
+          100% {
+            transform: translateY(0) scaleY(1);
+            filter: brightness(1);
+          }
+        }
+
+        @keyframes clownStripSettle {
+          0% {
+            transform: translateY(-10px);
+          }
+          38% {
+            transform: translateY(7px);
+          }
+          66% {
+            transform: translateY(-2.5px);
+          }
+          100% {
+            transform: translateY(0);
+          }
+        }
+
+        @media (max-width: 600px) {
+          .clown-reel-strip {
+            gap: 3px;
+          }
+
+          .clown-reel-running .clown-reel-strip {
+            animation-duration: .29s;
+            filter: blur(.25px);
+          }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+          .clown-reel-running .clown-reel-strip,
+          .clown-reel-stopping,
+          .clown-reel-stopping .clown-reel-strip {
+            animation-duration: .01ms !important;
+            animation-iteration-count: 1 !important;
+          }
+        }
+      `}</style>
+
       <div className="clown-tent-bg" aria-hidden="true" />
       <div className="clown-spotlight clown-spotlight-left" aria-hidden="true" />
       <div className="clown-spotlight clown-spotlight-right" aria-hidden="true" />
@@ -772,26 +967,29 @@ export default function ClownParty({
           {grid.map(
             (column, columnIndex) => (
               <div
-                className={`clown-reel ${
+                className={[
+                  "clown-reel",
                   reelSpinning[columnIndex]
-                    ? "clown-spinning"
-                    : ""
-                }`}
+                    ? "clown-spinning clown-reel-running"
+                    : "",
+                  reelStopping[columnIndex]
+                    ? "clown-reel-stopping"
+                    : "",
+                ].join(" ")}
+                style={{
+                  "--clown-reel-index": columnIndex,
+                }}
                 key={columnIndex}
               >
-                {column.map(
-                  (symbol, rowIndex) => {
+                <div className="clown-reel-strip">
+                  {column.map((symbol, rowIndex) => {
                     const cellId = `${columnIndex}-${rowIndex}`;
 
                     const isWinning =
-                      winningCells.includes(
-                        cellId
-                      );
+                      winningCells.includes(cellId);
 
                     const isScatter =
-                      scatterCells.includes(
-                        cellId
-                      );
+                      scatterCells.includes(cellId);
 
                     return (
                       <div
@@ -812,8 +1010,8 @@ export default function ClownParty({
                         {symbol}
                       </div>
                     );
-                  }
-                )}
+                  })}
+                </div>
               </div>
             )
           )}
@@ -923,7 +1121,7 @@ export default function ClownParty({
           </span>
         </div>
 
-        <div className="clown-phase-stamp">CLOWN PARTY · FASE 2</div>
+        <div className="clown-phase-stamp">CLOWN PARTY · GIRO FINAL ESTABLE</div>
       </section>
 
       {celebration && (
