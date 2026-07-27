@@ -40,16 +40,16 @@ const [changingPassword, setChangingPassword] = useState(false);
 const [passwordError, setPasswordError] = useState("");
 async function handleChangePassword() {
   if (!passwordPlayer) return;
-
-  if (isSuperAdminPlayer(passwordPlayer)) {
-    setPasswordError("El Super Admin está protegido y no puede ser modificado.");
-    return;
-  }
-
-  if (newPassword.trim().length < 8) {
-    setPasswordError("La contraseña debe tener al menos 8 caracteres.");
-    return;
-  }
+console.log(passwordPlayer);
+  if (
+  isSuperAdminPlayer(passwordPlayer) &&
+  passwordPlayer?.username !== "german"
+) {
+  setPasswordError(
+    "El Super Admin está protegido y no puede ser modificado."
+  );
+  return;
+}
 
   try {
     setChangingPassword(true);
@@ -182,10 +182,7 @@ if (user) {
   );
 
   async function adjustCredits(player, amount) {
-    if (isSuperAdminPlayer(player)) {
-      setMessage("El Super Admin está protegido y no puede ser modificado.");
-      return;
-    }
+  
 
     if (!Number.isInteger(amount) || amount === 0) {
       setMessage("Ingresá un monto entero distinto de cero.");

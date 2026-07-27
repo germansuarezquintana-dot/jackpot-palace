@@ -220,15 +220,17 @@ export default function App() {
   }
 
   if (
-    showAdmin &&
-    ["super_admin", "admin"].includes(player.role)
-  ) {
-    return (
-      <Admin
-        onClose={() => setShowAdmin(false)}
-      />
-    );
-  }
+  showAdmin &&
+  ["super_admin", "admin"].includes(player.role)
+) {
+  console.log("PLAYER ACTUAL:", player);
+
+  return (
+    <Admin
+      onClose={() => setShowAdmin(false)}
+    />
+  );
+}
 
   if (player?.role === "cashier") {
     return (
