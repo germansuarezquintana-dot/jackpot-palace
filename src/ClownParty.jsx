@@ -257,16 +257,12 @@ function calculatePrize(grid, bet) {
   let surpriseMultiplier = 1;
 
   if (linePrize > 0) {
-    const multiplierChance = Math.random();
+  const multiplierChance = Math.random();
 
-    if (multiplierChance < 0.01) {
-      surpriseMultiplier = 4;
-    } else if (multiplierChance < 0.04) {
-      surpriseMultiplier = 3;
-    } else if (multiplierChance < 0.12) {
-      surpriseMultiplier = 2;
-    }
+  if (multiplierChance < 0.01) {
+    surpriseMultiplier = 2;
   }
+}
 
   const multipliedLinePrize =
     linePrize * surpriseMultiplier;

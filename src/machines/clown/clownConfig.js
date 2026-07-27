@@ -2,7 +2,7 @@ export const CLOWN_CONFIG = {
   ROWS: 5,
   COLUMNS: 5,
 
-  BET_OPTIONS: [100, 250, 500, 1000, 2500, 5000],
+  BET_OPTIONS: [30, 40, 50, 100, 250, 500, 1000],
 
   WILD: "🤡",
   SCATTER: "🎪",
