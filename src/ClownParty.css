@@ -2330,3 +2330,1336 @@
   }
 }
 
+/* =========================================================
+   CLOWN PARTY — LUCES INTELIGENTES
+   idle / spin / stop / win / bonus / mega
+   ========================================================= */
+
+.clown-machine {
+  --clown-light-speed: 1s;
+  --clown-light-scale: 1.35;
+  --clown-light-opacity-low: .28;
+  --clown-light-opacity-high: 1;
+  --clown-light-main: var(--clown-yellow);
+  --clown-light-secondary: var(--clown-pink);
+  --clown-light-glow: rgba(255, 231, 106, .72);
+}
+
+.clown-machine .clown-frame-bulbs span {
+  animation-duration: var(--clown-light-speed) !important;
+}
+
+.clown-machine .clown-control-lights span {
+  animation-duration: calc(var(--clown-light-speed) * .85) !important;
+}
+
+.clown-machine .clown-machine-neon {
+  transition:
+    box-shadow .2s ease,
+    filter .2s ease,
+    opacity .2s ease;
+}
+
+.clown-machine .clown-side-decor span {
+  transition:
+    filter .2s ease,
+    box-shadow .2s ease,
+    transform .2s ease;
+}
+
+/* Reposo: recorrido elegante y lento. */
+.clown-lights-idle {
+  --clown-light-speed: 1.25s;
+}
+
+.clown-lights-idle .clown-machine-neon {
+  filter: brightness(1);
+  opacity: .92;
+}
+
+/* Giro: luces más rápidas y borde más vivo. */
+.clown-lights-spin {
+  --clown-light-speed: .46s;
+}
+
+.clown-lights-spin .clown-machine-neon {
+  opacity: 1;
+  filter: brightness(1.28) saturate(1.18);
+  box-shadow:
+    0 0 14px #fff,
+    0 0 28px var(--clown-yellow),
+    0 0 50px var(--clown-pink),
+    0 0 78px rgba(56, 216, 255, .6),
+    inset 0 0 20px rgba(255, 255, 255, .12);
+  animation: clownSpinNeonPulse .42s ease-in-out infinite alternate;
+}
+
+.clown-lights-spin .clown-frame-bulbs span {
+  animation-name: clownBulbSpinChase !important;
+}
+
+.clown-lights-spin .clown-control-lights span {
+  animation-name: clownDeckSpinChase !important;
+}
+
+.clown-lights-spin .clown-side-decor span {
+  filter: brightness(1.25) saturate(1.2);
+}
+
+/* Frenado: destello corto, acompaña el golpe de los rodillos. */
+.clown-lights-stop {
+  --clown-light-speed: .22s;
+}
+
+.clown-lights-stop .clown-machine-neon {
+  filter: brightness(1.55) saturate(1.35);
+  box-shadow:
+    0 0 18px #fff,
+    0 0 38px #ffe76a,
+    0 0 72px #ff45b8,
+    0 0 105px rgba(56, 216, 255, .72);
+  animation: clownStopFlash .24s ease-out infinite alternate;
+}
+
+.clown-lights-stop .clown-frame-bulbs span,
+.clown-lights-stop .clown-control-lights span {
+  animation-name: clownBulbStopFlash !important;
+}
+
+.clown-lights-stop .clown-side-decor span {
+  animation-duration: .45s !important;
+  filter: brightness(1.45);
+}
+
+/* Premio común: dorado, vivo pero elegante. */
+.clown-lights-win {
+  --clown-light-speed: .34s;
+}
+
+.clown-lights-win .clown-machine-neon {
+  filter: brightness(1.55) saturate(1.25);
+  box-shadow:
+    0 0 18px #fff,
+    0 0 42px #fff36a,
+    0 0 78px #ffcf3a,
+    0 0 110px rgba(255, 69, 184, .55);
+  animation: clownWinNeon .52s ease-in-out infinite alternate;
+}
+
+.clown-lights-win .clown-frame-bulbs span {
+  background: #ffe76a !important;
+  box-shadow:
+    0 0 6px #fff,
+    0 0 16px #ffe76a,
+    0 0 26px #ffbd2e !important;
+  animation-name: clownBulbWinWave !important;
+}
+
+.clown-lights-win .clown-control-lights span {
+  background: #fff36a !important;
+  box-shadow:
+    0 0 9px #fff,
+    0 0 18px #fff36a !important;
+  animation-name: clownDeckWinWave !important;
+}
+
+/* Bonus: celeste, rosa y dorado alternados. */
+.clown-lights-bonus {
+  --clown-light-speed: .28s;
+}
+
+.clown-lights-bonus .clown-machine-neon {
+  filter: brightness(1.6) saturate(1.4);
+  box-shadow:
+    0 0 18px #fff,
+    0 0 38px #49ecff,
+    0 0 72px #ff45b8,
+    0 0 110px #ffe76a;
+  animation: clownBonusNeon .42s linear infinite;
+}
+
+.clown-lights-bonus .clown-frame-bulbs span,
+.clown-lights-bonus .clown-control-lights span {
+  animation-name: clownBulbBonusCycle !important;
+}
+
+/* Mega: show total, muy rápido y con pulsación de toda la máquina. */
+.clown-lights-mega {
+  --clown-light-speed: .16s;
+  animation:
+    clownMachineMegaPulse .36s ease-in-out infinite alternate,
+    clownMachineMegaShake 1.1s ease-in-out infinite;
+}
+
+.clown-lights-mega .clown-machine-neon {
+  opacity: 1;
+  filter: brightness(1.85) saturate(1.5);
+  box-shadow:
+    0 0 22px #fff,
+    0 0 48px #ffe76a,
+    0 0 88px #ff45b8,
+    0 0 130px #38d8ff;
+  animation: clownMegaNeon .22s linear infinite;
+}
+
+.clown-lights-mega .clown-frame-bulbs span,
+.clown-lights-mega .clown-control-lights span {
+  animation-name: clownBulbMegaBurst !important;
+}
+
+.clown-lights-mega .clown-side-decor span {
+  animation-duration: .28s !important;
+  filter: brightness(1.7) saturate(1.5);
+}
+
+@keyframes clownSpinNeonPulse {
+  from {
+    opacity: .72;
+    filter: brightness(1.08) saturate(1.08);
+  }
+  to {
+    opacity: 1;
+    filter: brightness(1.42) saturate(1.3);
+  }
+}
+
+@keyframes clownBulbSpinChase {
+  0%, 100% {
+    opacity: .18;
+    transform: scale(.62);
+    filter: brightness(.7);
+  }
+  40% {
+    opacity: 1;
+    transform: scale(1.5);
+    filter: brightness(1.7);
+  }
+}
+
+@keyframes clownDeckSpinChase {
+  0%, 100% {
+    opacity: .22;
+    transform: scaleX(.45);
+  }
+  50% {
+    opacity: 1;
+    transform: scaleX(1.45);
+  }
+}
+
+@keyframes clownStopFlash {
+  from {
+    opacity: .68;
+    filter: brightness(1.15);
+  }
+  to {
+    opacity: 1;
+    filter: brightness(1.9);
+  }
+}
+
+@keyframes clownBulbStopFlash {
+  0% {
+    opacity: .25;
+    transform: scale(.72);
+  }
+  45% {
+    opacity: 1;
+    transform: scale(1.72);
+    background: #fff;
+  }
+  100% {
+    opacity: .45;
+    transform: scale(.9);
+  }
+}
+
+@keyframes clownWinNeon {
+  from {
+    opacity: .72;
+    filter: brightness(1.2);
+  }
+  to {
+    opacity: 1;
+    filter: brightness(1.7);
+  }
+}
+
+@keyframes clownBulbWinWave {
+  0%, 100% {
+    opacity: .3;
+    transform: scale(.7);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.55);
+    background: #fff;
+  }
+}
+
+@keyframes clownDeckWinWave {
+  0%, 100% {
+    opacity: .3;
+    transform: scaleX(.55);
+  }
+  50% {
+    opacity: 1;
+    transform: scaleX(1.55);
+  }
+}
+
+@keyframes clownBonusNeon {
+  0% {
+    filter: brightness(1.25) hue-rotate(0deg);
+  }
+  50% {
+    filter: brightness(1.75) hue-rotate(45deg);
+  }
+  100% {
+    filter: brightness(1.25) hue-rotate(0deg);
+  }
+}
+
+@keyframes clownBulbBonusCycle {
+  0% {
+    opacity: .35;
+    transform: scale(.7);
+    background: #49ecff;
+  }
+  33% {
+    opacity: 1;
+    transform: scale(1.55);
+    background: #ff45b8;
+  }
+  66% {
+    opacity: 1;
+    transform: scale(1.35);
+    background: #ffe76a;
+  }
+  100% {
+    opacity: .35;
+    transform: scale(.7);
+    background: #49ecff;
+  }
+}
+
+@keyframes clownMegaNeon {
+  0% {
+    filter: brightness(1.25) hue-rotate(0deg);
+  }
+  25% {
+    filter: brightness(1.95) hue-rotate(45deg);
+  }
+  50% {
+    filter: brightness(1.45) hue-rotate(100deg);
+  }
+  75% {
+    filter: brightness(2) hue-rotate(180deg);
+  }
+  100% {
+    filter: brightness(1.25) hue-rotate(360deg);
+  }
+}
+
+@keyframes clownBulbMegaBurst {
+  0% {
+    opacity: .15;
+    transform: scale(.55);
+    filter: brightness(.7);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.8);
+    filter: brightness(2);
+    background: #fff;
+  }
+  100% {
+    opacity: .35;
+    transform: scale(.8);
+  }
+}
+
+@keyframes clownMachineMegaPulse {
+  from {
+    filter: brightness(1);
+  }
+  to {
+    filter: brightness(1.28);
+  }
+}
+
+@keyframes clownMachineMegaShake {
+  0%, 100% {
+    transform: translateX(0);
+  }
+  25% {
+    transform: translateX(-1px);
+  }
+  75% {
+    transform: translateX(1px);
+  }
+}
+
+@media (max-width: 600px) {
+  .clown-lights-spin .clown-machine-neon,
+  .clown-lights-stop .clown-machine-neon,
+  .clown-lights-win .clown-machine-neon,
+  .clown-lights-bonus .clown-machine-neon,
+  .clown-lights-mega .clown-machine-neon {
+    filter: brightness(1.2) saturate(1.12);
+  }
+
+  .clown-lights-mega {
+    animation:
+      clownMachineMegaPulse .42s ease-in-out infinite alternate;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .clown-lights-spin,
+  .clown-lights-stop,
+  .clown-lights-win,
+  .clown-lights-bonus,
+  .clown-lights-mega,
+  .clown-lights-spin *,
+  .clown-lights-stop *,
+  .clown-lights-win *,
+  .clown-lights-bonus *,
+  .clown-lights-mega * {
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+  }
+}
+
+/* =========================================================
+   CORRECCIÓN — LUCES MUCHO MÁS VISIBLES
+   También detecta el giro con :has() aunque la clase lightMode
+   no se haya aplicado todavía.
+   ========================================================= */
+
+/* Reposo: bombitas claramente encendidas. */
+.clown-machine .clown-frame-bulbs span {
+  opacity: .8 !important;
+  transform: scale(1) !important;
+  animation:
+    clownVisibleIdleBulbs .9s ease-in-out infinite alternate !important;
+}
+
+.clown-machine .clown-control-lights span {
+  opacity: .75 !important;
+  animation:
+    clownVisibleDeckIdle .8s ease-in-out infinite alternate !important;
+}
+
+/* Giro: funciona con la clase nueva o detectando un rodillo activo. */
+.clown-machine.clown-lights-spin,
+.clown-machine:has(.clown-reel-running) {
+  box-shadow:
+    0 0 0 4px #d61d39,
+    0 0 0 8px rgba(255, 231, 106, .38),
+    0 0 28px #fff,
+    0 0 62px #ffe76a,
+    0 0 105px rgba(255, 69, 184, .85),
+    inset 0 0 42px rgba(0, 0, 0, .72) !important;
+}
+
+.clown-machine.clown-lights-spin .clown-machine-neon,
+.clown-machine:has(.clown-reel-running) .clown-machine-neon {
+  opacity: 1 !important;
+  filter: brightness(1.75) saturate(1.5) !important;
+  box-shadow:
+    0 0 18px #fff,
+    0 0 38px #ffe76a,
+    0 0 72px #ff45b8,
+    0 0 112px #38d8ff,
+    inset 0 0 22px rgba(255,255,255,.18) !important;
+  animation: clownVisibleSpinNeon .24s ease-in-out infinite alternate !important;
+}
+
+.clown-machine.clown-lights-spin .clown-frame-bulbs span,
+.clown-machine:has(.clown-reel-running) .clown-frame-bulbs span {
+  animation: clownVisibleSpinBulbs .26s linear infinite !important;
+}
+
+.clown-machine.clown-lights-spin .clown-control-lights span,
+.clown-machine:has(.clown-reel-running) .clown-control-lights span {
+  animation: clownVisibleDeckSpin .22s linear infinite !important;
+}
+
+/* Frenado: destello blanco/dorado muy evidente. */
+.clown-machine.clown-lights-stop,
+.clown-machine:has(.clown-reel-stopping) {
+  animation: clownVisibleStopMachine .18s ease-out infinite alternate !important;
+}
+
+.clown-machine.clown-lights-stop .clown-frame-bulbs span,
+.clown-machine:has(.clown-reel-stopping) .clown-frame-bulbs span {
+  background: #fff !important;
+  box-shadow:
+    0 0 8px #fff,
+    0 0 20px #ffe76a,
+    0 0 34px #ffb62e !important;
+  animation: clownVisibleStopBulbs .18s ease-out infinite alternate !important;
+}
+
+/* Premio: dorado fuerte. */
+.clown-machine.clown-lights-win .clown-machine-neon,
+.clown-machine.clown-machine-winning .clown-machine-neon {
+  opacity: 1 !important;
+  filter: brightness(1.9) saturate(1.5) !important;
+  box-shadow:
+    0 0 20px #fff,
+    0 0 48px #fff36a,
+    0 0 88px #ffbd2e,
+    0 0 135px rgba(255, 69, 184, .72) !important;
+  animation: clownVisibleWinNeon .32s ease-in-out infinite alternate !important;
+}
+
+.clown-machine.clown-lights-win .clown-frame-bulbs span,
+.clown-machine.clown-machine-winning .clown-frame-bulbs span {
+  animation: clownVisibleWinBulbs .24s linear infinite !important;
+}
+
+/* Laterales acompañan el giro. */
+.clown-machine:has(.clown-reel-running) .clown-side-decor span,
+.clown-machine.clown-lights-spin .clown-side-decor span {
+  box-shadow:
+    0 0 10px #fff,
+    0 0 24px #ffe76a,
+    0 0 38px #ff45b8 !important;
+  animation-duration: .55s !important;
+}
+
+@keyframes clownVisibleIdleBulbs {
+  from {
+    opacity: .42;
+    filter: brightness(.8);
+    transform: scale(.82);
+  }
+  to {
+    opacity: 1;
+    filter: brightness(1.45);
+    transform: scale(1.25);
+  }
+}
+
+@keyframes clownVisibleDeckIdle {
+  from {
+    opacity: .35;
+    transform: scaleX(.65);
+  }
+  to {
+    opacity: 1;
+    transform: scaleX(1.35);
+  }
+}
+
+@keyframes clownVisibleSpinNeon {
+  from {
+    filter: brightness(1.25) saturate(1.2);
+  }
+  to {
+    filter: brightness(2) saturate(1.7);
+  }
+}
+
+@keyframes clownVisibleSpinBulbs {
+  0% {
+    opacity: .15;
+    transform: scale(.55);
+    filter: brightness(.6);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.75);
+    filter: brightness(2);
+    background: #fff;
+  }
+  100% {
+    opacity: .35;
+    transform: scale(.8);
+  }
+}
+
+@keyframes clownVisibleDeckSpin {
+  0% {
+    opacity: .2;
+    transform: scaleX(.45);
+  }
+  50% {
+    opacity: 1;
+    transform: scaleX(1.7);
+  }
+  100% {
+    opacity: .3;
+    transform: scaleX(.7);
+  }
+}
+
+@keyframes clownVisibleStopMachine {
+  from {
+    filter: brightness(1);
+  }
+  to {
+    filter: brightness(1.35);
+  }
+}
+
+@keyframes clownVisibleStopBulbs {
+  from {
+    opacity: .35;
+    transform: scale(.75);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1.85);
+  }
+}
+
+@keyframes clownVisibleWinNeon {
+  from {
+    filter: brightness(1.2) saturate(1.2);
+  }
+  to {
+    filter: brightness(2.1) saturate(1.8);
+  }
+}
+
+@keyframes clownVisibleWinBulbs {
+  0% {
+    opacity: .2;
+    transform: scale(.6);
+    background: #ff45b8;
+  }
+  33% {
+    opacity: 1;
+    transform: scale(1.7);
+    background: #fff;
+  }
+  66% {
+    opacity: 1;
+    transform: scale(1.4);
+    background: #ffe76a;
+  }
+  100% {
+    opacity: .25;
+    transform: scale(.7);
+    background: #38d8ff;
+  }
+}
+
+@media (max-width: 600px) {
+  .clown-machine.clown-lights-spin,
+  .clown-machine:has(.clown-reel-running) {
+    box-shadow:
+      0 0 0 3px #d61d39,
+      0 0 0 6px rgba(255, 231, 106, .35),
+      0 0 22px #ffe76a,
+      0 0 58px rgba(255, 69, 184, .72),
+      inset 0 0 36px rgba(0,0,0,.72) !important;
+  }
+}
+
+/* =========================================================
+   CLOWN PARTY — CELEBRACIÓN PREMIUM
+   Contador, monedas, destello y niveles de premio.
+   ========================================================= */
+
+.clown-premium-effects {
+  position: fixed;
+  inset: 0;
+  z-index: 9990;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.clown-premium-flash {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  background:
+    radial-gradient(
+      circle at center,
+      rgba(255, 255, 255, .96),
+      rgba(255, 239, 126, .36) 30%,
+      transparent 68%
+    );
+  animation: clownPremiumFlash .72s ease-out;
+}
+
+.clown-premium-effects-small .clown-premium-flash {
+  animation-duration: .46s;
+}
+
+.clown-premium-effects-mega .clown-premium-flash,
+.clown-premium-effects-bonus .clown-premium-flash {
+  animation: clownPremiumFlashMega 1.05s ease-out;
+}
+
+.clown-coin-rain {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+}
+
+.clown-coin-rain span {
+  position: absolute;
+  top: -55px;
+  left: var(--coin-left);
+  width: var(--coin-size);
+  height: var(--coin-size);
+  display: grid;
+  place-items: center;
+  border: 2px solid #fff3a0;
+  border-radius: 50%;
+  color: #7b3d00;
+  background:
+    radial-gradient(circle at 35% 28%, #fffbd1 0 12%, #ffd84e 35%, #d88b05 72%, #814200 100%);
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: calc(var(--coin-size) * .58);
+  font-weight: 1000;
+  text-shadow: 0 1px 0 rgba(255,255,255,.45);
+  box-shadow:
+    0 0 6px #fff,
+    0 0 14px rgba(255, 214, 58, .85),
+    inset 0 0 5px rgba(255,255,255,.6);
+  animation:
+    clownCoinFall var(--coin-duration) cubic-bezier(.2,.7,.35,1) forwards,
+    clownCoinTurn .48s linear infinite;
+  animation-delay: var(--coin-delay), var(--coin-delay);
+}
+
+.clown-premium-effects-small .clown-coin-rain span {
+  opacity: .84;
+}
+
+.clown-premium-effects-mega .clown-coin-rain span,
+.clown-premium-effects-bonus .clown-coin-rain span {
+  box-shadow:
+    0 0 8px #fff,
+    0 0 20px #ffe76a,
+    0 0 34px rgba(255,69,184,.54);
+}
+
+.clown-premium-burst {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 1px;
+  height: 1px;
+}
+
+.clown-premium-burst span {
+  position: absolute;
+  width: 8px;
+  height: 64px;
+  border-radius: 8px;
+  background:
+    linear-gradient(
+      180deg,
+      #fff,
+      #ffe76a 30%,
+      rgba(255,69,184,.2) 80%,
+      transparent
+    );
+  transform-origin: 50% 100%;
+  transform:
+    translate(-50%, -100%)
+    rotate(var(--burst-angle))
+    scaleY(0);
+  opacity: 0;
+  animation: clownPremiumBurst .78s ease-out forwards;
+  animation-delay: var(--burst-delay);
+}
+
+.clown-premium-effects-small .clown-premium-burst {
+  display: none;
+}
+
+.clown-inline-win {
+  position: absolute;
+  top: 48%;
+  left: 50%;
+  z-index: 30;
+  min-width: 210px;
+  padding: 10px 18px 9px;
+  transform: translate(-50%, -50%);
+  border: 3px solid #fff36a;
+  border-radius: 18px;
+  text-align: center;
+  background:
+    radial-gradient(circle at top, rgba(255,255,255,.18), transparent 45%),
+    linear-gradient(180deg, rgba(99,10,103,.96), rgba(25,2,31,.96));
+  box-shadow:
+    0 0 12px #fff,
+    0 0 30px #ffe76a,
+    0 0 58px rgba(255,69,184,.72);
+  animation:
+    clownInlineWinIn .34s cubic-bezier(.15,.85,.25,1.2),
+    clownInlineWinPulse .62s ease-in-out .34s infinite alternate;
+  pointer-events: none;
+}
+
+.clown-inline-win span,
+.clown-inline-win small {
+  display: block;
+  color: #fff7c5;
+  font-size: 10px;
+  font-weight: 1000;
+  letter-spacing: 2px;
+}
+
+.clown-inline-win strong {
+  display: block;
+  margin: 2px 0;
+  color: #fff36a;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(32px, 5vw, 48px);
+  line-height: 1;
+  text-shadow:
+    0 0 8px #fff,
+    0 0 20px #ffcf35,
+    0 3px 0 #7a2b00;
+}
+
+.clown-inline-win-small {
+  min-width: 170px;
+  padding: 7px 14px 6px;
+  opacity: .96;
+}
+
+.clown-inline-win-small strong {
+  font-size: clamp(26px, 4vw, 38px);
+}
+
+.clown-inline-win-medium {
+  border-color: #49ecff;
+  box-shadow:
+    0 0 12px #fff,
+    0 0 30px #49ecff,
+    0 0 60px rgba(255,69,184,.72);
+}
+
+.clown-celebration-count {
+  min-height: 1em;
+  font-variant-numeric: tabular-nums;
+}
+
+.clown-celebration-card {
+  animation:
+    clownCelebrationPop .55s ease-out,
+    clownCelebrationPremiumPulse .7s ease-in-out .55s infinite alternate;
+}
+
+.clown-premium-effects-big ~ .clown-page,
+.clown-premium-effects-mega ~ .clown-page {
+  filter: brightness(.78);
+}
+
+@keyframes clownPremiumFlash {
+  0% {
+    opacity: 0;
+  }
+  14% {
+    opacity: .88;
+  }
+  36% {
+    opacity: .22;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+@keyframes clownPremiumFlashMega {
+  0% {
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+  }
+  26% {
+    opacity: .18;
+  }
+  42% {
+    opacity: .76;
+  }
+  58% {
+    opacity: .12;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+@keyframes clownCoinFall {
+  0% {
+    transform: translateY(-60px) rotate(0deg) scale(.72);
+    opacity: 0;
+  }
+  8% {
+    opacity: 1;
+  }
+  75% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(112vh) rotate(980deg) scale(1.08);
+    opacity: 0;
+  }
+}
+
+@keyframes clownCoinTurn {
+  0%, 100% {
+    border-radius: 50%;
+  }
+  50% {
+    border-radius: 48% 12%;
+  }
+}
+
+@keyframes clownPremiumBurst {
+  0% {
+    opacity: 0;
+    transform:
+      translate(-50%, -100%)
+      rotate(var(--burst-angle))
+      scaleY(0);
+  }
+  24% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform:
+      translate(-50%, -100%)
+      rotate(var(--burst-angle))
+      scaleY(1.45);
+  }
+}
+
+@keyframes clownInlineWinIn {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(.45) rotate(-4deg);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1) rotate(0);
+  }
+}
+
+@keyframes clownInlineWinPulse {
+  from {
+    transform: translate(-50%, -50%) scale(.985);
+    filter: brightness(1);
+  }
+  to {
+    transform: translate(-50%, -50%) scale(1.035);
+    filter: brightness(1.18);
+  }
+}
+
+@keyframes clownCelebrationPremiumPulse {
+  from {
+    transform: scale(.985);
+    filter: brightness(1);
+  }
+  to {
+    transform: scale(1.025);
+    filter: brightness(1.18);
+  }
+}
+
+@media (max-width: 600px) {
+  .clown-inline-win {
+    top: 50%;
+    min-width: 150px;
+    padding: 7px 12px 6px;
+    border-width: 2px;
+    border-radius: 13px;
+  }
+
+  .clown-inline-win span,
+  .clown-inline-win small {
+    font-size: 7px;
+    letter-spacing: 1.2px;
+  }
+
+  .clown-inline-win strong {
+    font-size: clamp(24px, 8vw, 34px);
+  }
+
+  .clown-coin-rain span {
+    transform: scale(.86);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .clown-premium-effects *,
+  .clown-inline-win,
+  .clown-celebration-card {
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+  }
+}
+
+/* =========================================================
+   CLOWN PARTY — HEADER PREMIUM
+   Mejora nitidez, jerarquía y separación de las luces.
+   Se agrega al final para prevalecer sobre fases anteriores.
+   ========================================================= */
+
+.clown-header {
+  position: relative;
+  isolation: isolate;
+  min-height: 110px !important;
+  padding: 10px 58px 8px 58px !important;
+  border-radius: 22px;
+  background:
+    linear-gradient(
+      180deg,
+      rgba(255,255,255,.05) 0%,
+      rgba(255,255,255,.015) 28%,
+      rgba(20,2,28,.28) 100%
+    ),
+    radial-gradient(
+      ellipse at 50% 46%,
+      rgba(28,3,38,.72) 0%,
+      rgba(22,2,30,.58) 42%,
+      transparent 76%
+    );
+  box-shadow:
+    inset 0 -1px 0 rgba(255,255,255,.06),
+    inset 0 -18px 30px rgba(0,0,0,.18);
+}
+
+.clown-header::before {
+  content: "";
+  position: absolute;
+  inset: 11px 28px 8px;
+  z-index: -1;
+  border-radius: 18px;
+  background:
+    linear-gradient(
+      90deg,
+      transparent 0%,
+      rgba(255,231,106,.04) 20%,
+      rgba(255,231,106,.08) 50%,
+      rgba(255,231,106,.04) 80%,
+      transparent 100%
+    );
+  box-shadow:
+    inset 0 0 24px rgba(255,231,106,.035);
+  pointer-events: none;
+}
+
+.clown-title-wrap {
+  position: relative;
+  z-index: 3;
+  padding: 2px 20px 4px;
+  border-radius: 18px;
+}
+
+.clown-title-halo {
+  inset: -10px -18px !important;
+  opacity: .42 !important;
+  background:
+    radial-gradient(
+      ellipse at center,
+      rgba(255,225,104,.16) 0%,
+      rgba(255,69,184,.07) 42%,
+      transparent 72%
+    ) !important;
+  filter: blur(8px) !important;
+  animation: clownTitleHaloPremium 3.2s ease-in-out infinite alternate !important;
+}
+
+.clown-header h1 {
+  margin: 1px 0 2px !important;
+  font-size: clamp(48px, 7vw, 74px) !important;
+  line-height: .9 !important;
+  letter-spacing: 1px !important;
+  background:
+    linear-gradient(
+      180deg,
+      #fffbe2 0%,
+      #fff2a3 17%,
+      #ffd75a 38%,
+      #ff9a3d 62%,
+      #d84436 82%,
+      #8d173d 100%
+    ) !important;
+  -webkit-background-clip: text !important;
+  background-clip: text !important;
+  color: transparent !important;
+  -webkit-text-stroke: 1px rgba(103,24,55,.42);
+  filter:
+    drop-shadow(0 2px 0 #751438)
+    drop-shadow(0 5px 3px rgba(30,0,24,.5)) !important;
+  text-shadow:
+    0 0 3px rgba(255,255,255,.48),
+    0 0 8px rgba(255,209,84,.28) !important;
+  animation: clownTitleGlowPremium 2.6s ease-in-out infinite alternate !important;
+}
+
+.clown-kicker {
+  margin-bottom: 2px !important;
+  color: rgba(255,244,216,.92) !important;
+  font-size: 9px !important;
+  letter-spacing: 2.2px !important;
+  text-shadow:
+    0 1px 0 rgba(0,0,0,.8),
+    0 0 5px rgba(255,231,106,.18) !important;
+}
+
+.clown-subtitle {
+  margin-top: 5px !important;
+  color: rgba(255,247,231,.94) !important;
+  font-size: 10px !important;
+  letter-spacing: 1.2px !important;
+  text-shadow:
+    0 1px 0 rgba(0,0,0,.8),
+    0 0 4px rgba(255,255,255,.12) !important;
+}
+
+/* Las alas de luces acompañan, pero no compiten con el logo. */
+.clown-marquee-wing {
+  gap: 6px !important;
+  opacity: .78;
+  transform: translateY(3px);
+}
+
+.clown-marquee-wing span {
+  width: 9px !important;
+  height: 9px !important;
+  border-width: 1px !important;
+  box-shadow:
+    0 0 3px rgba(255,255,255,.75),
+    0 0 7px currentColor !important;
+  animation: clownWingBlinkPremium 1.8s ease-in-out infinite alternate !important;
+}
+
+/* La tira superior deja de pisar el título. */
+.clown-frame-bulbs-top {
+  top: 6px !important;
+  left: 34px !important;
+  right: 34px !important;
+  opacity: .72;
+}
+
+.clown-frame-bulbs-top span {
+  width: 6px !important;
+  height: 6px !important;
+  box-shadow:
+    0 0 2px #fff,
+    0 0 6px currentColor !important;
+}
+
+/* Menos intensidad solo en la zona superior, sin apagar el show general. */
+.clown-lights-idle .clown-frame-bulbs-top span,
+.clown-lights-spin .clown-frame-bulbs-top span,
+.clown-lights-stop .clown-frame-bulbs-top span,
+.clown-lights-win .clown-frame-bulbs-top span,
+.clown-lights-bonus .clown-frame-bulbs-top span,
+.clown-lights-mega .clown-frame-bulbs-top span {
+  transform-origin: center;
+  max-width: 7px;
+  max-height: 7px;
+}
+
+/* Botón de sonido separado visualmente del logo. */
+.clown-sound-button {
+  top: 14px !important;
+  right: 15px !important;
+  width: 42px !important;
+  height: 42px !important;
+  border: 2px solid rgba(255,231,106,.78) !important;
+  background:
+    radial-gradient(circle at 35% 28%, rgba(255,255,255,.18), transparent 32%),
+    linear-gradient(180deg, #25102d 0%, #110515 100%) !important;
+  box-shadow:
+    0 0 8px rgba(255,231,106,.35),
+    inset 0 1px 0 rgba(255,255,255,.12),
+    inset 0 -8px 12px rgba(0,0,0,.45) !important;
+}
+
+.clown-title-wrap::before,
+.clown-title-wrap::after {
+  opacity: .6 !important;
+  font-size: 12px !important;
+  text-shadow:
+    0 0 3px #fff,
+    0 0 7px var(--clown-yellow) !important;
+  animation: clownTitleSparkPremium 2.2s ease-in-out infinite alternate !important;
+}
+
+@keyframes clownTitleHaloPremium {
+  from {
+    opacity: .28;
+    transform: scale(.98);
+  }
+  to {
+    opacity: .5;
+    transform: scale(1.02);
+  }
+}
+
+@keyframes clownTitleGlowPremium {
+  from {
+    filter:
+      drop-shadow(0 2px 0 #751438)
+      drop-shadow(0 5px 3px rgba(30,0,24,.5))
+      brightness(.97);
+  }
+  to {
+    filter:
+      drop-shadow(0 2px 0 #751438)
+      drop-shadow(0 5px 3px rgba(30,0,24,.5))
+      brightness(1.06);
+  }
+}
+
+@keyframes clownWingBlinkPremium {
+  from {
+    opacity: .45;
+    transform: scale(.9);
+  }
+  to {
+    opacity: .92;
+    transform: scale(1.08);
+  }
+}
+
+@keyframes clownTitleSparkPremium {
+  from {
+    opacity: .3;
+    transform: translateY(-50%) scale(.85);
+  }
+  to {
+    opacity: .72;
+    transform: translateY(-50%) scale(1.05);
+  }
+}
+
+/* Notebook / PC con poca altura */
+@media (min-width: 601px) and (max-height: 950px) {
+  .clown-header {
+    min-height: 82px !important;
+    padding: 7px 52px 5px 52px !important;
+  }
+
+  .clown-header h1 {
+    font-size: 43px !important;
+  }
+
+  .clown-title-wrap {
+    padding: 0 14px 2px !important;
+  }
+
+  .clown-kicker {
+    font-size: 7px !important;
+    letter-spacing: 1.8px !important;
+  }
+
+  .clown-subtitle {
+    margin-top: 3px !important;
+    font-size: 8px !important;
+  }
+
+  .clown-frame-bulbs-top {
+    left: 28px !important;
+    right: 28px !important;
+    opacity: .62;
+  }
+
+  .clown-sound-button {
+    top: 10px !important;
+    right: 12px !important;
+    width: 38px !important;
+    height: 38px !important;
+    font-size: 17px !important;
+  }
+}
+
+/* Celulares */
+@media (max-width: 600px) {
+  .clown-header {
+    min-height: 76px !important;
+    padding:
+      7px
+      36px
+      5px
+      28px !important;
+    border-radius: 14px;
+  }
+
+  .clown-header::before {
+    inset: 8px 16px 6px;
+    border-radius: 12px;
+  }
+
+  .clown-title-wrap {
+    padding: 0 6px 2px !important;
+  }
+
+  .clown-title-halo {
+    inset: -6px -10px !important;
+    filter: blur(5px) !important;
+  }
+
+  .clown-header h1 {
+    font-size: clamp(31px, 10.2vw, 43px) !important;
+    letter-spacing: 0 !important;
+    -webkit-text-stroke: .6px rgba(103,24,55,.42);
+    text-shadow:
+      0 0 2px rgba(255,255,255,.38),
+      0 0 5px rgba(255,209,84,.2) !important;
+  }
+
+  .clown-kicker {
+    font-size: 6px !important;
+    letter-spacing: 1.25px !important;
+  }
+
+  .clown-subtitle {
+    margin-top: 2px !important;
+    font-size: 7px !important;
+    letter-spacing: .7px !important;
+  }
+
+  .clown-marquee-wing {
+    gap: 3px !important;
+    opacity: .6;
+  }
+
+  .clown-marquee-wing span {
+    width: 5px !important;
+    height: 5px !important;
+  }
+
+  .clown-frame-bulbs-top {
+    left: 16px !important;
+    right: 16px !important;
+    opacity: .52;
+  }
+
+  .clown-frame-bulbs-top span {
+    width: 4px !important;
+    height: 4px !important;
+  }
+
+  .clown-sound-button {
+    top: 8px !important;
+    right: 7px !important;
+    width: 34px !important;
+    height: 34px !important;
+    font-size: 15px !important;
+  }
+
+  .clown-title-wrap::before,
+  .clown-title-wrap::after {
+    display: none !important;
+  }
+}
+

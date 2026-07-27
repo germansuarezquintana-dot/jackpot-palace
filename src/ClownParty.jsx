@@ -241,6 +241,8 @@ export default function ClownParty({
   const [winningCells, setWinningCells] = useState([]);
   const [scatterCells, setScatterCells] = useState([]);
   const [celebration, setCelebration] = useState(null);
+  const [winEffect, setWinEffect] = useState(null);
+  const [animatedPrize, setAnimatedPrize] = useState(0);
   const [soundEnabled, setSoundEnabled] = useState(true);
 
   const audioContextRef = useRef(null);
@@ -251,6 +253,20 @@ export default function ClownParty({
   const displayCreditsRef = useRef(player?.credits ?? 0);
 
   const bet = BET_OPTIONS[betIndex];
+
+  const lightMode = celebration
+    ? celebration.type === "mega"
+      ? "mega"
+      : celebration.type === "bonus"
+      ? "bonus"
+      : "win"
+    : spinning
+    ? reelStopping.some(Boolean)
+      ? "stop"
+      : "spin"
+    : lastPrize > 0
+    ? "win"
+    : "idle";
 
   useEffect(() => {
     setCredits(player?.credits ?? 0);
@@ -295,6 +311,41 @@ export default function ClownParty({
 
     return () => cancelAnimationFrame(frameId);
   }, [credits]);
+
+  useEffect(() => {
+    if (!winEffect?.amount) {
+      setAnimatedPrize(0);
+      return undefined;
+    }
+
+    const target = winEffect.amount;
+    const duration =
+      winEffect.level === "mega"
+        ? 2600
+        : winEffect.level === "big"
+        ? 2100
+        : winEffect.level === "medium"
+        ? 1500
+        : 950;
+
+    const startedAt = performance.now();
+    let frameId;
+
+    const animatePrize = (now) => {
+      const progress = Math.min(1, (now - startedAt) / duration);
+      const eased = 1 - Math.pow(1 - progress, 4);
+      setAnimatedPrize(Math.round(target * eased));
+
+      if (progress < 1) {
+        frameId = requestAnimationFrame(animatePrize);
+      }
+    };
+
+    setAnimatedPrize(0);
+    frameId = requestAnimationFrame(animatePrize);
+
+    return () => cancelAnimationFrame(frameId);
+  }, [winEffect]);
 
   useEffect(() => {
     return () => {
@@ -512,6 +563,8 @@ export default function ClownParty({
     setWinningCells([]);
     setScatterCells([]);
     setCelebration(null);
+    setWinEffect(null);
+    setAnimatedPrize(0);
 
     if (isFreeSpin) {
       setFreeSpins((current) =>
@@ -644,12 +697,33 @@ export default function ClownParty({
                   prize.freeSpinsWon,
               });
 
+              setWinEffect({
+                level: "bonus",
+                amount: prize.amount,
+                id: Date.now(),
+              });
+
               setMessage(
                 `🎪 BONUS: ${prize.freeSpinsWon} GIROS GRATIS`
               );
 
               playBonusSound();
             } else if (prize.amount > 0) {
+              const winLevel =
+                prize.amount >= bet * 25
+                  ? "mega"
+                  : prize.amount >= bet * 10
+                  ? "big"
+                  : prize.amount >= bet * 3
+                  ? "medium"
+                  : "small";
+
+              setWinEffect({
+                level: winLevel,
+                amount: prize.amount,
+                id: Date.now(),
+              });
+
               if (
                 prize.surpriseMultiplier > 1
               ) {
@@ -677,6 +751,18 @@ export default function ClownParty({
               playWinSound(
                 prize.amount >= bet * 10
               );
+
+              const effectTimeoutId = window.setTimeout(() => {
+                setWinEffect((current) =>
+                  current?.amount === prize.amount &&
+                  current?.level !== "big" &&
+                  current?.level !== "mega"
+                    ? null
+                    : current
+                );
+              }, winLevel === "small" ? 1800 : 2400);
+
+              timeoutsRef.current.push(effectTimeoutId);
             } else {
               setMessage(
                 freeSpins > 1
@@ -867,6 +953,56 @@ export default function ClownParty({
       <div className="clown-spotlight clown-spotlight-right" aria-hidden="true" />
       <div className="clown-cloud clown-cloud-left" aria-hidden="true" />
       <div className="clown-cloud clown-cloud-right" aria-hidden="true" />
+      {winEffect && (
+        <div
+          className={`clown-premium-effects clown-premium-effects-${winEffect.level}`}
+          aria-hidden="true"
+        >
+          <div className="clown-premium-flash" />
+          <div className="clown-premium-burst">
+            {Array.from({ length: 18 }).map((_, index) => (
+              <span
+                key={`burst-${winEffect.id}-${index}`}
+                style={{
+                  "--burst-angle": `${index * 20}deg`,
+                  "--burst-delay": `${(index % 6) * 0.04}s`,
+                }}
+              />
+            ))}
+          </div>
+
+          <div className="clown-coin-rain">
+            {Array.from({
+              length:
+                winEffect.level === "mega"
+                  ? 56
+                  : winEffect.level === "big" ||
+                    winEffect.level === "bonus"
+                  ? 40
+                  : winEffect.level === "medium"
+                  ? 24
+                  : 12,
+            }).map((_, index) => (
+              <span
+                key={`coin-${winEffect.id}-${index}`}
+                style={{
+                  "--coin-left": `${(index * 29 + 7) % 100}%`,
+                  "--coin-delay": `${(index % 12) * 0.09}s`,
+                  "--coin-duration": `${
+                    1.5 + (index % 7) * 0.13
+                  }s`,
+                  "--coin-size": `${
+                    15 + (index % 5) * 4
+                  }px`,
+                }}
+              >
+                $
+              </span>
+            ))}
+          </div>
+        </div>
+      )}
+
       <div className="clown-confetti" aria-hidden="true">
         {Array.from({ length: 35 }).map(
           (_, index) => (
@@ -897,11 +1033,11 @@ export default function ClownParty({
       </div>
 
       <section
-        className={`clown-machine ${
-          celebration
-            ? "clown-machine-winning"
-            : ""
-        }`}
+        className={[
+          "clown-machine",
+          celebration ? "clown-machine-winning" : "",
+          `clown-lights-${lightMode}`,
+        ].join(" ")}
       >
         <div className="clown-machine-neon" aria-hidden="true" />
         <div className="clown-win-flash" aria-hidden="true" />
@@ -1017,6 +1153,19 @@ export default function ClownParty({
           )}
         </div>
 
+        {winEffect && !celebration && (
+          <div
+            className={`clown-inline-win clown-inline-win-${winEffect.level}`}
+            aria-live="polite"
+          >
+            <span>GANASTE</span>
+            <strong>
+              {animatedPrize.toLocaleString("es-AR")}
+            </strong>
+            <small>CRÉDITOS</small>
+          </div>
+        )}
+
         <div
           className={`clown-message ${
             lastPrize > 0
@@ -1121,16 +1270,18 @@ export default function ClownParty({
           </span>
         </div>
 
-        <div className="clown-phase-stamp">CLOWN PARTY · GIRO FINAL ESTABLE</div>
+        <div className="clown-phase-stamp">CLOWN PARTY · CELEBRACIÓN PREMIUM</div>
       </section>
 
       {celebration && (
         <button
           type="button"
           className={`clown-celebration clown-celebration-${celebration.type}`}
-          onClick={() =>
-            setCelebration(null)
-          }
+          onClick={() => {
+            setCelebration(null);
+            setWinEffect(null);
+            setAnimatedPrize(0);
+          }}
           aria-label="Cerrar premio"
         >
           <div className="clown-celebration-card">
@@ -1142,8 +1293,8 @@ export default function ClownParty({
                 : "🎉 GRAN PREMIO"}
             </span>
 
-            <strong>
-              {celebration.amount.toLocaleString(
+            <strong className="clown-celebration-count">
+              {(animatedPrize || celebration.amount).toLocaleString(
                 "es-AR"
               )}
             </strong>
