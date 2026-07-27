@@ -2,89 +2,25 @@ import { useEffect, useRef, useState } from "react";
 import { supabase } from "./supabase";
 import "./ClownParty.css";
 import ClownHeader from "./clown/ClownHeader";
+import { CLOWN_CONFIG } from "./machines/clown/clownConfig.js";
 
-const ROWS = 5;
-const COLUMNS = 5;
+const ROWS = CLOWN_CONFIG.ROWS;
+const COLUMNS = CLOWN_CONFIG.COLUMNS;
 
-const BET_OPTIONS = [100, 250, 500, 1000, 2500, 5000];
+const BET_OPTIONS = CLOWN_CONFIG.BET_OPTIONS;
 
-const WILD = "🤡";
-const SCATTER = "🎪";
-const TICKET = "🎟️";
-const CAROUSEL = "🎠";
+const WILD = CLOWN_CONFIG.WILD;
+const SCATTER = CLOWN_CONFIG.SCATTER;
+const TICKET = CLOWN_CONFIG.TICKET;
+const CAROUSEL = CLOWN_CONFIG.CAROUSEL;
 
-const SYMBOLS = [
-  WILD,
-  SCATTER,
-  "🎈",
-  "🍿",
-  "🎁",
-  "⭐",
-  "🍭",
-  "🎭",
-  TICKET,
-  CAROUSEL,
-];
+const SYMBOLS = CLOWN_CONFIG.SYMBOLS;
 
-const WEIGHTED_SYMBOLS = [
-  "🎈",
-  "🎈",
-  "🎈",
-  "🎈",
-  "🎈",
-  "🎈",
-  "🎈",
-  "🍿",
-  "🍿",
-  "🍿",
-  "🍿",
-  "🍿",
-  "🍿",
-  "🍭",
-  "🍭",
-  "🍭",
-  "🍭",
-  "🍭",
-  "🎭",
-  "🎭",
-  "🎭",
-  "🎭",
-  "⭐",
-  "⭐",
-  "⭐",
-  "🎁",
-  "🎁",
-  TICKET,
-  TICKET,
-  TICKET,
-  CAROUSEL,
-  CAROUSEL,
-  CAROUSEL,
-  SCATTER,
-  WILD,
-];
+const WEIGHTED_SYMBOLS = CLOWN_CONFIG.WEIGHTED_SYMBOLS;
 
-const SYMBOL_PAYS = {
-  "🎈": { 3: 2.3, 4: 4.7, 5: 9 },
-  "🍿": { 3: 2.9, 4: 6, 5: 12 },
-  "🍭": { 3: 4.1, 4: 9, 5: 18 },
-  "🎭": { 3: 6, 4: 14, 5: 29 },
-  "⭐": { 3: 9, 4: 23, 5: 47 },
-  "🎁": { 3: 14, 4: 36, 5: 72 },
-  [WILD]: { 3: 23, 4: 59, 5: 119 },
-};
+const SYMBOL_PAYS = CLOWN_CONFIG.SYMBOL_PAYS;
 
-const PAYLINES = [
-  [0, 0, 0, 0, 0],
-  [1, 1, 1, 1, 1],
-  [2, 2, 2, 2, 2],
-  [3, 3, 3, 3, 3],
-  [4, 4, 4, 4, 4],
-  [0, 1, 2, 3, 4],
-  [4, 3, 2, 1, 0],
-  [0, 1, 2, 1, 0],
-  [4, 3, 2, 3, 4],
-];
+const PAYLINES = CLOWN_CONFIG.PAYLINES;
 
 function randomSymbol() {
   return WEIGHTED_SYMBOLS[
@@ -1298,7 +1234,7 @@ export default function ClownParty({
           </span>
         </div>
 
-        <div className="clown-phase-stamp">CLOWN PARTY · OPTIMIZADO</div>
+        <div className="clown-phase-stamp">CLOWN PARTY · CONFIGURADO</div>
       </section>
 
       {celebration && (

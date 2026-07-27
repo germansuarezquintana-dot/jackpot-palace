@@ -1,54 +1,26 @@
 import { GAME_CONFIG } from "./gameConfig.js";
-export const WILD = "🃏";
-export const SCATTER = "🎁";
-export const ROWS = 3;
-export const COLUMNS = 5;
-export const BET_OPTIONS = [100, 250, 500, 1000, 2500, 5000];
+import { JACKPOT_CONFIG } from "../machines/jackpot/jackpotConfig.js";
+export const WILD = JACKPOT_CONFIG.WILD;
+export const SCATTER = JACKPOT_CONFIG.SCATTER;
+
+export const ROWS = JACKPOT_CONFIG.ROWS;
+export const COLUMNS = JACKPOT_CONFIG.COLUMNS;
+
+export const BET_OPTIONS = JACKPOT_CONFIG.BET_OPTIONS;
+
 export const STARTING_JACKPOT = GAME_CONFIG.JACKPOT_START;
 
-export const SYMBOLS = [
-  "🍒", "🍋", "🔔", "⭐", "7️⃣", "💎", "🍉", "👑", WILD, SCATTER,
-];
+export const SYMBOLS = JACKPOT_CONFIG.SYMBOLS;
 
-export const PAYLINES = [
-  [0, 0, 0, 0, 0], [1, 1, 1, 1, 1], [2, 2, 2, 2, 2],
-  [0, 1, 2, 1, 0], [2, 1, 0, 1, 2], [0, 0, 1, 0, 0],
-  [2, 2, 1, 2, 2], [1, 0, 0, 0, 1], [1, 2, 2, 2, 1],
-  [0, 1, 1, 1, 0],
-];
+export const PAYLINES = JACKPOT_CONFIG.PAYLINES;
 
-const LINE_PAYOUT_FACTOR = GAME_CONFIG.LINE_PAYOUT_FACTOR;
+const LINE_PAYOUT_FACTOR = JACKPOT_CONFIG.LINE_PAYOUT_FACTOR;
 
-export const OUTCOME_RATES = Object.freeze({
-  jackpot: 0.00005,
-  mega: 0.002,
-  big: 0.015,
-  medium: 0.06,
-  scatter: 0.008,
-  small: 0.38,
-});
-
-export const SYMBOL_PAYS = {
-  "🍒": { 3: 2, 4: 5, 5: 12 },
-  "🍋": { 3: 2, 4: 5, 5: 12 },
-  "🔔": { 3: 2, 4: 6, 5: 14 },
-  "⭐": { 3: 3, 4: 7, 5: 16 },
-  "🍉": { 3: 3, 4: 8, 5: 18 },
-  "💎": { 3: 4, 4: 10, 5: 22 },
-  "7️⃣": { 3: 5, 4: 12, 5: 28 },
-  "👑": { 3: 6, 4: 18, 5: 0 },
-  [WILD]: { 3: 5, 4: 12, 5: 25 },
-};
-
-const BASE_POOL = [
-  "🍒", "🍒", "🍒", "🍒", "🍒",
-  "🍋", "🍋", "🍋", "🍋",
-  "🔔", "🔔", "🔔",
-  "⭐", "⭐", "⭐",
-  "🍉", "🍉",
-  "💎", "💎",
-  "7️⃣", "👑",
-];
+export const OUTCOME_RATES = Object.freeze(
+  JACKPOT_CONFIG.OUTCOME_RATES
+);
+export const SYMBOL_PAYS = JACKPOT_CONFIG.SYMBOL_PAYS;
+const BASE_POOL = JACKPOT_CONFIG.BASE_POOL;
 
 function randomItem(items, random = Math.random) {
   return items[Math.floor(random() * items.length)];
@@ -248,8 +220,11 @@ function evaluateScatters(result, bet) {
   });
 
   const count = cells.length;
-  const multiplier = count >= 5 ? 5 : count === 4 ? 3 : count === 3 ? 2 : 0;
-  const freeSpins = count >= 5 ? 8 : count === 4 ? 5 : count === 3 ? 3 : 0;
+  const multiplier =
+  JACKPOT_CONFIG.SCATTER_MULTIPLIERS[count] ?? 0;
+
+const freeSpins =
+  JACKPOT_CONFIG.FREE_SPINS[count] ?? 0;
 
   return {
     count,
