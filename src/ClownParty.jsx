@@ -3,7 +3,7 @@ import { supabase } from "./supabase";
 import "./ClownParty.css";
 import ClownHeader from "./clown/ClownHeader";
 
-const ROWS = 3;
+const ROWS = 5;
 const COLUMNS = 5;
 
 const BET_OPTIONS = [100, 250, 500, 1000, 2500, 5000];
@@ -78,8 +78,12 @@ const PAYLINES = [
   [0, 0, 0, 0, 0],
   [1, 1, 1, 1, 1],
   [2, 2, 2, 2, 2],
+  [3, 3, 3, 3, 3],
+  [4, 4, 4, 4, 4],
+  [0, 1, 2, 3, 4],
+  [4, 3, 2, 1, 0],
   [0, 1, 2, 1, 0],
-  [2, 1, 0, 1, 2],
+  [4, 3, 2, 3, 4],
 ];
 
 function randomSymbol() {
@@ -610,26 +614,27 @@ export default function ClownParty({
       clearInterval(spinTickerRef.current);
     }
 
-    let spinFrame = 0;
+    let activeColumn = 0;
 
     spinTickerRef.current = window.setInterval(() => {
-      spinFrame += 1;
+      setGrid((currentGrid) => {
+        const updatedGrid = currentGrid.map((column) => [...column]);
 
-      setGrid((currentGrid) =>
-        currentGrid.map((column, columnIndex) => {
-          if (!reelSpinningRef.current[columnIndex]) {
-            return column;
+        for (let attempt = 0; attempt < COLUMNS; attempt += 1) {
+          const columnIndex = (activeColumn + attempt) % COLUMNS;
+
+          if (reelSpinningRef.current[columnIndex]) {
+            updatedGrid[columnIndex] =
+              Array.from({ length: ROWS }, randomSymbol);
+
+            activeColumn = (columnIndex + 1) % COLUMNS;
+            break;
           }
+        }
 
-          // Cada rodillo cambia en un momento levemente distinto.
-          if ((spinFrame + columnIndex) % 2 !== 0) {
-            return column;
-          }
-
-          return Array.from({ length: ROWS }, randomSymbol);
-        })
-      );
-    }, 42);
+        return updatedGrid;
+      });
+    }, 70);
 
     playSpinSound();
 
@@ -849,7 +854,7 @@ export default function ClownParty({
           position: relative;
           width: 100%;
           display: grid;
-          grid-template-rows: repeat(3, minmax(0, 1fr));
+          grid-template-rows: repeat(5, minmax(0, 1fr));
           gap: 7px;
           transform: translateY(0);
           will-change: transform, filter;
@@ -1027,7 +1032,7 @@ export default function ClownParty({
       )}
 
       <div className="clown-confetti" aria-hidden="true">
-        {Array.from({ length: 35 }).map(
+        {Array.from({ length: 12 }).map(
           (_, index) => (
             <span
               key={index}
@@ -1078,13 +1083,13 @@ export default function ClownParty({
         </div>
 
         <div className="clown-frame-bulbs clown-frame-bulbs-top" aria-hidden="true">
-          {Array.from({ length: 30 }).map((_, index) => (
+          {Array.from({ length: 20 }).map((_, index) => (
             <span key={`top-${index}`} />
           ))}
         </div>
 
         <div className="clown-frame-bulbs clown-frame-bulbs-bottom" aria-hidden="true">
-          {Array.from({ length: 30 }).map((_, index) => (
+          {Array.from({ length: 20 }).map((_, index) => (
             <span key={`bottom-${index}`} />
           ))}
         </div>
@@ -1203,7 +1208,7 @@ export default function ClownParty({
 
         <div className="clown-control-deck">
           <div className="clown-control-lights" aria-hidden="true">
-            {Array.from({ length: 12 }).map((_, index) => (
+            {Array.from({ length: 8 }).map((_, index) => (
               <span key={index} />
             ))}
           </div>
@@ -1293,7 +1298,7 @@ export default function ClownParty({
           </span>
         </div>
 
-        <div className="clown-phase-stamp">CLOWN PARTY · PAGO MENOS SEGUIDO</div>
+        <div className="clown-phase-stamp">CLOWN PARTY · OPTIMIZADO</div>
       </section>
 
       {celebration && (
