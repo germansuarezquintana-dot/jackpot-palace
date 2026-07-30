@@ -48,13 +48,13 @@ button {
 
 .wheel-machine {
   position: relative;
-  width: min(1340px, 100%);
-  height: calc(100dvh - 16px);
+  width: min(1120px, calc(100% - 24px));
+  height: min(620px, calc(100dvh - 28px));
   min-height: 0;
-  max-height: calc(100dvh - 16px);
-  padding: 8px 12px;
+  max-height: calc(100dvh - 28px);
+  padding: 7px 10px;
   display: grid;
-  grid-template-rows: 52px 44px minmax(0, 1fr) 112px;
+  grid-template-rows: 48px 40px minmax(0, 1fr) 100px;
   gap: 5px;
   overflow: hidden;
   isolation: isolate;
@@ -94,7 +94,7 @@ button {
    ========================================================= */
 
 .wheel-topbar {
-  height: 52px;
+  height: 48px;
   display: grid;
   grid-template-columns: 120px 1fr 44px;
   align-items: center;
@@ -167,7 +167,7 @@ button {
    ========================================================= */
 
 .wheel-dashboard {
-  height: 44px;
+  height: 40px;
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 10px;
@@ -175,7 +175,7 @@ button {
 
 .wheel-dashboard > div {
   position: relative;
-  height: 44px;
+  height: 40px;
   display: grid;
   place-content: center;
   overflow: hidden;
@@ -230,7 +230,7 @@ button {
 .wheel-game-layout {
   min-height: 0;
   display: grid;
-  grid-template-columns: 205px minmax(420px, 1fr) 230px;
+  grid-template-columns: 180px minmax(360px, 1fr) 200px;
   gap: 10px;
   overflow: hidden;
 }
@@ -431,9 +431,9 @@ button {
 
 .wheel-stage {
   --wheel-size: min(
-    calc(100dvh - 282px),
-    calc(100vw - 525px),
-    390px
+    calc(100dvh - 255px),
+    calc(100vw - 500px),
+    350px
   );
 
   position: relative;
@@ -696,8 +696,8 @@ button {
    ========================================================= */
 
 .wheel-betting-panel {
-  height: 112px;
-  min-height: 112px;
+  height: 100px;
+  min-height: 100px;
   margin: 0;
   padding: 6px 10px 8px;
   overflow: hidden;
@@ -707,7 +707,7 @@ button {
 }
 
 .wheel-chips {
-  height: 45px;
+  height: 40px;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -717,9 +717,9 @@ button {
 }
 
 .wheel-chip {
-  width: 44px;
-  height: 44px;
-  flex: 0 0 44px;
+  width: 39px;
+  height: 39px;
+  flex: 0 0 39px;
   border: 3px dashed rgba(255, 255, 255, 0.88);
   border-radius: 50%;
   color: #fff;
@@ -750,7 +750,7 @@ button {
 }
 
 .wheel-actions {
-  height: 43px;
+  height: 39px;
   display: grid;
   grid-template-columns: 1fr 1fr 1fr 1.45fr;
   gap: 8px;
@@ -758,8 +758,8 @@ button {
 
 .wheel-action-button,
 .wheel-spin-button {
-  min-height: 43px;
-  height: 43px;
+  min-height: 39px;
+  height: 39px;
   border-radius: 13px;
   font-size: 14px;
   font-weight: 1000;
@@ -901,24 +901,24 @@ button {
     width: 100%;
     height: calc(
       100svh
-      - max(4px, env(safe-area-inset-top))
-      - max(4px, env(safe-area-inset-bottom))
+      - max(8px, env(safe-area-inset-top))
+      - max(8px, env(safe-area-inset-bottom))
     );
     min-height: 0;
     max-height: calc(
       100svh
-      - max(4px, env(safe-area-inset-top))
-      - max(4px, env(safe-area-inset-bottom))
+      - max(8px, env(safe-area-inset-top))
+      - max(8px, env(safe-area-inset-bottom))
     );
     padding: 3px 5px 4px;
     border-radius: 12px;
-    grid-template-rows: 36px 38px minmax(0, 1fr) 108px;
+    grid-template-rows: 34px 36px minmax(0, 1fr) 96px;
     gap: 3px;
     overflow: hidden;
   }
 
   .wheel-topbar {
-    height: 36px;
+    height: 34px;
     grid-template-columns: 64px minmax(0, 1fr) 32px;
     gap: 4px;
     padding: 0 1px 2px;
@@ -948,12 +948,12 @@ button {
   }
 
   .wheel-dashboard {
-    height: 38px;
+    height: 36px;
     gap: 3px;
   }
 
   .wheel-dashboard > div {
-    height: 38px;
+    height: 36px;
     border-radius: 8px;
   }
 
@@ -1002,9 +1002,9 @@ button {
       82vw,
       calc(
         100svh
+        - 34px
         - 36px
-        - 38px
-        - 108px
+        - 96px
         - 26px
         - 18px
         - env(safe-area-inset-top)
@@ -1069,8 +1069,8 @@ button {
   }
 
   .wheel-betting-panel {
-    height: 108px;
-    min-height: 108px;
+    height: 96px;
+    min-height: 96px;
     padding: 3px 5px 5px;
     border-radius: 12px;
   }
@@ -1080,7 +1080,7 @@ button {
   }
 
   .wheel-chips {
-    height: 43px;
+    height: 37px;
     justify-content: center;
     gap: 5px;
     margin: 0 0 3px;
@@ -1088,23 +1088,23 @@ button {
   }
 
   .wheel-chip {
-    width: 41px;
-    height: 41px;
-    flex: 0 0 41px;
+    width: 35px;
+    height: 35px;
+    flex: 0 0 35px;
     border-width: 3px;
     font-size: 8px;
   }
 
   .wheel-actions {
-    height: 54px;
+    height: 51px;
     grid-template-columns: repeat(3, 1fr);
-    grid-template-rows: 22px 29px;
+    grid-template-rows: 21px 27px;
     gap: 3px;
   }
 
   .wheel-action-button {
-    height: 22px;
-    min-height: 22px;
+    height: 21px;
+    min-height: 21px;
     padding: 0 2px;
     border-radius: 7px;
     font-size: 8px;
@@ -1112,8 +1112,8 @@ button {
 
   .wheel-spin-button {
     grid-column: 1 / -1;
-    height: 29px;
-    min-height: 29px;
+    height: 27px;
+    min-height: 27px;
     border-radius: 8px;
     font-size: 14px;
   }
