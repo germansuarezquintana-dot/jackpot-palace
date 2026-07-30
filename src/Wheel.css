@@ -2665,3 +2665,107 @@ body {
     opacity: 0.55 !important;
   }
 }
+
+
+/* =========================================================
+   EFECTOS VISIBLES EN CELULAR
+   ========================================================= */
+
+@media (max-width: 760px) {
+  .wheel-machine::before {
+    display: block !important;
+    opacity: 1 !important;
+    animation: wheelAmbientPulse 4s ease-in-out infinite alternate !important;
+  }
+
+  .wheel-machine::after {
+    display: none !important;
+  }
+
+  .wheel-main-area::before {
+    display: block !important;
+    width: 96% !important;
+    opacity: 0.9 !important;
+    animation: wheelBackgroundRays 22s linear infinite !important;
+  }
+
+  .wheel-main-area::after {
+    display: block !important;
+    width: 90% !important;
+    opacity: 1 !important;
+    filter: blur(9px) !important;
+    animation: wheelAuraBreathe 2.8s ease-in-out infinite alternate !important;
+  }
+
+  .wheel-stage {
+    animation: wheelStageGlowMobile 2s ease-in-out infinite alternate !important;
+    box-shadow:
+      0 0 13px rgba(255, 244, 176, 0.68),
+      0 0 31px rgba(255, 184, 36, 0.58),
+      0 0 48px rgba(177, 22, 58, 0.35) !important;
+  }
+
+  .wheel-stage::before {
+    display: block !important;
+    inset: -10px !important;
+    opacity: 1 !important;
+    animation: wheelOuterBulbs 4.2s linear infinite !important;
+    filter:
+      drop-shadow(0 0 4px #fff2a8)
+      drop-shadow(0 0 10px rgba(255, 181, 35, 0.95)) !important;
+  }
+
+  .wheel-stage::after {
+    display: block !important;
+    animation: wheelGlassFlash 6.8s ease-in-out infinite !important;
+  }
+
+  .wheel-lights-ring {
+    display: block !important;
+    opacity: 1 !important;
+    animation: wheelLightsRun 4s linear infinite !important;
+    filter:
+      drop-shadow(0 0 4px #fff4b0)
+      drop-shadow(0 0 10px #ffb52a)
+      drop-shadow(0 0 16px rgba(255, 170, 30, 0.8)) !important;
+  }
+
+  .wheel-center {
+    animation: wheelCenterPulse 2s ease-in-out infinite alternate !important;
+  }
+
+  .wheel-center::after {
+    display: block !important;
+    animation: wheelCenterHalo 2s ease-out infinite !important;
+  }
+
+  .wheel-pointer {
+    animation: wheelPointerGlow 1s ease-in-out infinite alternate !important;
+  }
+
+  .wheel-spin-button:not(:disabled) {
+    animation: wheelSpinButtonPulse 1.5s ease-in-out infinite !important;
+  }
+
+  .wheel-chip.is-selected {
+    animation: wheelSelectedChip 1.1s ease-in-out infinite alternate !important;
+  }
+}
+
+@keyframes wheelStageGlowMobile {
+  from {
+    filter: brightness(0.97);
+    box-shadow:
+      0 0 9px rgba(255, 242, 166, 0.52),
+      0 0 21px rgba(255, 180, 34, 0.42),
+      0 0 33px rgba(177, 22, 58, 0.24);
+  }
+
+  to {
+    filter: brightness(1.1);
+    box-shadow:
+      0 0 16px rgba(255, 249, 198, 0.88),
+      0 0 37px rgba(255, 184, 36, 0.70),
+      0 0 55px rgba(177, 22, 58, 0.42);
+  }
+}
