@@ -2839,3 +2839,18 @@ body {
     min-height: 142px !important;
   }
 }
+/* AJUSTE FINAL IPHONE */
+@media (max-width: 760px) {
+  .wheel-page {
+    height: calc(100svh - 16px) !important;
+    min-height: calc(100svh - 16px) !important;
+    max-height: calc(100svh - 16px) !important;
+  }
+
+  .wheel-machine {
+    height: calc(100svh - 16px) !important;
+    min-height: 0 !important;
+    max-height: calc(100svh - 16px) !important;
+    padding-bottom: 2px !important;
+  }
+}
