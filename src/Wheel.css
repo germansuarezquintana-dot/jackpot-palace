@@ -2769,3 +2769,73 @@ body {
       0 0 55px rgba(177, 22, 58, 0.42);
   }
 }
+
+
+/* =========================================================
+   AJUSTE IPHONE — EVITA PASARSE BAJO LA BARRA DE DIRECCIONES
+   ========================================================= */
+
+@media (max-width: 760px) {
+  .wheel-page {
+    width: 100% !important;
+    height: 100svh !important;
+    min-height: 100svh !important;
+    max-height: 100svh !important;
+    padding:
+      env(safe-area-inset-top)
+      env(safe-area-inset-right)
+      env(safe-area-inset-bottom)
+      env(safe-area-inset-left) !important;
+    overflow: hidden !important;
+  }
+
+  .wheel-machine {
+    width: 100% !important;
+    height: calc(
+      100svh
+      - env(safe-area-inset-top)
+      - env(safe-area-inset-bottom)
+    ) !important;
+    min-height: 0 !important;
+    max-height: calc(
+      100svh
+      - env(safe-area-inset-top)
+      - env(safe-area-inset-bottom)
+    ) !important;
+    padding-top: 3px !important;
+    padding-bottom: 4px !important;
+    overflow: hidden !important;
+  }
+}
+
+/* iPhone con poca altura visible */
+@media (max-width: 760px) and (max-height: 760px) {
+  .wheel-machine {
+    grid-template-rows:
+      38px
+      40px
+      minmax(0, 1fr)
+      142px !important;
+    gap: 3px !important;
+  }
+
+  .wheel-topbar {
+    height: 38px !important;
+    min-height: 38px !important;
+  }
+
+  .wheel-dashboard {
+    height: 40px !important;
+    min-height: 40px !important;
+  }
+
+  .wheel-dashboard > div {
+    height: 40px !important;
+    min-height: 40px !important;
+  }
+
+  .wheel-betting-panel {
+    height: 142px !important;
+    min-height: 142px !important;
+  }
+}
