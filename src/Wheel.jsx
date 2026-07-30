@@ -1,32 +1,31 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import "./Wheel.css";
-import { supabase } from "./supabase";
 
 const SEGMENTS = [
   { label: "100", value: 100 },
-  { label: "PIERDE", lossBet: true },
   { label: "200", value: 200 },
   { label: "100", value: 100 },
-  { label: "-500", loss: 500 },
+  { label: "500", value: 500 },
+  { label: "PIERDE", value: 0 },
+  { label: "100", value: 100 },
+  { label: "BONUS", bonus: true },
+  { label: "200", value: 200 },
+  { label: "100", value: 100 },
+  { label: "1000", value: 1000 },
+  { label: "100", value: 100 },
+  { label: "X2", multiplier: 2 },
+  { label: "200", value: 200 },
+  { label: "100", value: 100 },
   { label: "500", value: 500 },
   { label: "100", value: 100 },
-  { label: "-1000", loss: 1000 },
   { label: "BONUS", bonus: true },
-  { label: "100", value: 100 },
-  { label: "PIERDE", lossBet: true },
   { label: "200", value: 200 },
   { label: "100", value: 100 },
-  { label: "-2000", loss: 2000 },
-  { label: "X2", multiplier: 2 },
-  { label: "100", value: 100 },
-  { label: "-4000", loss: 4000 },
-  { label: "200", value: 200 },
-  { label: "100", value: 100 },
-  { label: "-1000", loss: 1000 },
   { label: "JACKPOT", jackpot: true },
+  { label: "100", value: 100 },
+  { label: "500", value: 500 },
   { label: "200", value: 200 },
-  { label: "PIERDE", lossBet: true },
-  { label: "1000", value: 1000 },
+  { label: "100", value: 100 },
 ];
 
 const SPIN_DURATION_MS = 5400;
@@ -35,14 +34,11 @@ function getSegmentClass(segment) {
   if (segment.jackpot) return "wheel-segment-label is-jackpot";
   if (segment.bonus) return "wheel-segment-label is-bonus";
   if (segment.multiplier) return "wheel-segment-label is-multiplier";
-  if (segment.lossBet || segment.loss > 0 || segment.value === 0) {
-    return "wheel-segment-label is-lose";
-  }
+  if (segment.value === 0) return "wheel-segment-label is-lose";
   return "wheel-segment-label";
 }
 
 export default function Wheel({
-  player,
   credits: externalCredits,
   onCreditsChange,
   onBack,
@@ -51,16 +47,15 @@ export default function Wheel({
   const [spinning, setSpinning] = useState(false);
   const [result, setResult] = useState(null);
   const [soundEnabled, setSoundEnabled] = useState(true);
-  const [localCredits, setLocalCredits] = useState(() => {
-    const initialCredits = externalCredits ?? player?.credits ?? 0;
-    return Math.max(0, Math.floor(Number(initialCredits) || 0));
-  });
+  const [localCredits, setLocalCredits] = useState(10000);
   const [bet, setBet] = useState(100);
   const [lastBet, setLastBet] = useState(100);
   const [lastPrize, setLastPrize] = useState(0);
   const [history, setHistory] = useState([]);
 
-  const credits = localCredits;
+  const credits = Number.isFinite(Number(externalCredits))
+    ? Number(externalCredits)
+    : localCredits;
 
   const currentRotationRef = useRef(0);
   const spinTimeoutRef = useRef(null);
@@ -310,59 +305,19 @@ export default function Wheel({
   function updateCredits(nextCredits) {
     const safeCredits = Math.max(0, Math.floor(Number(nextCredits) || 0));
 
-    setLocalCredits(safeCredits);
+    if (!Number.isFinite(Number(externalCredits))) {
+      setLocalCredits(safeCredits);
+    }
+
     onCreditsChange?.(safeCredits);
   }
-
-  async function refreshCredits() {
-    if (!player?.id) return;
-
-    const { data, error } = await supabase
-      .from("players")
-      .select("credits")
-      .eq("id", player.id)
-      .single();
-
-    if (error) {
-      console.error("No se pudo actualizar el saldo de Wheel:", error);
-      return;
-    }
-
-    updateCredits(data?.credits ?? 0);
-  }
-
-  useEffect(() => {
-    const propCredits = externalCredits ?? player?.credits;
-
-    if (Number.isFinite(Number(propCredits))) {
-      setLocalCredits(Math.max(0, Math.floor(Number(propCredits))));
-    }
-
-    if (player?.id) {
-      refreshCredits();
-    }
-    // Solo al entrar o cambiar de jugador.
-    // No depende de player.credits para evitar pisar el descuento visual.
-  }, [player?.id]);
 
   function calculatePrize(segment, currentBet) {
     if (segment.jackpot) return currentBet * 10;
     if (segment.bonus) return currentBet * 3;
     if (segment.multiplier) return currentBet * segment.multiplier;
-
-    // Los premios fijos son ganancia adicional:
-    // se devuelve la apuesta y se suma el valor del casillero.
-    if (segment.value > 0) return currentBet + segment.value;
-
+    if (segment.value > 0) return segment.value;
     return 0;
-  }
-
-  function calculateTotalLoss(segment, currentBet, availableCredits) {
-    const requestedLoss = segment.lossBet
-      ? currentBet
-      : Math.max(0, Number(segment.loss) || 0);
-
-    return Math.min(requestedLoss, Math.max(0, availableCredits));
   }
 
   function selectChip(value) {
@@ -388,17 +343,12 @@ export default function Wheel({
   async function spinWheel() {
     if (spinning || bet <= 0 || bet > credits) return;
 
+    const creditsAfterBet = credits - bet;
     const currentBet = bet;
-    const creditsAfterBet = credits - currentBet;
 
     setLastBet(currentBet);
     setLastPrize(0);
-
-    // Descuento visual inmediato solo dentro de Wheel.
-    // No actualizamos App todavía para evitar que vuelva a cargar
-    // el saldo anterior desde Supabase mientras la rueda gira.
-    setLocalCredits(creditsAfterBet);
-
+    updateCredits(creditsAfterBet);
     setSpinning(true);
     setResult(null);
 
@@ -432,14 +382,10 @@ export default function Wheel({
     currentRotationRef.current = targetRotation;
     setRotation(targetRotation);
 
-    spinTimeoutRef.current = window.setTimeout(async () => {
+    spinTimeoutRef.current = window.setTimeout(() => {
       const selectedSegment = SEGMENTS[selectedIndex];
       const prize = calculatePrize(selectedSegment, currentBet);
-      const totalLoss =
-        selectedSegment.lossBet || selectedSegment.loss > 0
-          ? calculateTotalLoss(selectedSegment, currentBet, credits)
-          : currentBet;
-      const isPenalty = selectedSegment.lossBet || selectedSegment.loss > 0;
+      const finalCredits = creditsAfterBet + prize;
 
       setResult(selectedSegment);
       setLastPrize(prize);
@@ -448,42 +394,14 @@ export default function Wheel({
           id: `${Date.now()}-${selectedIndex}`,
           label: selectedSegment.label,
           prize,
-          loss: isPenalty ? totalLoss : 0,
         },
         ...current,
       ].slice(0, 8));
-      try {
-        if (player?.id) {
-          const { data: resultData, error: resultError } = await supabase.rpc(
-            "apply_game_result",
-            {
-              p_bet: totalLoss,
-              p_win: prize,
-              p_is_free_spin: false,
-            }
-          );
-
-          if (resultError) {
-            console.error("No se pudo guardar la jugada de Wheel:", resultError);
-            await refreshCredits();
-          } else if (resultData?.length) {
-            updateCredits(resultData[0].credits_after);
-          } else {
-            await refreshCredits();
-          }
-        } else {
-          // Modo local de respaldo para desarrollo.
-          updateCredits(Math.max(0, credits - totalLoss + prize));
-        }
-      } catch (error) {
-        console.error("Error al registrar la jugada de Wheel:", error);
-        await refreshCredits();
-      } finally {
-        setSpinning(false);
-        playResultSound(audioContextRef.current, selectedSegment);
-        spinTimeoutRef.current = null;
-        clearSoundTimers();
-      }
+      updateCredits(finalCredits);
+      setSpinning(false);
+      playResultSound(audioContextRef.current, selectedSegment);
+      spinTimeoutRef.current = null;
+      clearSoundTimers();
     }, SPIN_DURATION_MS);
   }
 
@@ -550,8 +468,7 @@ export default function Wheel({
         </div>
 
         <div className="wheel-game-layout">
-          <aside className="wheel-left-column">
-            <section className="wheel-history-panel">
+          <aside className="wheel-history-panel">
             <span className="wheel-section-title">ÚLTIMOS GIROS</span>
             <div className="wheel-history-list">
               {history.length === 0 ? (
@@ -560,26 +477,11 @@ export default function Wheel({
                 history.map((item) => (
                   <div className="wheel-history-item" key={item.id}>
                     <strong>{item.label}</strong>
-                    <span>
-                      {item.prize > 0
-                        ? `+${item.prize}`
-                        : item.loss > 0
-                          ? `-${item.loss}`
-                          : "0"}
-                    </span>
+                    <span>{item.prize > 0 ? `+${item.prize}` : "0"}</span>
                   </div>
                 ))
               )}
             </div>
-            </section>
-
-            <section className="wheel-rules-panel">
-              <span className="wheel-section-title">REGLAS</span>
-              <div className="wheel-rule-row"><b>BONUS</b><span>×3 apuesta</span></div>
-              <div className="wheel-rule-row"><b>X2</b><span>duplica</span></div>
-              <div className="wheel-rule-row"><b>JACKPOT</b><span>×10 apuesta</span></div>
-              <div className="wheel-rule-row"><b>PIERDE</b><span>resta créditos</span></div>
-            </section>
           </aside>
 
           <div className="wheel-main-area">
@@ -643,31 +545,12 @@ export default function Wheel({
               {result
                 ? lastPrize > 0
                   ? `${result.label} · GANASTE ${lastPrize.toLocaleString("es-AR")}`
-                  : result.lossBet || result.loss > 0
-                    ? `${result.label} · PÉRDIDA APLICADA`
-                    : `${result.label} · SIN PREMIO`
+                  : `${result.label} · SIN PREMIO`
                 : spinning
                   ? "LA RUEDA ESTÁ GIRANDO..."
                   : "ELEGÍ TU FICHA Y GIRÁ"}
             </div>
           </div>
-
-          <aside className="wheel-info-column">
-            <section className="wheel-info-panel">
-              <span className="wheel-section-title">INFORMACIÓN</span>
-              <div className="wheel-info-row"><i>🎁</i><b>BONUS</b><strong>×3</strong></div>
-              <div className="wheel-info-row"><i>✦</i><b>DUPLICA</b><strong>×2</strong></div>
-              <div className="wheel-info-row"><i>♦</i><b>JACKPOT</b><strong>×10</strong></div>
-              <div className="wheel-info-row"><i>−</i><b>PÉRDIDAS</b><strong>hasta 4.000</strong></div>
-            </section>
-
-            <section className="wheel-status-panel">
-              <span className="wheel-section-title">ESTADO DE JUEGO</span>
-              <div><span>APUESTA</span><strong>{bet.toLocaleString("es-AR")}</strong></div>
-              <div><span>DISPONIBLE</span><strong>{credits.toLocaleString("es-AR")}</strong></div>
-              <div><span>GIROS</span><strong>{history.length}</strong></div>
-            </section>
-          </aside>
         </div>
 
         <section className="wheel-betting-panel">
