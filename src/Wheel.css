@@ -1,332 +1,628 @@
+
 :root {
-  --wheel-gold: #f4cf72;
-  --wheel-gold-dark: #8a5b16;
-  --wheel-panel: rgba(8, 13, 24, 0.92);
-  --wheel-panel-soft: rgba(20, 27, 43, 0.92);
-  --wheel-line: rgba(244, 207, 114, 0.32);
-  --wheel-red: #d91f45;
+  --fortune-wheel-gold: #f4cf72;
+  --fortune-wheel-gold-soft: #fff2b2;
+  --fortune-wheel-line: rgba(244, 207, 114, 0.32);
+  --fortune-wheel-panel: rgba(8, 13, 24, 0.94);
+  --fortune-wheel-panel-2: rgba(18, 26, 42, 0.94);
+  --fortune-wheel-red: #d91f45;
+  --fortune-wheel-green: #27952d;
 }
 
 * {
   box-sizing: border-box;
 }
 
-.wheel-page {
-  min-height: 100vh;
-  min-height: 100dvh;
-  padding: 18px;
-  overflow-x: hidden;
-  color: #fff;
-  background:
-    radial-gradient(circle at 50% -10%, rgba(42, 96, 146, 0.38), transparent 34%),
-    radial-gradient(circle at 85% 35%, rgba(138, 19, 53, 0.22), transparent 30%),
-    linear-gradient(155deg, #030711 0%, #07101d 45%, #02040a 100%);
+html,
+body,
+#root {
+  width: 100%;
+  min-width: 320px;
+  min-height: 100%;
+  margin: 0;
 }
 
 button {
   font: inherit;
 }
 
-.wheel-machine {
-  width: min(1180px, 100%);
-  min-height: calc(100dvh - 36px);
-  margin: 0 auto;
-  padding: 18px;
-  border: 1px solid rgba(244, 207, 114, 0.48);
-  border-radius: 28px;
-  background:
-    linear-gradient(180deg, rgba(15, 22, 36, 0.96), rgba(5, 9, 17, 0.98)),
-    radial-gradient(circle at center, rgba(199, 29, 67, 0.08), transparent 50%);
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.08),
-    0 0 0 5px rgba(5, 8, 14, 0.88),
-    0 24px 80px rgba(0, 0, 0, 0.65);
-}
+/* =========================================================
+   PÁGINA
+   ========================================================= */
 
-.wheel-topbar {
-  min-height: 64px;
+.fortune-wheel-page {
+  width: 100%;
+  height: 100dvh;
+  min-height: 100dvh;
   display: grid;
-  grid-template-columns: 130px 1fr 52px;
-  align-items: center;
-  gap: 14px;
-  padding: 8px 10px 14px;
-  border-bottom: 1px solid var(--wheel-line);
+  place-items: center;
+  padding: 8px;
+  overflow: hidden;
+  color: #fff;
+  font-family: Arial, Helvetica, sans-serif;
+  background:
+    radial-gradient(circle at 50% -10%, rgba(42, 96, 146, 0.38), transparent 34%),
+    radial-gradient(circle at 85% 35%, rgba(138, 19, 53, 0.22), transparent 30%),
+    linear-gradient(155deg, #030711 0%, #07101d 45%, #02040a 100%);
 }
 
-.wheel-brand {
+.fortune-wheel-machine {
+  position: relative;
+  width: min(1120px, calc(100% - 24px));
+  height: min(620px, calc(100dvh - 28px));
+  min-height: 0;
+  max-height: calc(100dvh - 28px);
+  padding: 7px 10px;
+  display: grid;
+  grid-template-rows: 48px 40px minmax(0, 1fr) 100px;
+  gap: 5px;
+  overflow: hidden;
+  isolation: isolate;
+  border: 1px solid rgba(244, 207, 114, 0.42);
+  border-radius: 18px;
+  box-shadow:
+    0 0 0 3px rgba(4, 7, 13, 0.78),
+    0 16px 48px rgba(0, 0, 0, 0.55);
+  background:
+    radial-gradient(circle at 50% 42%, rgba(165, 21, 56, 0.13), transparent 42%),
+    linear-gradient(180deg, rgba(15, 22, 36, 0.98), rgba(5, 9, 17, 0.99));
+}
+
+.fortune-wheel-machine::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(circle at 50% 18%, rgba(255, 211, 82, 0.10), transparent 30%),
+    radial-gradient(circle at 14% 58%, rgba(229, 27, 74, 0.08), transparent 25%),
+    radial-gradient(circle at 86% 60%, rgba(61, 130, 255, 0.07), transparent 26%);
+  animation: wheelAmbientPulse 4.8s ease-in-out infinite alternate;
+}
+
+.fortune-wheel-topbar,
+.fortune-wheel-dashboard,
+.fortune-wheel-game-layout,
+.fortune-wheel-betting-panel {
+  position: relative;
+  z-index: 2;
+}
+
+/* =========================================================
+   CABECERA
+   ========================================================= */
+
+.fortune-wheel-topbar {
+  height: 48px;
+  display: grid;
+  grid-template-columns: 120px 1fr 44px;
+  align-items: center;
+  gap: 10px;
+  padding: 2px 8px 5px;
+  border-bottom: 1px solid var(--fortune-wheel-line);
+}
+
+.fortune-wheel-brand {
+  min-width: 0;
   text-align: center;
 }
 
-.wheel-brand span {
+.fortune-wheel-brand span {
   display: block;
-  color: var(--wheel-gold);
-  font-size: 12px;
+  color: var(--fortune-wheel-gold);
+  font-size: 9px;
   font-weight: 900;
-  letter-spacing: 0.34em;
+  letter-spacing: 0.28em;
 }
 
-.wheel-brand strong {
+.fortune-wheel-brand strong {
   display: block;
-  margin-top: 3px;
-  font-size: clamp(25px, 4vw, 42px);
+  margin-top: 1px;
+  font-size: 25px;
   line-height: 1;
   letter-spacing: 0.08em;
-  text-shadow: 0 0 20px rgba(244, 207, 114, 0.28);
+  white-space: nowrap;
+  text-shadow: 0 0 18px rgba(244, 207, 114, 0.30);
 }
 
-.wheel-back-button,
-.wheel-sound-button,
-.wheel-action-button {
-  border: 1px solid var(--wheel-line);
+.fortune-wheel-back-button,
+.fortune-wheel-sound-button,
+.fortune-wheel-action-button {
+  border: 1px solid var(--fortune-wheel-line);
   color: #fff;
-  background: linear-gradient(180deg, rgba(37, 47, 65, 0.95), rgba(12, 18, 29, 0.98));
+  background: linear-gradient(180deg, rgba(37, 47, 65, 0.96), rgba(12, 18, 29, 0.99));
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
   cursor: pointer;
 }
 
-.wheel-back-button {
-  min-height: 42px;
-  border-radius: 12px;
-  font-size: 12px;
+.fortune-wheel-back-button {
+  height: 40px;
+  padding: 0 9px;
+  border-radius: 11px;
+  font-size: 11px;
   font-weight: 900;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.06em;
 }
 
-.wheel-sound-button {
-  width: 46px;
-  height: 46px;
+.fortune-wheel-sound-button {
+  width: 40px;
+  height: 40px;
   display: grid;
   place-items: center;
   border-radius: 50%;
-  font-size: 20px;
+  font-size: 18px;
 }
 
-.wheel-back-button:disabled {
-  opacity: 0.35;
-  cursor: default;
+.fortune-wheel-back-button:disabled,
+.fortune-wheel-action-button:disabled,
+.fortune-wheel-spin-button:disabled,
+.fortune-wheel-chip:disabled {
+  opacity: 0.38;
+  cursor: not-allowed;
 }
 
-.wheel-dashboard {
+/* =========================================================
+   TABLERO SUPERIOR
+   ========================================================= */
+
+.fortune-wheel-dashboard {
+  height: 40px;
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 12px;
-  margin: 16px 0;
+  gap: 10px;
 }
 
-.wheel-dashboard > div {
-  min-height: 76px;
+.fortune-wheel-dashboard > div {
+  position: relative;
+  height: 40px;
   display: grid;
   place-content: center;
+  overflow: hidden;
   text-align: center;
-  border: 1px solid var(--wheel-line);
-  border-radius: 16px;
-  background: linear-gradient(180deg, rgba(26, 35, 53, 0.92), rgba(8, 13, 23, 0.98));
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06);
+  border: 1px solid var(--fortune-wheel-line);
+  border-radius: 13px;
+  background: linear-gradient(180deg, var(--fortune-wheel-panel-2), var(--fortune-wheel-panel));
 }
 
-.wheel-dashboard span,
-.wheel-section-title {
+.fortune-wheel-dashboard > div::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(
+    110deg,
+    transparent 0 38%,
+    rgba(255, 255, 255, 0.10) 48%,
+    transparent 58% 100%
+  );
+  transform: translateX(-140%);
+  animation: wheelPanelShine 5.6s ease-in-out infinite;
+}
+
+.fortune-wheel-dashboard > div:nth-child(2)::after {
+  animation-delay: -1.9s;
+}
+
+.fortune-wheel-dashboard > div:nth-child(3)::after {
+  animation-delay: -3.8s;
+}
+
+.fortune-wheel-dashboard span,
+.fortune-wheel-section-title {
   color: rgba(255, 255, 255, 0.58);
-  font-size: 11px;
+  font-size: 9px;
   font-weight: 900;
-  letter-spacing: 0.17em;
+  letter-spacing: 0.14em;
 }
 
-.wheel-dashboard strong {
-  margin-top: 5px;
+.fortune-wheel-dashboard strong {
+  margin-top: 1px;
   color: #fff8d6;
-  font-size: clamp(22px, 3.5vw, 34px);
+  font-size: 20px;
+  line-height: 1;
 }
 
-.wheel-game-layout {
+/* =========================================================
+   ÁREA CENTRAL
+   ========================================================= */
+
+.fortune-wheel-game-layout {
+  min-height: 0;
   display: grid;
-  grid-template-columns: 180px minmax(0, 1fr);
-  gap: 18px;
-  align-items: stretch;
+  grid-template-columns: 180px minmax(360px, 1fr) 200px;
+  gap: 10px;
+  overflow: hidden;
 }
 
-.wheel-history-panel {
-  padding: 16px;
-  border: 1px solid var(--wheel-line);
-  border-radius: 18px;
-  background: var(--wheel-panel);
-}
-
-.wheel-history-list {
+.fortune-wheel-left-column,
+.fortune-wheel-info-column {
+  min-height: 0;
+  height: 100%;
   display: grid;
-  gap: 8px;
-  margin-top: 14px;
+  gap: 9px;
+  overflow: hidden;
 }
 
-.wheel-history-list p {
-  margin: 20px 0;
-  color: rgba(255, 255, 255, 0.4);
+.fortune-wheel-left-column {
+  grid-template-rows: minmax(0, 1fr) auto;
+}
+
+.fortune-wheel-info-column {
+  grid-template-rows: auto 1fr;
+}
+
+.fortune-wheel-history-panel,
+.fortune-wheel-rules-panel,
+.fortune-wheel-info-panel,
+.fortune-wheel-status-panel {
+  min-height: 0;
+  padding: 10px 12px;
+  border: 1px solid var(--fortune-wheel-line);
+  border-radius: 15px;
+  background: linear-gradient(180deg, rgba(15, 21, 34, 0.97), rgba(5, 9, 17, 0.99));
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05);
+}
+
+.fortune-wheel-history-panel {
+  overflow: hidden;
+}
+
+.fortune-wheel-history-list {
+  max-height: calc(100% - 28px);
+  display: grid;
+  gap: 5px;
+  margin-top: 9px;
+  overflow-y: auto;
+  scrollbar-width: thin;
+}
+
+.fortune-wheel-history-list p {
+  margin: 18px 0;
+  color: rgba(255, 255, 255, 0.40);
   text-align: center;
 }
 
-.wheel-history-item {
+.fortune-wheel-history-item {
   display: flex;
   justify-content: space-between;
   gap: 8px;
-  padding: 10px;
-  border-radius: 10px;
+  padding: 7px 9px;
+  border-radius: 9px;
   background: rgba(255, 255, 255, 0.05);
+  font-size: 12px;
 }
 
-.wheel-history-item strong {
+.fortune-wheel-history-item strong {
   color: #fff4bf;
 }
 
-.wheel-history-item span {
+.fortune-wheel-history-item span {
   color: #8ef0b3;
   font-weight: 900;
 }
 
-.wheel-main-area {
-  min-width: 0;
+.fortune-wheel-rules-panel,
+.fortune-wheel-info-panel,
+.fortune-wheel-status-panel {
+  display: grid;
+  align-content: start;
+  gap: 7px;
+}
+
+.fortune-wheel-rule-row,
+.fortune-wheel-info-row,
+.fortune-wheel-status-panel > div {
+  display: grid;
+  align-items: center;
+  min-height: 32px;
+  border-bottom: 1px solid rgba(244, 207, 114, 0.13);
+}
+
+.fortune-wheel-rule-row {
+  grid-template-columns: 1fr auto;
+  gap: 8px;
+  font-size: 11px;
+}
+
+.fortune-wheel-rule-row b,
+.fortune-wheel-info-row strong {
+  color: var(--fortune-wheel-gold);
+}
+
+.fortune-wheel-rule-row span,
+.fortune-wheel-status-panel span {
+  color: rgba(255, 255, 255, 0.62);
+}
+
+.fortune-wheel-info-row {
+  grid-template-columns: 30px 1fr auto;
+  gap: 7px;
+}
+
+.fortune-wheel-info-row i {
+  width: 25px;
+  height: 25px;
   display: grid;
   place-items: center;
-  padding: 12px 16px 4px;
-  border: 1px solid var(--wheel-line);
-  border-radius: 22px;
-  background:
-    radial-gradient(circle at center, rgba(123, 21, 48, 0.18), transparent 48%),
-    linear-gradient(180deg, rgba(14, 20, 33, 0.88), rgba(5, 9, 16, 0.96));
+  border: 1px solid rgba(244, 207, 114, 0.45);
+  border-radius: 50%;
+  color: #ffd96e;
+  font-style: normal;
+  background: rgba(255, 255, 255, 0.04);
 }
 
-.wheel-stage {
+.fortune-wheel-info-row b {
+  font-size: 11px;
+  letter-spacing: 0.05em;
+}
+
+.fortune-wheel-info-row strong {
+  font-size: 15px;
+}
+
+.fortune-wheel-status-panel > div {
+  grid-template-columns: 1fr auto;
+}
+
+.fortune-wheel-status-panel strong {
+  color: #fff2b2;
+  font-size: 15px;
+}
+
+/* =========================================================
+   RUEDA
+   ========================================================= */
+
+.fortune-wheel-main-area {
   position: relative;
-  width: min(62vw, 560px);
-  max-width: 100%;
-  aspect-ratio: 1;
-  margin: 12px auto 0;
+  min-width: 0;
+  min-height: 0;
+  height: 100%;
+  padding: 3px 8px 0;
+  display: grid;
+  grid-template-rows: minmax(0, 1fr) 30px;
+  place-items: center;
+  overflow: hidden;
+  isolation: isolate;
+  border: 1px solid var(--fortune-wheel-line);
+  border-radius: 18px;
+  background:
+    radial-gradient(circle at center, rgba(145, 20, 48, 0.24), transparent 54%),
+    linear-gradient(180deg, rgba(13, 18, 30, 0.92), rgba(4, 7, 13, 0.99));
 }
 
-.wheel-pointer {
+.fortune-wheel-main-area::before {
+  content: "";
   position: absolute;
-  top: -23px;
+  width: min(92%, 620px);
+  aspect-ratio: 1;
+  z-index: 0;
+  pointer-events: none;
+  border-radius: 50%;
+  background:
+    repeating-conic-gradient(
+      from 0deg,
+      rgba(255, 213, 81, 0.11) 0deg 1deg,
+      transparent 1deg 15deg
+    );
+  mask: radial-gradient(circle, transparent 0 54%, #000 55% 70%, transparent 71%);
+  -webkit-mask: radial-gradient(circle, transparent 0 54%, #000 55% 70%, transparent 71%);
+  animation: wheelBackgroundRays 20s linear infinite;
+}
+
+.fortune-wheel-main-area::after {
+  content: "";
+  position: absolute;
+  width: min(78%, 560px);
+  aspect-ratio: 1;
+  z-index: 0;
+  pointer-events: none;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle,
+    rgba(255, 205, 71, 0.18),
+    rgba(184, 21, 62, 0.09) 42%,
+    transparent 70%
+  );
+  filter: blur(15px);
+  animation: wheelAuraBreathe 2.6s ease-in-out infinite alternate;
+}
+
+.fortune-wheel-stage {
+  --fortune-wheel-size: min(
+    calc(100dvh - 255px),
+    calc(100vw - 500px),
+    350px
+  );
+
+  position: relative;
+  z-index: 3;
+  width: var(--fortune-wheel-size);
+  height: var(--fortune-wheel-size);
+  min-width: 0;
+  min-height: 0;
+  max-width: 100%;
+  max-height: 100%;
+  margin: 6px auto 0;
+  align-self: center;
+  justify-self: center;
+  aspect-ratio: 1 / 1;
+  border-radius: 50%;
+  filter:
+    drop-shadow(0 0 11px rgba(255, 239, 151, 0.50))
+    drop-shadow(0 0 27px rgba(255, 180, 34, 0.34));
+  animation: wheelStageGlow 1.8s ease-in-out infinite alternate;
+}
+
+.fortune-wheel-stage::before {
+  content: "";
+  position: absolute;
+  inset: -9px;
+  z-index: 1;
+  pointer-events: none;
+  border-radius: 50%;
+  background:
+    repeating-conic-gradient(
+      from 0deg,
+      #fff5b0 0deg 2deg,
+      #ffb32a 2deg 4deg,
+      transparent 4deg 8deg
+    );
+  mask: radial-gradient(circle, transparent 0 89%, #000 89.5% 94%, transparent 94.5%);
+  -webkit-mask: radial-gradient(circle, transparent 0 89%, #000 89.5% 94%, transparent 94.5%);
+  filter:
+    drop-shadow(0 0 4px #fff1a5)
+    drop-shadow(0 0 10px rgba(255, 181, 35, 0.90));
+  animation: wheelOuterBulbs 3.6s linear infinite;
+}
+
+.fortune-wheel-pointer {
+  position: absolute;
+  top: -15px;
   left: 50%;
   z-index: 30;
   transform: translateX(-50%);
   color: #fff2ae;
-  font-size: 52px;
+  font-size: 39px;
   line-height: 1;
-  filter: drop-shadow(0 5px 4px rgba(0, 0, 0, 0.8));
-  text-shadow: 0 0 13px rgba(255, 205, 76, 0.9);
+  text-shadow:
+    0 0 6px #fff,
+    0 0 13px #ffd45b,
+    0 0 24px rgba(255, 171, 24, 0.95);
+  animation: wheelPointerGlow 0.9s ease-in-out infinite alternate;
 }
 
-.wheel-disc {
+.fortune-wheel-disc,
+.fortune-wheel-lights-ring,
+.fortune-wheel-shine,
+.fortune-wheel-labels {
+  width: 100%;
+  height: 100%;
+  aspect-ratio: 1 / 1;
+}
+
+.fortune-wheel-disc {
   position: absolute;
   inset: 0;
-  z-index: 2;
+  z-index: 4;
   overflow: hidden;
-  border: clamp(9px, 1.4vw, 16px) solid #d9aa39;
+  border: clamp(8px, 1.2vw, 14px) solid #d9aa39;
   border-radius: 50%;
-  transition: transform 5.4s cubic-bezier(0.08, 0.67, 0.08, 1);
+  transition: transform 4.7s cubic-bezier(0.08, 0.67, 0.08, 1);
   will-change: transform;
   box-shadow:
-    inset 0 0 0 7px #66390c,
-    inset 0 0 55px rgba(0, 0, 0, 0.72),
-    0 0 0 7px #7b1028,
-    0 0 0 13px #160811,
-    0 0 42px rgba(255, 191, 44, 0.58);
+    inset 0 0 0 6px #66390c,
+    inset 0 0 50px rgba(0, 0, 0, 0.72),
+    0 0 0 6px #7b1028,
+    0 0 0 11px #160811,
+    0 0 20px rgba(255, 242, 167, 0.72),
+    0 0 45px rgba(255, 174, 34, 0.46);
 }
 
-.wheel-disc::before {
+.fortune-wheel-disc::before {
   content: "";
   position: absolute;
-  inset: 8px;
+  inset: 7px;
   z-index: 5;
   border: 2px solid rgba(255, 244, 178, 0.55);
   border-radius: 50%;
   pointer-events: none;
 }
 
-.wheel-disc::after {
+.fortune-wheel-disc::after {
   content: "";
   position: absolute;
   inset: 0;
   z-index: 1;
-  border-radius: 50%;
   pointer-events: none;
+  border-radius: 50%;
   background:
     radial-gradient(circle at center, transparent 0 32%, rgba(0, 0, 0, 0.08) 58%, rgba(0, 0, 0, 0.4) 100%),
     repeating-conic-gradient(from 0deg, rgba(255, 255, 255, 0.08) 0deg 0.7deg, transparent 0.7deg 15deg);
 }
 
-.wheel-labels {
+.fortune-wheel-labels {
   position: absolute;
   inset: 0;
   z-index: 6;
-  width: 100%;
-  height: 100%;
+  display: block;
   overflow: visible;
   pointer-events: none;
 }
 
-.wheel-labels text {
+.fortune-wheel-labels text {
   dominant-baseline: middle;
   text-anchor: middle;
   fill: #fff;
   font-family: Arial, Helvetica, sans-serif;
-  font-size: 2.15px;
+  font-size: 2.35px;
   font-weight: 1000;
   paint-order: stroke fill;
   stroke: rgba(0, 0, 0, 0.95);
-  stroke-width: 0.72px;
+  stroke-width: 0.76px;
 }
 
-.wheel-labels text.is-bonus,
-.wheel-labels text.is-multiplier {
+.fortune-wheel-labels text.is-bonus,
+.fortune-wheel-labels text.is-multiplier {
   fill: #fff2a1;
-  font-size: 2px;
+  font-size: 2.12px;
 }
 
-.wheel-labels text.is-jackpot {
+.fortune-wheel-labels text.is-jackpot,
+.fortune-wheel-labels text.is-lose {
   fill: #fff1a1;
-  font-size: 1.72px;
+  font-size: 1.88px;
 }
 
-.wheel-labels text.is-lose {
-  font-size: 1.82px;
-}
-
-.wheel-center {
+.fortune-wheel-center {
   position: absolute;
   top: 50%;
   left: 50%;
   z-index: 20;
-  width: 31%;
+  width: 28%;
   aspect-ratio: 1;
   display: grid;
   place-content: center;
   transform: translate(-50%, -50%);
-  border: 8px solid #dcae3a;
+  border: 6px solid #dcae3a;
   border-radius: 50%;
   background: radial-gradient(circle at 38% 30%, #b83355, #390713 65%, #100006 100%);
   box-shadow:
-    inset 0 0 30px rgba(0, 0, 0, 0.72),
-    0 0 0 4px #6f3510,
-    0 0 25px rgba(255, 198, 45, 0.75);
+    inset 0 0 26px rgba(0, 0, 0, 0.72),
+    0 0 0 4px #7b3d0f,
+    0 0 18px #fff0a0,
+    0 0 36px rgba(255, 192, 45, 0.92);
+  animation: wheelCenterPulse 1.9s ease-in-out infinite alternate;
 }
 
-.wheel-center span {
+.fortune-wheel-center::after {
+  content: "";
+  position: absolute;
+  inset: -8px;
+  border: 2px solid rgba(255, 224, 123, 0.42);
+  border-radius: 50%;
+  pointer-events: none;
+  animation: wheelCenterHalo 1.9s ease-out infinite;
+}
+
+.fortune-wheel-center span {
   color: #fff3ad;
-  font-size: clamp(34px, 7vw, 66px);
+  font-size: clamp(31px, 4vw, 48px);
   font-weight: 1000;
   line-height: 0.85;
 }
 
-.wheel-center strong {
-  margin-top: 5px;
-  font-size: clamp(8px, 1.5vw, 14px);
-  letter-spacing: 0.2em;
+.fortune-wheel-center strong {
+  margin-top: 4px;
+  font-size: 9px;
+  letter-spacing: 0.18em;
 }
 
-.wheel-lights-ring {
+.fortune-wheel-lights-ring {
   position: absolute;
-  inset: -17px;
-  z-index: 4;
+  inset: -9px;
+  z-index: 8;
   border-radius: 50%;
   pointer-events: none;
   background: repeating-conic-gradient(
@@ -337,20 +633,22 @@ button {
   );
   mask: radial-gradient(circle, transparent 0 86%, #000 86.5% 94%, transparent 94.5%);
   -webkit-mask: radial-gradient(circle, transparent 0 86%, #000 86.5% 94%, transparent 94.5%);
-  filter: drop-shadow(0 0 7px rgba(255, 202, 64, 0.85));
+  filter:
+    drop-shadow(0 0 5px #fff4b0)
+    drop-shadow(0 0 12px #ffb52a);
   animation: wheelLightsRun 3.5s linear infinite;
 }
 
-.wheel-shine {
+.fortune-wheel-shine {
   position: absolute;
   inset: 5%;
-  z-index: 12;
+  z-index: 13;
   overflow: hidden;
   border-radius: 50%;
   pointer-events: none;
 }
 
-.wheel-shine::before {
+.fortune-wheel-shine::before {
   content: "";
   position: absolute;
   top: -40%;
@@ -367,48 +665,62 @@ button {
     transparent
   );
   filter: blur(5px);
-  animation: wheelShinePass 4.6s ease-in-out infinite;
+  animation: wheelShinePass 4.8s ease-in-out infinite;
 }
 
-.wheel-result {
+.fortune-wheel-result {
+  position: relative;
+  z-index: 20;
   width: 100%;
-  min-height: 48px;
+  height: 30px;
+  min-height: 30px;
   display: grid;
   place-items: center;
-  margin: 10px 0 4px;
-  padding: 9px 14px;
+  margin: 0;
+  padding: 2px 8px;
   color: #d8deeb;
-  font-size: clamp(15px, 2.4vw, 24px);
+  font-size: 17px;
   font-weight: 1000;
-  letter-spacing: 0.04em;
+  line-height: 1;
   text-align: center;
 }
 
-.wheel-result.is-win {
+.fortune-wheel-result.is-win {
   color: #fff0a2;
   text-shadow: 0 0 14px rgba(255, 210, 75, 0.72);
+  animation: wheelWinText 0.72s ease-in-out infinite alternate;
 }
 
-.wheel-betting-panel {
-  margin-top: 18px;
-  padding: 16px;
-  border: 1px solid var(--wheel-line);
-  border-radius: 20px;
-  background: var(--wheel-panel);
+/* =========================================================
+   APUESTAS
+   ========================================================= */
+
+.fortune-wheel-betting-panel {
+  height: 100px;
+  min-height: 100px;
+  margin: 0;
+  padding: 6px 10px 8px;
+  overflow: hidden;
+  border: 1px solid var(--fortune-wheel-line);
+  border-radius: 18px;
+  background: var(--fortune-wheel-panel);
 }
 
-.wheel-chips {
+.fortune-wheel-chips {
+  height: 40px;
   display: flex;
   justify-content: center;
-  flex-wrap: wrap;
-  gap: 12px;
-  margin: 14px 0 16px;
+  align-items: center;
+  flex-wrap: nowrap;
+  gap: 10px;
+  margin: 2px 0 4px;
 }
 
-.wheel-chip {
-  width: 72px;
-  aspect-ratio: 1;
-  border: 5px dashed rgba(255, 255, 255, 0.88);
+.fortune-wheel-chip {
+  width: 39px;
+  height: 39px;
+  flex: 0 0 39px;
+  border: 3px dashed rgba(255, 255, 255, 0.88);
   border-radius: 50%;
   color: #fff;
   background:
@@ -417,266 +729,713 @@ button {
   box-shadow:
     inset 0 0 0 4px #0e1728,
     0 5px 12px rgba(0, 0, 0, 0.42);
-  font-size: 13px;
+  font-size: 9px;
   font-weight: 1000;
   cursor: pointer;
   transition: transform 0.15s ease, filter 0.15s ease;
 }
 
-.wheel-chip:hover:not(:disabled),
-.wheel-chip.is-selected {
-  transform: translateY(-4px) scale(1.04);
+.fortune-wheel-chip:hover:not(:disabled),
+.fortune-wheel-chip.is-selected {
+  transform: translateY(-3px) scale(1.04);
   filter: brightness(1.18);
 }
 
-.wheel-chip.is-selected {
+.fortune-wheel-chip.is-selected {
   box-shadow:
     inset 0 0 0 4px #0e1728,
     0 0 0 4px rgba(255, 226, 128, 0.32),
     0 0 22px rgba(255, 202, 64, 0.62);
+  animation: wheelSelectedChip 1s ease-in-out infinite alternate;
 }
 
-.wheel-chip:disabled,
-.wheel-action-button:disabled,
-.wheel-spin-button:disabled {
-  opacity: 0.38;
-  cursor: not-allowed;
-}
-
-.wheel-actions {
+.fortune-wheel-actions {
+  height: 39px;
   display: grid;
-  grid-template-columns: repeat(3, minmax(100px, 1fr)) minmax(190px, 1.45fr);
-  gap: 10px;
+  grid-template-columns: 1fr 1fr 1fr 1.45fr;
+  gap: 8px;
 }
 
-.wheel-action-button,
-.wheel-spin-button {
-  min-height: 52px;
-  border-radius: 14px;
+.fortune-wheel-action-button,
+.fortune-wheel-spin-button {
+  min-height: 39px;
+  height: 39px;
+  border-radius: 13px;
+  font-size: 14px;
   font-weight: 1000;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.04em;
 }
 
-.wheel-action-button {
-  padding: 0 16px;
+.fortune-wheel-action-button:nth-child(1) {
+  background: linear-gradient(180deg, #7a1820, #3f070d);
 }
 
-.wheel-spin-button {
-  border: 1px solid #ffe599;
+.fortune-wheel-action-button:nth-child(2) {
+  background: linear-gradient(180deg, #174f86, #092542);
+}
+
+.fortune-wheel-action-button:nth-child(3) {
+  background: linear-gradient(180deg, #7a5913, #3d2905);
+}
+
+.fortune-wheel-spin-button {
+  border: 1px solid #d8ffc5;
   color: #fff;
-  background: linear-gradient(180deg, #f0375b, #b01135 58%, #66091d);
+  background: linear-gradient(180deg, #27952d, #0d5c19 60%, #06350d);
   box-shadow:
-    0 5px 0 #43030f,
+    0 4px 0 #032608,
     inset 0 1px 0 rgba(255, 255, 255, 0.34),
-    0 0 22px rgba(235, 42, 84, 0.32);
-  font-size: 21px;
+    0 0 18px rgba(46, 214, 70, 0.36);
+  font-size: 18px;
   cursor: pointer;
+  animation: wheelSpinButtonPulse 1.4s ease-in-out infinite;
 }
 
-.wheel-action-button:hover:not(:disabled),
-.wheel-spin-button:hover:not(:disabled),
-.wheel-back-button:hover:not(:disabled),
-.wheel-sound-button:hover:not(:disabled) {
+.fortune-wheel-action-button:hover:not(:disabled),
+.fortune-wheel-spin-button:hover:not(:disabled),
+.fortune-wheel-back-button:hover:not(:disabled),
+.fortune-wheel-sound-button:hover:not(:disabled) {
   filter: brightness(1.14);
 }
 
-.wheel-spin-button:active:not(:disabled),
-.wheel-action-button:active:not(:disabled) {
-  transform: translateY(2px);
-}
+/* =========================================================
+   NOTEBOOK BAJA
+   ========================================================= */
 
-@keyframes wheelLightsRun {
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-@keyframes wheelShinePass {
-  0%, 25% {
-    left: -70%;
-    opacity: 0;
+@media (min-width: 901px) and (max-height: 680px) {
+  .fortune-wheel-machine {
+    grid-template-rows: 46px 40px minmax(0, 1fr) 104px;
+    gap: 4px;
+    padding: 4px 10px;
   }
 
-  40% {
-    opacity: 1;
+  .fortune-wheel-topbar {
+    height: 46px;
   }
 
-  70%, 100% {
-    left: 125%;
-    opacity: 0;
-  }
-}
-
-@media (max-width: 760px) {
-  .wheel-page {
-    padding: 0;
-  }
-
-  .wheel-machine {
-    min-height: 100dvh;
-    padding: 10px;
-    border: 0;
-    border-radius: 0;
-  }
-
-  .wheel-topbar {
-    grid-template-columns: 82px 1fr 42px;
-    padding: 4px 2px 10px;
-  }
-
-  .wheel-back-button {
-    min-height: 38px;
-    font-size: 10px;
-  }
-
-  .wheel-sound-button {
-    width: 40px;
+  .fortune-wheel-dashboard,
+  .fortune-wheel-dashboard > div {
     height: 40px;
   }
 
-  .wheel-brand span {
-    font-size: 8px;
-    letter-spacing: 0.22em;
+  .fortune-wheel-game-layout {
+    grid-template-columns: 190px minmax(360px, 1fr) 215px;
+    gap: 8px;
   }
 
-  .wheel-brand strong {
-    font-size: 21px;
+  .fortune-wheel-stage {
+    --fortune-wheel-size: min(calc(100dvh - 245px), calc(100vw - 490px), 355px);
   }
 
-  .wheel-dashboard {
-    gap: 6px;
-    margin: 10px 0;
+  .fortune-wheel-betting-panel {
+    height: 104px;
+    min-height: 104px;
+    padding: 4px 9px 6px;
   }
 
-  .wheel-dashboard > div {
-    min-height: 60px;
-    border-radius: 12px;
+  .fortune-wheel-chips {
+    height: 41px;
+    margin: 1px 0 3px;
   }
 
-  .wheel-dashboard span {
-    font-size: 8px;
-    letter-spacing: 0.08em;
+  .fortune-wheel-chip {
+    width: 40px;
+    height: 40px;
+    flex-basis: 40px;
   }
 
-  .wheel-dashboard strong {
-    font-size: 18px;
+  .fortune-wheel-actions,
+  .fortune-wheel-action-button,
+  .fortune-wheel-spin-button {
+    height: 39px;
+    min-height: 39px;
+  }
+}
+
+/* =========================================================
+   TABLET
+   ========================================================= */
+
+@media (max-width: 980px) and (min-width: 761px) {
+  .fortune-wheel-game-layout {
+    grid-template-columns: 150px minmax(0, 1fr);
   }
 
-  .wheel-game-layout {
-    display: block;
+  .fortune-wheel-info-column {
+    display: none;
   }
 
-  .wheel-history-panel {
-    padding: 10px;
+  .fortune-wheel-stage {
+    --fortune-wheel-size: min(calc(100dvh - 275px), 56vw, 430px);
+  }
+}
+
+/* =========================================================
+   CELULAR VERTICAL — SIN SCROLL Y BOTÓN SIEMPRE VISIBLE
+   ========================================================= */
+
+@media (max-width: 760px) and (orientation: portrait) {
+  html,
+  body,
+  #root {
+    width: 100%;
+    height: 100%;
+    min-height: 100%;
+    overflow: hidden;
+    overscroll-behavior: none;
+  }
+
+  .fortune-wheel-page {
+    width: 100%;
+    height: 100svh;
+    min-height: 100svh;
+    max-height: 100svh;
+    padding:
+      max(4px, env(safe-area-inset-top))
+      4px
+      max(4px, env(safe-area-inset-bottom));
     overflow: hidden;
   }
 
-  .wheel-history-list {
-    display: flex;
-    overflow-x: auto;
-    gap: 6px;
-    margin-top: 8px;
-    scrollbar-width: none;
+  .fortune-wheel-machine {
+    width: 100%;
+    height: calc(
+      100svh
+      - max(8px, env(safe-area-inset-top))
+      - max(8px, env(safe-area-inset-bottom))
+    );
+    min-height: 0;
+    max-height: calc(
+      100svh
+      - max(8px, env(safe-area-inset-top))
+      - max(8px, env(safe-area-inset-bottom))
+    );
+    padding: 3px 5px 4px;
+    border-radius: 12px;
+    grid-template-rows: 34px 36px minmax(0, 1fr) 96px;
+    gap: 3px;
+    overflow: hidden;
   }
 
-  .wheel-history-list::-webkit-scrollbar {
-    display: none;
+  .fortune-wheel-topbar {
+    height: 34px;
+    grid-template-columns: 64px minmax(0, 1fr) 32px;
+    gap: 4px;
+    padding: 0 1px 2px;
   }
 
-  .wheel-history-item {
-    min-width: 90px;
-    padding: 7px 8px;
-    font-size: 11px;
+  .fortune-wheel-back-button {
+    height: 30px;
+    min-height: 30px;
+    padding: 0 4px;
+    border-radius: 8px;
+    font-size: 8px;
   }
 
-  .wheel-main-area {
-    margin-top: 8px;
-    padding: 7px 4px 0;
-    border-radius: 16px;
-  }
-
-  .wheel-stage {
-    width: min(86vw, 460px);
-    margin-top: 10px;
-  }
-
-  .wheel-pointer {
-    top: -16px;
-    font-size: 40px;
-  }
-
-  .wheel-lights-ring {
-    inset: -10px;
-  }
-
-  .wheel-result {
-    min-height: 40px;
-    margin: 4px 0 0;
+  .fortune-wheel-sound-button {
+    width: 30px;
+    height: 30px;
     font-size: 14px;
   }
 
-  .wheel-betting-panel {
-    margin-top: 8px;
-    padding: 10px;
-    border-radius: 16px;
+  .fortune-wheel-brand span {
+    font-size: 5px;
+    letter-spacing: 0.15em;
   }
 
-  .wheel-chips {
-    flex-wrap: nowrap;
-    justify-content: flex-start;
-    overflow-x: auto;
-    gap: 9px;
-    margin: 10px 0 12px;
-    padding: 2px 2px 6px;
-    scrollbar-width: none;
+  .fortune-wheel-brand strong {
+    font-size: clamp(15px, 4.7vw, 19px);
   }
 
-  .wheel-chips::-webkit-scrollbar {
+  .fortune-wheel-dashboard {
+    height: 36px;
+    gap: 3px;
+  }
+
+  .fortune-wheel-dashboard > div {
+    height: 36px;
+    border-radius: 8px;
+  }
+
+  .fortune-wheel-dashboard span {
+    font-size: 6px;
+    letter-spacing: 0.06em;
+  }
+
+  .fortune-wheel-dashboard strong {
+    font-size: 15px;
+  }
+
+  .fortune-wheel-game-layout {
+    min-height: 0;
+    display: block;
+    overflow: hidden;
+  }
+
+  .fortune-wheel-left-column,
+  .fortune-wheel-info-column {
     display: none;
   }
 
-  .wheel-chip {
-    flex: 0 0 58px;
-    width: 58px;
-    border-width: 4px;
+  .fortune-wheel-main-area {
+    width: 100%;
+    height: 100%;
+    min-height: 0;
+    padding: 1px 2px 0;
+    grid-template-rows: minmax(0, 1fr) 24px;
+    border-radius: 13px;
+    overflow: hidden;
+  }
+
+  .fortune-wheel-main-area::before {
+    width: 96%;
+    opacity: 0.72;
+  }
+
+  .fortune-wheel-main-area::after {
+    width: 88%;
+    filter: blur(8px);
+  }
+
+  .fortune-wheel-stage {
+    --fortune-wheel-size: min(
+      82vw,
+      calc(
+        100svh
+        - 34px
+        - 36px
+        - 96px
+        - 26px
+        - 18px
+        - env(safe-area-inset-top)
+        - env(safe-area-inset-bottom)
+      )
+    );
+
+    width: max(210px, var(--fortune-wheel-size));
+    height: max(210px, var(--fortune-wheel-size));
+    max-width: 100%;
+    max-height: 100%;
+    margin: 3px auto 0;
+  }
+
+  .fortune-wheel-stage::before {
+    inset: -7px;
+    animation-duration: 4.2s;
+  }
+
+  .fortune-wheel-pointer {
+    top: -11px;
+    font-size: 31px;
+  }
+
+  .fortune-wheel-lights-ring {
+    inset: -7px;
+  }
+
+  .fortune-wheel-labels text {
+    font-size: 2.05px;
+    stroke-width: 0.70px;
+  }
+
+  .fortune-wheel-labels text.is-bonus,
+  .fortune-wheel-labels text.is-multiplier {
+    font-size: 1.88px;
+  }
+
+  .fortune-wheel-labels text.is-jackpot,
+  .fortune-wheel-labels text.is-lose {
+    font-size: 1.68px;
+  }
+
+  .fortune-wheel-center {
+    width: 29%;
+    border-width: 5px;
+  }
+
+  .fortune-wheel-center span {
+    font-size: clamp(27px, 9vw, 39px);
+  }
+
+  .fortune-wheel-center strong {
+    font-size: 7px;
+  }
+
+  .fortune-wheel-result {
+    height: 24px;
+    min-height: 24px;
+    padding: 1px 4px;
     font-size: 11px;
   }
 
-  .wheel-actions {
+  .fortune-wheel-betting-panel {
+    height: 96px;
+    min-height: 96px;
+    padding: 3px 5px 5px;
+    border-radius: 12px;
+  }
+
+  .fortune-wheel-betting-panel > .fortune-wheel-section-title {
+    display: none;
+  }
+
+  .fortune-wheel-chips {
+    height: 37px;
+    justify-content: center;
+    gap: 5px;
+    margin: 0 0 3px;
+    overflow: hidden;
+  }
+
+  .fortune-wheel-chip {
+    width: 35px;
+    height: 35px;
+    flex: 0 0 35px;
+    border-width: 3px;
+    font-size: 8px;
+  }
+
+  .fortune-wheel-actions {
+    height: 51px;
     grid-template-columns: repeat(3, 1fr);
-    gap: 7px;
+    grid-template-rows: 21px 27px;
+    gap: 3px;
   }
 
-  .wheel-action-button {
-    min-height: 43px;
-    padding: 0 5px;
-    font-size: 10px;
+  .fortune-wheel-action-button {
+    height: 21px;
+    min-height: 21px;
+    padding: 0 2px;
+    border-radius: 7px;
+    font-size: 8px;
   }
 
-  .wheel-spin-button {
+  .fortune-wheel-spin-button {
     grid-column: 1 / -1;
-    min-height: 54px;
-    font-size: 20px;
+    height: 27px;
+    min-height: 27px;
+    border-radius: 8px;
+    font-size: 14px;
   }
 }
 
-@media (max-width: 380px) {
-  .wheel-stage {
-    width: 82vw;
+/* iPhone con altura visible más corta */
+@media (max-width: 760px) and (orientation: portrait) and (max-height: 700px) {
+  .fortune-wheel-machine {
+    grid-template-rows: 34px 36px minmax(0, 1fr) 100px;
   }
 
-  .wheel-dashboard strong {
+  .fortune-wheel-topbar {
+    height: 34px;
+  }
+
+  .fortune-wheel-dashboard,
+  .fortune-wheel-dashboard > div {
+    height: 36px;
+  }
+
+  .fortune-wheel-stage {
+    --fortune-wheel-size: min(
+      78vw,
+      calc(
+        100svh
+        - 34px
+        - 36px
+        - 100px
+        - 24px
+        - 16px
+        - env(safe-area-inset-top)
+        - env(safe-area-inset-bottom)
+      )
+    );
+  }
+
+  .fortune-wheel-betting-panel {
+    height: 100px;
+    min-height: 100px;
+  }
+
+  .fortune-wheel-chips {
+    height: 39px;
+  }
+
+  .fortune-wheel-chip {
+    width: 37px;
+    height: 37px;
+    flex-basis: 37px;
+  }
+}
+
+/* =========================================================
+   CELULAR HORIZONTAL
+   ========================================================= */
+
+@media (max-width: 950px) and (orientation: landscape) and (max-height: 520px) {
+  html,
+  body,
+  #root {
+    height: 100%;
+    overflow: hidden;
+  }
+
+  .fortune-wheel-page {
+    height: 100svh;
+    min-height: 0;
+    max-height: 100svh;
+    padding: 3px;
+    overflow: hidden;
+  }
+
+  .fortune-wheel-machine {
+    width: 100%;
+    height: calc(100svh - 6px);
+    min-height: 0;
+    max-height: calc(100svh - 6px);
+    padding: 3px 6px;
+    border-radius: 10px;
+    overflow: hidden;
+    grid-template-rows: 32px 34px minmax(0, 1fr) 54px;
+    gap: 2px;
+  }
+
+  .fortune-wheel-topbar {
+    height: 32px;
+    grid-template-columns: 68px 1fr 30px;
+    padding: 0;
+  }
+
+  .fortune-wheel-back-button,
+  .fortune-wheel-sound-button {
+    height: 28px;
+    min-height: 28px;
+  }
+
+  .fortune-wheel-sound-button {
+    width: 28px;
+  }
+
+  .fortune-wheel-brand strong {
     font-size: 16px;
   }
 
-  .wheel-center span {
-    font-size: 30px;
+  .fortune-wheel-dashboard,
+  .fortune-wheel-dashboard > div {
+    height: 34px;
+  }
+
+  .fortune-wheel-dashboard strong {
+    font-size: 13px;
+  }
+
+  .fortune-wheel-game-layout {
+    display: grid;
+    grid-template-columns: 105px minmax(0, 1fr);
+    gap: 4px;
+  }
+
+  .fortune-wheel-left-column {
+    display: block;
+  }
+
+  .fortune-wheel-rules-panel,
+  .fortune-wheel-info-column {
+    display: none;
+  }
+
+  .fortune-wheel-history-panel {
+    height: 100%;
+    padding: 5px;
+  }
+
+  .fortune-wheel-history-list {
+    margin-top: 5px;
+    gap: 3px;
+  }
+
+  .fortune-wheel-history-item {
+    padding: 4px 5px;
+    font-size: 9px;
+  }
+
+  .fortune-wheel-main-area {
+    grid-template-rows: minmax(0, 1fr) 20px;
+    padding: 0 2px;
+  }
+
+  .fortune-wheel-stage {
+    --fortune-wheel-size: min(calc(100svh - 150px), 42vw, 285px);
+    margin-top: 1px;
+  }
+
+  .fortune-wheel-result {
+    height: 20px;
+    min-height: 20px;
+    font-size: 9px;
+  }
+
+  .fortune-wheel-betting-panel {
+    height: 54px;
+    min-height: 54px;
+    display: grid;
+    grid-template-columns: 1fr 1.7fr;
+    gap: 5px;
+    padding: 3px 5px;
+  }
+
+  .fortune-wheel-betting-panel > .fortune-wheel-section-title {
+    display: none;
+  }
+
+  .fortune-wheel-chips {
+    height: 46px;
+    justify-content: flex-start;
+    gap: 4px;
+    margin: 0;
+  }
+
+  .fortune-wheel-chip {
+    width: 34px;
+    height: 34px;
+    flex-basis: 34px;
+    font-size: 7px;
+  }
+
+  .fortune-wheel-actions {
+    height: 46px;
+    grid-template-columns: repeat(3, 1fr) 1.4fr;
+    grid-template-rows: 1fr;
+    gap: 4px;
+  }
+
+  .fortune-wheel-action-button,
+  .fortune-wheel-spin-button {
+    grid-column: auto;
+    height: 34px;
+    min-height: 34px;
+    font-size: 8px;
   }
 }
 
+/* =========================================================
+   ANIMACIONES
+   ========================================================= */
+
+@keyframes wheelLightsRun {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes wheelOuterBulbs {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes wheelBackgroundRays {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes wheelAmbientPulse {
+  from { opacity: 0.62; filter: brightness(0.92); }
+  to { opacity: 1; filter: brightness(1.16); }
+}
+
+@keyframes wheelAuraBreathe {
+  from { opacity: 0.55; transform: scale(0.92); }
+  to { opacity: 1; transform: scale(1.07); }
+}
+
+@keyframes wheelStageGlow {
+  from { filter: brightness(0.97) drop-shadow(0 0 10px rgba(255, 239, 151, 0.44)); }
+  to { filter: brightness(1.10) drop-shadow(0 0 20px rgba(255, 235, 145, 0.78)); }
+}
+
+@keyframes wheelPointerGlow {
+  from { filter: brightness(0.96); }
+  to { filter: brightness(1.18); }
+}
+
+@keyframes wheelCenterPulse {
+  from { filter: brightness(0.94); }
+  to { filter: brightness(1.15); }
+}
+
+@keyframes wheelCenterHalo {
+  from { opacity: 0.78; transform: scale(0.92); }
+  to { opacity: 0; transform: scale(1.18); }
+}
+
+@keyframes wheelShinePass {
+  0%, 25% { left: -70%; opacity: 0; }
+  40% { opacity: 1; }
+  70%, 100% { left: 125%; opacity: 0; }
+}
+
+@keyframes wheelPanelShine {
+  0%, 68% { transform: translateX(-140%); }
+  100% { transform: translateX(140%); }
+}
+
+@keyframes wheelWinText {
+  from { transform: scale(1); }
+  to { transform: scale(1.025); }
+}
+
+@keyframes wheelSpinButtonPulse {
+  0%, 100% { filter: brightness(1); }
+  50% { filter: brightness(1.15); }
+}
+
+@keyframes wheelSelectedChip {
+  from { transform: translateY(-2px) scale(1); }
+  to { transform: translateY(-3px) scale(1.05); }
+}
+
 @media (prefers-reduced-motion: reduce) {
-  .wheel-lights-ring,
-  .wheel-shine::before {
-    animation: none;
+  .fortune-wheel-machine::before,
+  .fortune-wheel-main-area::before,
+  .fortune-wheel-main-area::after,
+  .fortune-wheel-stage,
+  .fortune-wheel-stage::before,
+  .fortune-wheel-pointer,
+  .fortune-wheel-lights-ring,
+  .fortune-wheel-shine::before,
+  .fortune-wheel-center,
+  .fortune-wheel-center::after,
+  .fortune-wheel-dashboard > div::after,
+  .fortune-wheel-result.is-win,
+  .fortune-wheel-spin-button,
+  .fortune-wheel-chip.is-selected {
+    animation: none !important;
+  }
+}
+
+/* =========================================================
+   IPHONE FINAL — WHEEL FIJA AL VIEWPORT, SIN SCROLL
+   Aislado: no modifica el lobby ni otras máquinas.
+   ========================================================= */
+@media (max-width: 760px) {
+  .fortune-wheel-page {
+    position: fixed !important;
+    inset: 0 !important;
+    z-index: 1000 !important;
+    width: 100vw !important;
+    height: 100svh !important;
+    min-height: 100svh !important;
+    max-height: 100svh !important;
+    margin: 0 !important;
+    padding:
+      max(3px, env(safe-area-inset-top))
+      4px
+      max(3px, env(safe-area-inset-bottom)) !important;
+    overflow: hidden !important;
+    overscroll-behavior: none !important;
+    touch-action: manipulation;
+  }
+
+  .fortune-wheel-machine {
+    width: 100% !important;
+    height: 100% !important;
+    min-height: 0 !important;
+    max-height: 100% !important;
+    margin: 0 !important;
+    overflow: hidden !important;
   }
 }

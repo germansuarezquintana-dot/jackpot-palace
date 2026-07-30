@@ -1,44 +1,48 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import "./Wheel.css";
+import { supabase } from "./supabase";
 
 const SEGMENTS = [
   { label: "100", value: 100 },
+  { label: "PIERDE", lossBet: true },
   { label: "200", value: 200 },
   { label: "100", value: 100 },
+  { label: "-500", loss: 500 },
   { label: "500", value: 500 },
-  { label: "PIERDE", value: 0 },
   { label: "100", value: 100 },
+  { label: "-1000", loss: 1000 },
   { label: "BONUS", bonus: true },
+  { label: "100", value: 100 },
+  { label: "PIERDE", lossBet: true },
   { label: "200", value: 200 },
   { label: "100", value: 100 },
-  { label: "1000", value: 1000 },
-  { label: "100", value: 100 },
+  { label: "-2000", loss: 2000 },
   { label: "X2", multiplier: 2 },
+  { label: "100", value: 100 },
+  { label: "-4000", loss: 4000 },
   { label: "200", value: 200 },
   { label: "100", value: 100 },
-  { label: "500", value: 500 },
-  { label: "100", value: 100 },
-  { label: "BONUS", bonus: true },
-  { label: "200", value: 200 },
-  { label: "100", value: 100 },
+  { label: "-1000", loss: 1000 },
   { label: "JACKPOT", jackpot: true },
-  { label: "100", value: 100 },
-  { label: "500", value: 500 },
   { label: "200", value: 200 },
-  { label: "100", value: 100 },
+  { label: "PIERDE", lossBet: true },
+  { label: "1000", value: 1000 },
 ];
 
 const SPIN_DURATION_MS = 5400;
 
 function getSegmentClass(segment) {
-  if (segment.jackpot) return "wheel-segment-label is-jackpot";
-  if (segment.bonus) return "wheel-segment-label is-bonus";
-  if (segment.multiplier) return "wheel-segment-label is-multiplier";
-  if (segment.value === 0) return "wheel-segment-label is-lose";
-  return "wheel-segment-label";
+  if (segment.jackpot) return "fortune-wheel-segment-label is-jackpot";
+  if (segment.bonus) return "fortune-wheel-segment-label is-bonus";
+  if (segment.multiplier) return "fortune-wheel-segment-label is-multiplier";
+  if (segment.lossBet || segment.loss > 0 || segment.value === 0) {
+    return "fortune-wheel-segment-label is-lose";
+  }
+  return "fortune-wheel-segment-label";
 }
 
 export default function Wheel({
+  player,
   credits: externalCredits,
   onCreditsChange,
   onBack,
@@ -47,15 +51,16 @@ export default function Wheel({
   const [spinning, setSpinning] = useState(false);
   const [result, setResult] = useState(null);
   const [soundEnabled, setSoundEnabled] = useState(true);
-  const [localCredits, setLocalCredits] = useState(10000);
+  const [localCredits, setLocalCredits] = useState(() => {
+    const initialCredits = externalCredits ?? player?.credits ?? 0;
+    return Math.max(0, Math.floor(Number(initialCredits) || 0));
+  });
   const [bet, setBet] = useState(100);
   const [lastBet, setLastBet] = useState(100);
   const [lastPrize, setLastPrize] = useState(0);
   const [history, setHistory] = useState([]);
 
-  const credits = Number.isFinite(Number(externalCredits))
-    ? Number(externalCredits)
-    : localCredits;
+  const credits = localCredits;
 
   const currentRotationRef = useRef(0);
   const spinTimeoutRef = useRef(null);
@@ -305,19 +310,59 @@ export default function Wheel({
   function updateCredits(nextCredits) {
     const safeCredits = Math.max(0, Math.floor(Number(nextCredits) || 0));
 
-    if (!Number.isFinite(Number(externalCredits))) {
-      setLocalCredits(safeCredits);
-    }
-
+    setLocalCredits(safeCredits);
     onCreditsChange?.(safeCredits);
   }
+
+  async function refreshCredits() {
+    if (!player?.id) return;
+
+    const { data, error } = await supabase
+      .from("players")
+      .select("credits")
+      .eq("id", player.id)
+      .single();
+
+    if (error) {
+      console.error("No se pudo actualizar el saldo de Wheel:", error);
+      return;
+    }
+
+    updateCredits(data?.credits ?? 0);
+  }
+
+  useEffect(() => {
+    const propCredits = externalCredits ?? player?.credits;
+
+    if (Number.isFinite(Number(propCredits))) {
+      setLocalCredits(Math.max(0, Math.floor(Number(propCredits))));
+    }
+
+    if (player?.id) {
+      refreshCredits();
+    }
+    // Solo al entrar o cambiar de jugador.
+    // No depende de player.credits para evitar pisar el descuento visual.
+  }, [player?.id]);
 
   function calculatePrize(segment, currentBet) {
     if (segment.jackpot) return currentBet * 10;
     if (segment.bonus) return currentBet * 3;
     if (segment.multiplier) return currentBet * segment.multiplier;
-    if (segment.value > 0) return segment.value;
+
+    // Los premios fijos son ganancia adicional:
+    // se devuelve la apuesta y se suma el valor del casillero.
+    if (segment.value > 0) return currentBet + segment.value;
+
     return 0;
+  }
+
+  function calculateTotalLoss(segment, currentBet, availableCredits) {
+    const requestedLoss = segment.lossBet
+      ? currentBet
+      : Math.max(0, Number(segment.loss) || 0);
+
+    return Math.min(requestedLoss, Math.max(0, availableCredits));
   }
 
   function selectChip(value) {
@@ -343,12 +388,17 @@ export default function Wheel({
   async function spinWheel() {
     if (spinning || bet <= 0 || bet > credits) return;
 
-    const creditsAfterBet = credits - bet;
     const currentBet = bet;
+    const creditsAfterBet = credits - currentBet;
 
     setLastBet(currentBet);
     setLastPrize(0);
-    updateCredits(creditsAfterBet);
+
+    // Descuento visual inmediato solo dentro de Wheel.
+    // No actualizamos App todavía para evitar que vuelva a cargar
+    // el saldo anterior desde Supabase mientras la rueda gira.
+    setLocalCredits(creditsAfterBet);
+
     setSpinning(true);
     setResult(null);
 
@@ -382,10 +432,14 @@ export default function Wheel({
     currentRotationRef.current = targetRotation;
     setRotation(targetRotation);
 
-    spinTimeoutRef.current = window.setTimeout(() => {
+    spinTimeoutRef.current = window.setTimeout(async () => {
       const selectedSegment = SEGMENTS[selectedIndex];
       const prize = calculatePrize(selectedSegment, currentBet);
-      const finalCredits = creditsAfterBet + prize;
+      const totalLoss =
+        selectedSegment.lossBet || selectedSegment.loss > 0
+          ? calculateTotalLoss(selectedSegment, currentBet, credits)
+          : currentBet;
+      const isPenalty = selectedSegment.lossBet || selectedSegment.loss > 0;
 
       setResult(selectedSegment);
       setLastPrize(prize);
@@ -394,40 +448,68 @@ export default function Wheel({
           id: `${Date.now()}-${selectedIndex}`,
           label: selectedSegment.label,
           prize,
+          loss: isPenalty ? totalLoss : 0,
         },
         ...current,
       ].slice(0, 8));
-      updateCredits(finalCredits);
-      setSpinning(false);
-      playResultSound(audioContextRef.current, selectedSegment);
-      spinTimeoutRef.current = null;
-      clearSoundTimers();
+      try {
+        if (player?.id) {
+          const { data: resultData, error: resultError } = await supabase.rpc(
+            "apply_game_result",
+            {
+              p_bet: totalLoss,
+              p_win: prize,
+              p_is_free_spin: false,
+            }
+          );
+
+          if (resultError) {
+            console.error("No se pudo guardar la jugada de Wheel:", resultError);
+            await refreshCredits();
+          } else if (resultData?.length) {
+            updateCredits(resultData[0].credits_after);
+          } else {
+            await refreshCredits();
+          }
+        } else {
+          // Modo local de respaldo para desarrollo.
+          updateCredits(Math.max(0, credits - totalLoss + prize));
+        }
+      } catch (error) {
+        console.error("Error al registrar la jugada de Wheel:", error);
+        await refreshCredits();
+      } finally {
+        setSpinning(false);
+        playResultSound(audioContextRef.current, selectedSegment);
+        spinTimeoutRef.current = null;
+        clearSoundTimers();
+      }
     }, SPIN_DURATION_MS);
   }
 
   const chipValues = [100, 200, 500, 1000, 2500];
 
   return (
-    <main className="wheel-page">
-      <section className="wheel-machine">
-        <div className="wheel-topbar">
+    <main className="fortune-wheel-page">
+      <section className="fortune-wheel-machine">
+        <div className="fortune-wheel-topbar">
           <button
             type="button"
-            className="wheel-back-button"
+            className="fortune-wheel-back-button"
             onClick={onBack}
             disabled={!onBack || spinning}
           >
             ← LOBBY
           </button>
 
-          <div className="wheel-brand">
+          <div className="fortune-wheel-brand">
             <span>JACKPOT PALACE</span>
             <strong>FORTUNE WHEEL</strong>
           </div>
 
           <button
             type="button"
-            className="wheel-sound-button"
+            className="fortune-wheel-sound-button"
             onClick={async () => {
               const nextValue = !soundEnabled;
               setSoundEnabled(nextValue);
@@ -452,7 +534,7 @@ export default function Wheel({
           </button>
         </div>
 
-        <div className="wheel-dashboard">
+        <div className="fortune-wheel-dashboard">
           <div>
             <span>CRÉDITOS</span>
             <strong>{credits.toLocaleString("es-AR")}</strong>
@@ -467,41 +549,57 @@ export default function Wheel({
           </div>
         </div>
 
-        <div className="wheel-game-layout">
-          <aside className="wheel-history-panel">
-            <span className="wheel-section-title">ÚLTIMOS GIROS</span>
-            <div className="wheel-history-list">
+        <div className="fortune-wheel-game-layout">
+          <aside className="fortune-wheel-left-column">
+            <section className="fortune-wheel-history-panel">
+            <span className="fortune-wheel-section-title">ÚLTIMOS GIROS</span>
+            <div className="fortune-wheel-history-list">
               {history.length === 0 ? (
                 <p>Sin jugadas</p>
               ) : (
                 history.map((item) => (
-                  <div className="wheel-history-item" key={item.id}>
+                  <div className="fortune-wheel-history-item" key={item.id}>
                     <strong>{item.label}</strong>
-                    <span>{item.prize > 0 ? `+${item.prize}` : "0"}</span>
+                    <span>
+                      {item.prize > 0
+                        ? `+${item.prize}`
+                        : item.loss > 0
+                          ? `-${item.loss}`
+                          : "0"}
+                    </span>
                   </div>
                 ))
               )}
             </div>
+            </section>
+
+            <section className="fortune-wheel-rules-panel">
+              <span className="fortune-wheel-section-title">REGLAS</span>
+              <div className="fortune-wheel-rule-row"><b>BONUS</b><span>×3 apuesta</span></div>
+              <div className="fortune-wheel-rule-row"><b>X2</b><span>duplica</span></div>
+              <div className="fortune-wheel-rule-row"><b>JACKPOT</b><span>×10 apuesta</span></div>
+              <div className="fortune-wheel-rule-row"><b>PIERDE</b><span>resta créditos</span></div>
+            </section>
           </aside>
 
-          <div className="wheel-main-area">
-            <div className="wheel-stage">
-              <div className="wheel-pointer" aria-hidden="true">
+          <div className="fortune-wheel-main-area">
+            <div className="fortune-wheel-stage">
+              <div className="fortune-wheel-pointer" aria-hidden="true">
                 ▼
               </div>
 
-              <div className="wheel-lights-ring" aria-hidden="true" />
-              <div className="wheel-shine" aria-hidden="true" />
+              <div className="fortune-wheel-lights-ring" aria-hidden="true" />
+              <div className="fortune-wheel-shine" aria-hidden="true" />
 
               <div
-                className={`wheel-disc${spinning ? " is-spinning" : ""}`}
+                className={`fortune-wheel-disc${spinning ? " is-spinning" : ""}`}
                 style={{
                   background: wheelBackground,
                   transform: `rotate(${rotation}deg)`,
                 }}
               >
                 <svg
-                  className="wheel-labels"
+                  className="fortune-wheel-labels"
                   viewBox="0 0 100 100"
                   aria-hidden="true"
                 >
@@ -531,7 +629,7 @@ export default function Wheel({
                   })}
                 </svg>
 
-                <div className="wheel-center">
+                <div className="fortune-wheel-center">
                   <span>JP</span>
                   <strong>PALACE</strong>
                 </div>
@@ -539,29 +637,48 @@ export default function Wheel({
             </div>
 
             <div
-              className={`wheel-result${lastPrize > 0 ? " is-win" : ""}`}
+              className={`fortune-wheel-result${lastPrize > 0 ? " is-win" : ""}`}
               aria-live="polite"
             >
               {result
                 ? lastPrize > 0
                   ? `${result.label} · GANASTE ${lastPrize.toLocaleString("es-AR")}`
-                  : `${result.label} · SIN PREMIO`
+                  : result.lossBet || result.loss > 0
+                    ? `${result.label} · PÉRDIDA APLICADA`
+                    : `${result.label} · SIN PREMIO`
                 : spinning
                   ? "LA RUEDA ESTÁ GIRANDO..."
                   : "ELEGÍ TU FICHA Y GIRÁ"}
             </div>
           </div>
+
+          <aside className="fortune-wheel-info-column">
+            <section className="fortune-wheel-info-panel">
+              <span className="fortune-wheel-section-title">INFORMACIÓN</span>
+              <div className="fortune-wheel-info-row"><i>🎁</i><b>BONUS</b><strong>×3</strong></div>
+              <div className="fortune-wheel-info-row"><i>✦</i><b>DUPLICA</b><strong>×2</strong></div>
+              <div className="fortune-wheel-info-row"><i>♦</i><b>JACKPOT</b><strong>×10</strong></div>
+              <div className="fortune-wheel-info-row"><i>−</i><b>PÉRDIDAS</b><strong>hasta 4.000</strong></div>
+            </section>
+
+            <section className="fortune-wheel-status-panel">
+              <span className="fortune-wheel-section-title">ESTADO DE JUEGO</span>
+              <div><span>APUESTA</span><strong>{bet.toLocaleString("es-AR")}</strong></div>
+              <div><span>DISPONIBLE</span><strong>{credits.toLocaleString("es-AR")}</strong></div>
+              <div><span>GIROS</span><strong>{history.length}</strong></div>
+            </section>
+          </aside>
         </div>
 
-        <section className="wheel-betting-panel">
-          <span className="wheel-section-title">SELECCIONÁ TU APUESTA</span>
+        <section className="fortune-wheel-betting-panel">
+          <span className="fortune-wheel-section-title">SELECCIONÁ TU APUESTA</span>
 
-          <div className="wheel-chips">
+          <div className="fortune-wheel-chips">
             {chipValues.map((value) => (
               <button
                 type="button"
                 key={value}
-                className={`wheel-chip${bet === value ? " is-selected" : ""}`}
+                className={`fortune-wheel-chip${bet === value ? " is-selected" : ""}`}
                 onClick={() => selectChip(value)}
                 disabled={spinning || value > credits}
               >
@@ -570,10 +687,10 @@ export default function Wheel({
             ))}
           </div>
 
-          <div className="wheel-actions">
+          <div className="fortune-wheel-actions">
             <button
               type="button"
-              className="wheel-action-button"
+              className="fortune-wheel-action-button"
               onClick={clearBet}
               disabled={spinning || bet === 0}
             >
@@ -582,7 +699,7 @@ export default function Wheel({
 
             <button
               type="button"
-              className="wheel-action-button"
+              className="fortune-wheel-action-button"
               onClick={repeatBet}
               disabled={spinning || credits <= 0}
             >
@@ -591,7 +708,7 @@ export default function Wheel({
 
             <button
               type="button"
-              className="wheel-action-button"
+              className="fortune-wheel-action-button"
               onClick={doubleBet}
               disabled={spinning || credits <= 0}
             >
@@ -600,7 +717,7 @@ export default function Wheel({
 
             <button
               type="button"
-              className="wheel-spin-button"
+              className="fortune-wheel-spin-button"
               onClick={spinWheel}
               disabled={spinning || bet <= 0 || bet > credits}
             >
