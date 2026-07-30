@@ -1439,3 +1439,402 @@ button {
     overflow: hidden !important;
   }
 }
+
+/* =========================================================
+   AJUSTE FINAL IPHONE / ANDROID VERTICAL
+   Todo centrado, sin scroll y con GIRAR siempre visible.
+   ========================================================= */
+@media (max-width: 760px) and (orientation: portrait) {
+  html,
+  body,
+  #root {
+    width: 100%;
+    height: 100%;
+    min-height: 0;
+    margin: 0;
+    overflow: hidden !important;
+    overscroll-behavior: none;
+  }
+
+  .fortune-wheel-page {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100dvh;
+    min-height: 0;
+    max-height: 100dvh;
+    box-sizing: border-box;
+    padding:
+      max(3px, env(safe-area-inset-top))
+      4px
+      max(3px, env(safe-area-inset-bottom));
+    overflow: hidden !important;
+  }
+
+  .fortune-wheel-machine {
+    width: 100%;
+    height: 100%;
+    min-height: 0;
+    max-height: 100%;
+    box-sizing: border-box;
+    padding: 3px 5px 4px;
+    grid-template-rows: 34px 36px minmax(0, 1fr) 88px;
+    gap: 3px;
+    overflow: hidden !important;
+  }
+
+  .fortune-wheel-game-layout,
+  .fortune-wheel-main-area {
+    min-height: 0;
+    height: 100%;
+    overflow: hidden !important;
+  }
+
+  .fortune-wheel-main-area {
+    display: grid;
+    grid-template-rows: minmax(0, 1fr) 22px;
+    place-items: center;
+    padding: 0 2px;
+  }
+
+  .fortune-wheel-stage {
+    --fortune-wheel-size: min(
+      76vw,
+      calc(100dvh - 34px - 36px - 88px - 22px - 28px)
+    );
+
+    width: clamp(190px, var(--fortune-wheel-size), 560px);
+    height: clamp(190px, var(--fortune-wheel-size), 560px);
+    max-width: 100%;
+    max-height: 100%;
+    margin: 0;
+    align-self: center;
+    justify-self: center;
+  }
+
+  .fortune-wheel-result {
+    width: 100%;
+    height: 22px;
+    min-height: 22px;
+    padding: 0 4px;
+    display: grid;
+    place-items: center;
+    font-size: 10px;
+    line-height: 1;
+  }
+
+  .fortune-wheel-betting-panel {
+    height: 88px;
+    min-height: 0;
+    max-height: 88px;
+    box-sizing: border-box;
+    padding: 2px 5px 4px;
+    overflow: hidden;
+  }
+
+  .fortune-wheel-chips {
+    height: 34px;
+    min-height: 34px;
+    gap: 5px;
+    margin: 0 0 3px;
+    overflow: hidden;
+  }
+
+  .fortune-wheel-chip {
+    width: 33px;
+    height: 33px;
+    min-width: 33px;
+    min-height: 33px;
+    flex: 0 0 33px;
+    border-width: 3px;
+    font-size: 7.5px;
+  }
+
+  .fortune-wheel-actions {
+    height: 45px;
+    min-height: 45px;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-rows: 19px 23px;
+    gap: 3px;
+  }
+
+  .fortune-wheel-action-button {
+    height: 19px;
+    min-height: 19px;
+    padding: 0 2px;
+    border-radius: 7px;
+    font-size: 7.5px;
+    line-height: 1;
+  }
+
+  .fortune-wheel-spin-button {
+    grid-column: 1 / -1;
+    height: 23px;
+    min-height: 23px;
+    padding: 0;
+    border-radius: 8px;
+    font-size: 13px;
+    line-height: 1;
+  }
+}
+
+/* Alturas muy cortas: se reduce solamente la rueda, no se corta el botón. */
+@media (max-width: 760px) and (orientation: portrait) and (max-height: 720px) {
+  .fortune-wheel-machine {
+    grid-template-rows: 32px 34px minmax(0, 1fr) 84px;
+  }
+
+  .fortune-wheel-topbar {
+    height: 32px;
+  }
+
+  .fortune-wheel-dashboard,
+  .fortune-wheel-dashboard > div {
+    height: 34px;
+  }
+
+  .fortune-wheel-stage {
+    --fortune-wheel-size: min(
+      72vw,
+      calc(100dvh - 32px - 34px - 84px - 21px - 24px)
+    );
+  }
+
+  .fortune-wheel-main-area {
+    grid-template-rows: minmax(0, 1fr) 21px;
+  }
+
+  .fortune-wheel-result {
+    height: 21px;
+    min-height: 21px;
+  }
+
+  .fortune-wheel-betting-panel {
+    height: 84px;
+    max-height: 84px;
+  }
+
+  .fortune-wheel-chips {
+    height: 32px;
+    min-height: 32px;
+  }
+
+  .fortune-wheel-chip {
+    width: 31px;
+    height: 31px;
+    min-width: 31px;
+    min-height: 31px;
+    flex-basis: 31px;
+  }
+}
+
+/* =========================================================
+   RESPONSIVE UNIVERSAL FINAL — TODOS LOS DISPOSITIVOS
+   Desktop, notebook, tablet, Android e iPhone.
+   Mantiene todo centrado y evita scroll dentro del juego.
+   ========================================================= */
+
+.fortune-wheel-page,
+.fortune-wheel-machine,
+.fortune-wheel-game-layout,
+.fortune-wheel-main-area,
+.fortune-wheel-betting-panel {
+  box-sizing: border-box;
+}
+
+.fortune-wheel-page {
+  min-height: 100dvh;
+  overflow: hidden;
+}
+
+.fortune-wheel-machine {
+  max-width: 1600px;
+  margin-inline: auto;
+}
+
+.fortune-wheel-main-area {
+  align-items: center;
+  justify-items: center;
+}
+
+.fortune-wheel-stage {
+  width: min(var(--fortune-wheel-size), 100%);
+  height: min(var(--fortune-wheel-size), 100%);
+}
+
+/* Desktop grande */
+@media (min-width: 1281px) {
+  .fortune-wheel-machine {
+    width: min(96vw, 1500px);
+    height: min(96dvh, 980px);
+  }
+
+  .fortune-wheel-stage {
+    --fortune-wheel-size: min(calc(100dvh - 270px), 38vw, 560px);
+  }
+}
+
+/* Notebook y desktop mediano */
+@media (min-width: 981px) and (max-width: 1280px) {
+  .fortune-wheel-machine {
+    width: calc(100vw - 16px);
+    height: calc(100dvh - 12px);
+  }
+
+  .fortune-wheel-game-layout {
+    grid-template-columns: 150px minmax(320px, 1fr) 170px;
+    gap: 8px;
+  }
+
+  .fortune-wheel-stage {
+    --fortune-wheel-size: min(calc(100dvh - 250px), calc(100vw - 390px), 480px);
+  }
+}
+
+/* Tablet vertical y horizontal */
+@media (min-width: 761px) and (max-width: 980px) {
+  .fortune-wheel-page {
+    height: 100dvh;
+    min-height: 100dvh;
+    padding: 6px;
+  }
+
+  .fortune-wheel-machine {
+    width: 100%;
+    height: 100%;
+    min-height: 0;
+    grid-template-rows: 48px 42px minmax(0, 1fr) 106px;
+    gap: 5px;
+    overflow: hidden;
+  }
+
+  .fortune-wheel-game-layout {
+    grid-template-columns: 130px minmax(0, 1fr);
+    gap: 7px;
+    min-height: 0;
+  }
+
+  .fortune-wheel-info-column {
+    display: none;
+  }
+
+  .fortune-wheel-stage {
+    --fortune-wheel-size: min(calc(100dvh - 245px), 58vw, 500px);
+  }
+}
+
+/* Celular horizontal */
+@media (max-width: 900px) and (orientation: landscape) {
+  html,
+  body,
+  #root {
+    width: 100%;
+    height: 100%;
+    overflow: hidden !important;
+  }
+
+  .fortune-wheel-page {
+    position: fixed;
+    inset: 0;
+    width: 100vw;
+    height: 100dvh;
+    min-height: 0;
+    padding:
+      max(2px, env(safe-area-inset-top))
+      max(4px, env(safe-area-inset-right))
+      max(2px, env(safe-area-inset-bottom))
+      max(4px, env(safe-area-inset-left));
+    overflow: hidden !important;
+  }
+
+  .fortune-wheel-machine {
+    width: 100%;
+    height: 100%;
+    min-height: 0;
+    padding: 3px 5px;
+    grid-template-rows: 32px 32px minmax(0, 1fr) 62px;
+    gap: 3px;
+    overflow: hidden;
+  }
+
+  .fortune-wheel-topbar {
+    height: 32px;
+  }
+
+  .fortune-wheel-dashboard,
+  .fortune-wheel-dashboard > div {
+    height: 32px;
+  }
+
+  .fortune-wheel-game-layout {
+    grid-template-columns: 104px minmax(0, 1fr);
+    gap: 5px;
+    min-height: 0;
+  }
+
+  .fortune-wheel-info-column {
+    display: none;
+  }
+
+  .fortune-wheel-left-column {
+    gap: 4px;
+  }
+
+  .fortune-wheel-main-area {
+    grid-template-rows: minmax(0, 1fr) 18px;
+    min-height: 0;
+  }
+
+  .fortune-wheel-stage {
+    --fortune-wheel-size: min(calc(100dvh - 155px), 42vw, 330px);
+    margin: 0;
+  }
+
+  .fortune-wheel-result {
+    height: 18px;
+    min-height: 18px;
+    font-size: 8px;
+  }
+
+  .fortune-wheel-betting-panel {
+    height: 62px;
+    min-height: 62px;
+    max-height: 62px;
+    padding: 2px 5px;
+  }
+
+  .fortune-wheel-chips {
+    height: 27px;
+    min-height: 27px;
+    margin: 0 0 2px;
+  }
+
+  .fortune-wheel-chip {
+    width: 27px;
+    height: 27px;
+    min-width: 27px;
+    min-height: 27px;
+    flex-basis: 27px;
+    font-size: 6px;
+    border-width: 2px;
+  }
+
+  .fortune-wheel-actions {
+    height: 29px;
+    min-height: 29px;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    grid-template-rows: 29px;
+    gap: 3px;
+  }
+
+  .fortune-wheel-action-button,
+  .fortune-wheel-spin-button {
+    height: 29px;
+    min-height: 29px;
+    font-size: 8px;
+  }
+
+  .fortune-wheel-spin-button {
+    grid-column: auto;
+  }
+}
