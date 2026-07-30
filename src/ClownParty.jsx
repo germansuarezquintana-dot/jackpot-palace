@@ -28,8 +28,17 @@ function randomSymbol() {
   ];
 }
 
-const NORMAL_WIN_CHANCE = 0.13;
-const BONUS_CHANCE = 0.01;
+const NORMAL_WIN_CHANCE = 0.15;
+const BONUS_CHANCE = 0.006;
+
+function detectIOS() {
+  if (typeof navigator === "undefined") return false;
+
+  return (
+    /iPad|iPhone|iPod/.test(navigator.userAgent) ||
+    (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1)
+  );
+}
 
 function hasPayingLine(grid) {
   return PAYLINES.some((payline) => {
@@ -286,6 +295,7 @@ export default function ClownParty({
   onBack,
   onLogout,
 }) {
+  const [showIntro, setShowIntro] = useState(true);
   const [grid, setGrid] = useState(createGrid());
   const [reelSpinning, setReelSpinning] = useState(
     Array(COLUMNS).fill(false)
@@ -296,10 +306,10 @@ export default function ClownParty({
 
   const [spinning, setSpinning] = useState(false);
   const [credits, setCredits] = useState(
-    player?.credits ?? 0
+    Number(player?.credits) || 0
   );
   const [displayCredits, setDisplayCredits] = useState(
-    player?.credits ?? 0
+    Number(player?.credits) || 0
   );
 
   const [betIndex, setBetIndex] = useState(1);
@@ -322,9 +332,21 @@ export default function ClownParty({
   const timeoutsRef = useRef([]);
   const spinTickerRef = useRef(null);
   const reelSpinningRef = useRef(Array(COLUMNS).fill(false));
-  const displayCreditsRef = useRef(player?.credits ?? 0);
+  const displayCreditsRef = useRef(Number(player?.credits) || 0);
+  const mountedRef = useRef(true);
+  const audioNodesRef = useRef(new Set());
+  const isIOSRef = useRef(detectIOS());
+  const isIOS = isIOSRef.current;
 
   const bet = BET_OPTIONS[betIndex];
+
+  useEffect(() => {
+    const introTimer = window.setTimeout(() => {
+      setShowIntro(false);
+    }, 1200);
+
+    return () => window.clearTimeout(introTimer);
+  }, []);
 
   const lightMode = celebration
     ? celebration.type === "mega"
@@ -341,7 +363,7 @@ export default function ClownParty({
     : "idle";
 
   useEffect(() => {
-    setCredits(player?.credits ?? 0);
+    setCredits(Number(player?.credits) || 0);
   }, [player?.credits]);
 
   useEffect(() => {
@@ -352,8 +374,8 @@ export default function ClownParty({
 
     const difference = Math.abs(end - start);
     const duration = Math.min(
-      1400,
-      Math.max(350, difference * 0.6)
+      950,
+      Math.max(300, difference * 0.45)
     );
 
     const startedAt = performance.now();
@@ -391,21 +413,33 @@ export default function ClownParty({
     }
 
     const target = winEffect.amount;
+
+    // Safari en iPhone puede recargar la pestaña cuando coinciden
+    // muchas animaciones de React y CSS. En iOS mostramos el monto
+    // directamente y evitamos otro bucle requestAnimationFrame.
+    if (isIOS) {
+      setAnimatedPrize(target);
+      return undefined;
+    }
+
     const duration =
       winEffect.level === "mega"
-        ? 2600
+        ? 4500
         : winEffect.level === "big"
-        ? 2100
+        ? 3000
         : winEffect.level === "medium"
-        ? 1500
-        : 950;
+        ? 2200
+        : 1500;
 
     const startedAt = performance.now();
     let frameId;
 
     const animatePrize = (now) => {
       const progress = Math.min(1, (now - startedAt) / duration);
-      const eased = 1 - Math.pow(1 - progress, 4);
+      const eased =
+        progress < 0.82
+          ? 0.92 * (1 - Math.pow(1 - progress / 0.82, 3))
+          : 0.92 + 0.08 * ((progress - 0.82) / 0.18);
       setAnimatedPrize(Math.round(target * eased));
 
       if (progress < 1) {
@@ -417,20 +451,56 @@ export default function ClownParty({
     frameId = requestAnimationFrame(animatePrize);
 
     return () => cancelAnimationFrame(frameId);
-  }, [winEffect]);
+  }, [winEffect, isIOS]);
 
   useEffect(() => {
-    return () => {
-      timeoutsRef.current.forEach((timeoutId) =>
-        clearTimeout(timeoutId)
-      );
+    if (!isIOS || !celebration) return undefined;
 
-      if (spinTickerRef.current) {
-        clearInterval(spinTickerRef.current);
-      }
+    const celebrationTimer = window.setTimeout(() => {
+      setCelebration(null);
+      setWinEffect(null);
+      setAnimatedPrize(0);
+    }, 4500);
+
+    return () => window.clearTimeout(celebrationTimer);
+  }, [celebration, isIOS]);
+
+  function clearTrackedTimeouts() {
+    timeoutsRef.current.forEach((timeoutId) =>
+      clearTimeout(timeoutId)
+    );
+    timeoutsRef.current = [];
+  }
+
+  function stopSpinTicker() {
+    if (spinTickerRef.current) {
+      clearInterval(spinTickerRef.current);
+      spinTickerRef.current = null;
+    }
+  }
+
+  useEffect(() => {
+    mountedRef.current = true;
+
+    return () => {
+      mountedRef.current = false;
+      clearTrackedTimeouts();
+      stopSpinTicker();
+
+      audioNodesRef.current.forEach(({ oscillator, gain }) => {
+        try {
+          oscillator.onended = null;
+          oscillator.disconnect();
+          gain.disconnect();
+        } catch {
+          // El nodo ya estaba desconectado.
+        }
+      });
+      audioNodesRef.current.clear();
 
       if (audioContextRef.current) {
-        audioContextRef.current.close();
+        audioContextRef.current.close().catch(() => {});
+        audioContextRef.current = null;
       }
     };
   }, []);
@@ -502,6 +572,19 @@ export default function ClownParty({
     oscillator.connect(gain);
     gain.connect(audioContext.destination);
 
+    const audioNode = { oscillator, gain };
+    audioNodesRef.current.add(audioNode);
+
+    oscillator.onended = () => {
+      audioNodesRef.current.delete(audioNode);
+      try {
+        oscillator.disconnect();
+        gain.disconnect();
+      } catch {
+        // El navegador ya liberó el nodo.
+      }
+    };
+
     oscillator.start(startTime);
     oscillator.stop(endTime);
   }
@@ -518,6 +601,30 @@ export default function ClownParty({
         });
       }
     );
+  }
+
+
+  function playUiClickSound() {
+    playTone({
+      frequency: 420,
+      duration: 0.1,
+      volume: 0.1,
+      type: "square",
+    });
+    playTone({
+      frequency: 500,
+      duration: 0.1,
+      volume: 0.1,
+      type: "square",
+      delay: 0.08,
+    });
+    playTone({
+      frequency: 350,
+      duration: 0.1,
+      volume: 0.1,
+      type: "square",
+      delay: 0.16,
+    });
   }
 
   function playReelStopSound(index) {
@@ -567,8 +674,9 @@ export default function ClownParty({
       .single();
 
     if (!error && data) {
-      setCredits(data.credits);
-      onCreditsChange?.(data.credits);
+      const refreshedCredits = Number(data.credits) || 0;
+      setCredits(refreshedCredits);
+      onCreditsChange?.(refreshedCredits);
     }
   }
 
@@ -603,6 +711,27 @@ export default function ClownParty({
     });
   }
 
+  function withTimeout(promise, milliseconds = 8000) {
+    let timeoutId;
+
+    const timeoutPromise = new Promise((_, reject) => {
+      timeoutId = window.setTimeout(() => {
+        reject(new Error("Tiempo de espera agotado"));
+      }, milliseconds);
+    });
+
+    return Promise.race([promise, timeoutPromise]).finally(() => {
+      clearTimeout(timeoutId);
+    });
+  }
+
+  function unlockSpin() {
+    if (mountedRef.current) {
+      setSpinning(false);
+    }
+    spinLockRef.current = false;
+  }
+
   async function spin() {
     if (
       spinLockRef.current ||
@@ -629,7 +758,20 @@ export default function ClownParty({
     }
 
     spinLockRef.current = true;
+    clearTrackedTimeouts();
+    stopSpinTicker();
     setSpinning(true);
+
+    // Seguridad: aunque falle una animación o la conexión, los controles
+    // nunca pueden quedar bloqueados permanentemente.
+    const unlockFailsafeId = window.setTimeout(() => {
+      if (spinLockRef.current) {
+        console.warn("Desbloqueo de seguridad del giro");
+        unlockSpin();
+      }
+    }, 12000);
+    timeoutsRef.current.push(unlockFailsafeId);
+
     setLastPrize(0);
     setWinningLines([]);
     setWinningCells([]);
@@ -655,35 +797,10 @@ export default function ClownParty({
     setReelSpinning(allReelsSpinning);
     setReelStopping(Array(COLUMNS).fill(false));
 
-    if (spinTickerRef.current) {
-      clearInterval(spinTickerRef.current);
-    }
+    // La animación continua la realiza CSS. React solo actualiza
+    // el resultado cuando cada rodillo se detiene. Esto reduce mucho
+    // el consumo de CPU y memoria en celulares.
 
-    let activeColumn = 0;
-
-spinTickerRef.current = window.setInterval(() => {
-  setGrid((currentGrid) => {
-    const updatedGrid = currentGrid.map((column) => [...column]);
-
-    for (let attempt = 0; attempt < COLUMNS; attempt += 1) {
-      const columnIndex = (activeColumn + attempt) % COLUMNS;
-
-      if (reelSpinningRef.current[columnIndex]) {
-        const currentColumn = updatedGrid[columnIndex];
-
-        updatedGrid[columnIndex] = [
-          randomSymbol(),
-          ...currentColumn.slice(0, ROWS - 1),
-        ];
-
-        activeColumn = (columnIndex + 1) % COLUMNS;
-        break;
-      }
-    }
-
-    return updatedGrid;
-  });
-}, 52);
     playSpinSound();
 
     const finalGrid = createGrid();
@@ -694,10 +811,12 @@ spinTickerRef.current = window.setInterval(() => {
       columnIndex += 1
     ) {
       const stopTime =
-        1100 + columnIndex * 320;
+  850 + columnIndex * 320;
 
       const timeoutId = window.setTimeout(
         async () => {
+          if (!mountedRef.current) return;
+
           setGrid((currentGrid) => {
             const updatedGrid =
               currentGrid.map((column) => [
@@ -730,17 +849,14 @@ spinTickerRef.current = window.setInterval(() => {
               updated[columnIndex] = false;
               return updated;
             });
-          }, 520);
+          }, 300);
 
           timeoutsRef.current.push(settleTimeoutId);
 
           playReelStopSound(columnIndex);
 
           if (columnIndex === COLUMNS - 1) {
-            if (spinTickerRef.current) {
-              clearInterval(spinTickerRef.current);
-              spinTickerRef.current = null;
-            }
+            stopSpinTicker();
 
             const prize = calculatePrize(
               finalGrid,
@@ -847,39 +963,53 @@ spinTickerRef.current = window.setInterval(() => {
               );
             }
 
-            const {
-              data: resultData,
-              error: resultError,
-            } = await supabase.rpc(
-              "apply_game_result",
-              {
-                p_bet: bet,
-                p_win: prize.amount,
-                p_is_free_spin: isFreeSpin,
+            try {
+              const {
+                data: resultData,
+                error: resultError,
+              } = await withTimeout(
+                supabase.rpc(
+                  "apply_game_result",
+                  {
+                    p_bet: bet,
+                    p_win: prize.amount,
+                    p_is_free_spin: isFreeSpin,
+                  }
+                ),
+                8000
+              );
+
+              if (!mountedRef.current) return;
+
+              if (resultError) {
+                console.error(resultError);
+
+                setMessage(
+                  "⚠️ No se pudo guardar la jugada. Actualizando saldo..."
+                );
+
+                await refreshCredits();
+              } else if (resultData?.length) {
+                const onlineCredits =
+                  resultData[0].credits_after;
+
+                setCredits(onlineCredits);
+                onCreditsChange?.(onlineCredits);
               }
-            );
-
-            if (resultError) {
-              console.error(resultError);
-
-              setMessage(
-                "⚠️ No se pudo guardar la jugada. Actualizando saldo..."
-              );
-
-              await refreshCredits();
-            } else if (resultData?.length) {
-              const onlineCredits =
-                resultData[0].credits_after;
-
-              setCredits(onlineCredits);
-              onCreditsChange?.(
-                onlineCredits
-              );
+            } catch (error) {
+              console.error("Error al guardar la jugada:", error);
+              if (mountedRef.current) {
+                setMessage(
+                  "⚠️ Error de conexión. Actualizando saldo..."
+                );
+                await refreshCredits();
+              }
+            } finally {
+              unlockSpin();
+              // Los temporizadores del giro ya terminaron; soltamos
+              // sus identificadores sin cancelar el cierre visual del premio.
+              timeoutsRef.current = [];
             }
-
-            setSpinning(false);
-            spinLockRef.current = false;
-            timeoutsRef.current = [];
           }
         },
         stopTime
@@ -890,8 +1020,269 @@ spinTickerRef.current = window.setInterval(() => {
   }
 
   return (
-    <main className="clown-page">
+    <main className={`clown-page ${isIOS ? "clown-ios-mode" : ""}`}>
+      {showIntro && (
+        <section className="clown-intro-screen" aria-label="Cargando Clown Party">
+          <div className="clown-intro-curtain clown-intro-curtain-left" aria-hidden="true" />
+          <div className="clown-intro-curtain clown-intro-curtain-right" aria-hidden="true" />
+
+          <div className="clown-intro-confetti" aria-hidden="true">
+            {Array.from({ length: isIOS ? 8 : 18 }).map((_, index) => (
+              <span
+                key={`intro-confetti-${index}`}
+                style={{
+                  "--intro-left": `${(index * 31 + 5) % 100}%`,
+                  "--intro-delay": `${(index % 6) * 0.08}s`,
+                  "--intro-rotate": `${index * 29}deg`,
+                }}
+              >
+                {index % 4 === 0
+                  ? "★"
+                  : index % 4 === 1
+                  ? "●"
+                  : index % 4 === 2
+                  ? "▲"
+                  : "■"}
+              </span>
+            ))}
+          </div>
+
+          <div className="clown-intro-card">
+            <div className="clown-intro-lights" aria-hidden="true">
+              {Array.from({ length: isIOS ? 6 : 12 }).map((_, index) => (
+                <span key={`intro-light-${index}`} />
+              ))}
+            </div>
+
+            <div className="clown-intro-clown" aria-hidden="true">🤡</div>
+            <h1>CLOWN PARTY</h1>
+            <p className="clown-intro-tagline">¡EL ESPECTÁCULO ESTÁ POR COMENZAR!</p>
+            <div className="clown-intro-loader" aria-hidden="true">
+              <span />
+              <span />
+              <span />
+            </div>
+            <small>🎪 Preparando el espectáculo...</small>
+          </div>
+        </section>
+      )}
+
       <style>{`
+        .clown-intro-screen {
+          position: fixed;
+          inset: 0;
+          z-index: 100000;
+          display: grid;
+          place-items: center;
+          overflow: hidden;
+          padding: 22px;
+          background:
+            radial-gradient(circle at 50% 38%, rgba(255, 226, 92, .22), transparent 27%),
+            repeating-linear-gradient(
+              90deg,
+              #d9153f 0 12.5%,
+              #fff3cf 12.5% 25%
+            );
+          animation: clownIntroFadeOut .28s ease 1s forwards;
+        }
+
+        .clown-intro-screen::before {
+          content: "";
+          position: absolute;
+          inset: 0;
+          background:
+            linear-gradient(180deg, rgba(17, 2, 34, .35), rgba(17, 2, 34, .78)),
+            radial-gradient(circle at center, transparent 25%, rgba(8, 0, 20, .78) 100%);
+        }
+
+        .clown-intro-curtain {
+          position: absolute;
+          top: 0;
+          bottom: 0;
+          width: 30%;
+          z-index: 1;
+          background:
+            repeating-linear-gradient(
+              90deg,
+              #73051d 0 14px,
+              #c41235 14px 30px,
+              #850521 30px 46px
+            );
+          box-shadow: inset 0 0 45px rgba(0, 0, 0, .6);
+        }
+
+        .clown-intro-curtain-left {
+          left: 0;
+          clip-path: polygon(0 0, 100% 0, 72% 100%, 0 100%);
+          animation: clownCurtainLeft 1.05s cubic-bezier(.2,.8,.25,1) forwards;
+        }
+
+        .clown-intro-curtain-right {
+          right: 0;
+          clip-path: polygon(0 0, 100% 0, 100% 100%, 28% 100%);
+          animation: clownCurtainRight 1.05s cubic-bezier(.2,.8,.25,1) forwards;
+        }
+
+        .clown-intro-card {
+          position: relative;
+          z-index: 3;
+          width: min(92vw, 430px);
+          padding: 34px 26px 28px;
+          text-align: center;
+          color: #fff;
+          border: 4px solid #ffd84b;
+          border-radius: 26px;
+          background:
+            linear-gradient(180deg, rgba(66, 11, 112, .97), rgba(27, 4, 57, .98));
+          box-shadow:
+            0 0 0 5px #d51b44,
+            0 0 36px rgba(255, 216, 75, .75),
+            0 24px 70px rgba(0, 0, 0, .62);
+          transform: scale(.78) translateY(18px);
+          opacity: 0;
+          animation: clownIntroCardIn .5s cubic-bezier(.18,.9,.28,1.25) .08s forwards;
+        }
+
+        .clown-intro-lights {
+          position: absolute;
+          inset: 8px;
+          display: flex;
+          justify-content: space-between;
+          pointer-events: none;
+        }
+
+        .clown-intro-lights span {
+          width: 9px;
+          height: 9px;
+          border-radius: 50%;
+          background: #fff5a3;
+          box-shadow: 0 0 10px #fff06a, 0 0 18px #ffb300;
+          animation: clownIntroBlink .45s ease-in-out infinite alternate;
+        }
+
+        .clown-intro-lights span:nth-child(even) {
+          animation-delay: .18s;
+        }
+
+        .clown-intro-clown {
+          font-size: clamp(64px, 20vw, 94px);
+          line-height: 1;
+          filter: drop-shadow(0 8px 8px rgba(0, 0, 0, .45));
+          animation: clownIntroBounce .7s ease-in-out infinite alternate;
+        }
+
+        .clown-intro-kicker {
+          margin: 12px 0 4px;
+          color: #ffd84b;
+          font-size: 12px;
+          font-weight: 900;
+          letter-spacing: .18em;
+        }
+
+        .clown-intro-card h1 {
+          margin: 0;
+          font-size: clamp(34px, 10vw, 58px);
+          line-height: 1;
+          letter-spacing: .03em;
+          color: #fff;
+          text-shadow:
+            0 4px 0 #c71945,
+            0 7px 0 #671039,
+            0 0 20px rgba(255, 217, 70, .65);
+        }
+
+        .clown-intro-tagline {
+          margin: 16px 0 12px;
+          font-size: clamp(13px, 3.8vw, 17px);
+          font-weight: 900;
+          color: #fff0a2;
+          letter-spacing: .06em;
+        }
+
+        .clown-intro-card small {
+          display: block;
+          margin-top: 9px;
+          color: rgba(255,255,255,.78);
+          font-weight: 800;
+        }
+
+        .clown-intro-loader {
+          display: flex;
+          justify-content: center;
+          gap: 8px;
+          height: 15px;
+        }
+
+        .clown-intro-loader span {
+          width: 11px;
+          height: 11px;
+          border-radius: 50%;
+          background: #ffd84b;
+          box-shadow: 0 0 10px rgba(255, 216, 75, .9);
+          animation: clownIntroDot .55s ease-in-out infinite alternate;
+        }
+
+        .clown-intro-loader span:nth-child(2) { animation-delay: .12s; }
+        .clown-intro-loader span:nth-child(3) { animation-delay: .24s; }
+
+        .clown-intro-confetti {
+          position: absolute;
+          inset: 0;
+          z-index: 2;
+          overflow: hidden;
+          pointer-events: none;
+        }
+
+        .clown-intro-confetti span {
+          position: absolute;
+          left: var(--intro-left);
+          top: -10%;
+          color: #ffd84b;
+          font-size: 18px;
+          transform: rotate(var(--intro-rotate));
+          animation: clownIntroConfetti 1.15s linear var(--intro-delay) infinite;
+        }
+
+        .clown-intro-confetti span:nth-child(3n + 1) { color: #42d8ff; }
+        .clown-intro-confetti span:nth-child(3n + 2) { color: #ff4d86; }
+
+        @keyframes clownIntroCardIn {
+          to { transform: scale(1) translateY(0); opacity: 1; }
+        }
+
+        @keyframes clownIntroBounce {
+          from { transform: translateY(0) rotate(-2deg); }
+          to { transform: translateY(-7px) rotate(2deg); }
+        }
+
+        @keyframes clownIntroDot {
+          from { transform: translateY(2px) scale(.75); opacity: .45; }
+          to { transform: translateY(-3px) scale(1.1); opacity: 1; }
+        }
+
+        @keyframes clownIntroBlink {
+          from { opacity: .45; transform: scale(.8); }
+          to { opacity: 1; transform: scale(1.15); }
+        }
+
+        @keyframes clownIntroConfetti {
+          to { top: 112%; transform: rotate(calc(var(--intro-rotate) + 420deg)); }
+        }
+
+        @keyframes clownCurtainLeft {
+          0%, 55% { transform: translateX(0); }
+          100% { transform: translateX(-82%); }
+        }
+
+        @keyframes clownCurtainRight {
+          0%, 55% { transform: translateX(0); }
+          100% { transform: translateX(82%); }
+        }
+
+        @keyframes clownIntroFadeOut {
+          to { opacity: 0; visibility: hidden; }
+        }
+
         .clown-reel {
           position: relative;
           min-width: 0;
@@ -922,7 +1313,7 @@ spinTickerRef.current = window.setInterval(() => {
         .clown-reel-running .clown-reel-strip {
           height: 200%;
           grid-template-rows: repeat(10, minmax(0, 1fr));
-          animation: clownStripRollPremium .34s linear infinite;
+          animation: clownStripRollPremium .58s linear infinite;
           animation-delay:
             calc(var(--clown-reel-index) * -68ms);
           filter: blur(.28px);
@@ -951,11 +1342,11 @@ spinTickerRef.current = window.setInterval(() => {
         .clown-reel-stopping {
           z-index: 6;
           transform-origin: center top;
-          animation: clownReelStopPremium .68s cubic-bezier(.15, .88, .2, 1.18);
+          animation: clownReelStopPremium .85s ease-out;
         }
 
         .clown-reel-stopping .clown-reel-strip {
-          animation: clownStripSettle .68s cubic-bezier(.15, .88, .2, 1.18);
+          animation: clownStripSettle .85s ease-out;
         }
 
         @keyframes clownStripRollPremium {
@@ -1005,15 +1396,100 @@ spinTickerRef.current = window.setInterval(() => {
           }
         }
 
+
+        .clown-winning-lines {
+          position: absolute;
+          inset: 14px;
+          z-index: 14;
+          width: calc(100% - 28px);
+          height: calc(100% - 28px);
+          overflow: visible;
+          pointer-events: none;
+        }
+
+        .clown-winning-line-glow,
+        .clown-winning-line-core {
+          fill: none;
+          stroke-linecap: round;
+          stroke-linejoin: round;
+          vector-effect: non-scaling-stroke;
+          stroke-dasharray: 180;
+          stroke-dashoffset: 180;
+          animation:
+            clownWinningLineDraw .52s ease-out forwards,
+            clownWinningLinePulse .72s ease-in-out .52s 3 alternate;
+        }
+
+        .clown-winning-line-glow {
+          stroke: hsl(var(--clown-line-hue) 100% 58%);
+          stroke-width: 9;
+          opacity: .72;
+          filter:
+            drop-shadow(0 0 5px hsl(var(--clown-line-hue) 100% 62%))
+            drop-shadow(0 0 12px hsl(var(--clown-line-hue) 100% 55%));
+        }
+
+        stroke: hsl(var(--clown-line-hue) 100% 60%);
+          stroke-width: 2.8;
+          filter:
+            drop-shadow(0 0 3px #fff)
+            drop-shadow(0 0 7px hsl(var(--clown-line-hue) 100% 62%));
+        }
+
+        @keyframes clownWinningLineDraw {
+          to {
+            stroke-dashoffset: 0;
+          }
+        }
+
+        @keyframes clownWinningLinePulse {
+          from {
+            opacity: .72;
+          }
+          to {
+            opacity: 1;
+          }
+        }
+
         @media (max-width: 600px) {
           .clown-reel-strip {
             gap: 3px;
           }
 
           .clown-reel-running .clown-reel-strip {
-            animation-duration: .31s;
+            animation-duration: .62s;
             filter: blur(.18px);
           }
+        }
+
+        .clown-ios-mode .clown-reel-running .clown-reel-strip {
+          filter: none !important;
+          animation-duration: .42s;
+          will-change: transform;
+        }
+
+        .clown-ios-mode .clown-reel-stopping,
+        .clown-ios-mode .clown-reel-stopping .clown-reel-strip {
+          filter: none !important;
+        }
+
+        .clown-ios-mode .clown-premium-effects *,
+        .clown-ios-mode .clown-celebration *,
+        .clown-ios-mode .clown-frame-bulbs span,
+        .clown-ios-mode .clown-control-lights span,
+        .clown-ios-mode .clown-side-decor span,
+        .clown-ios-mode .clown-spotlight,
+        .clown-ios-mode .clown-cloud {
+          filter: none !important;
+          box-shadow: none !important;
+          animation-iteration-count: 1 !important;
+        }
+
+        .clown-ios-mode .clown-machine-neon,
+        .clown-ios-mode .clown-win-flash,
+        .clown-ios-mode .clown-premium-flash {
+          filter: none !important;
+          box-shadow: none !important;
         }
 
         @media (prefers-reduced-motion: reduce) {
@@ -1031,14 +1507,14 @@ spinTickerRef.current = window.setInterval(() => {
       <div className="clown-spotlight clown-spotlight-right" aria-hidden="true" />
       <div className="clown-cloud clown-cloud-left" aria-hidden="true" />
       <div className="clown-cloud clown-cloud-right" aria-hidden="true" />
-      {winEffect && (
+{winEffect && (
         <div
           className={`clown-premium-effects clown-premium-effects-${winEffect.level}`}
           aria-hidden="true"
         >
           <div className="clown-premium-flash" />
           <div className="clown-premium-burst">
-            {Array.from({ length: 18 }).map((_, index) => (
+            {Array.from({ length: isIOS ? 6 : 12 }).map((_, index) => (
               <span
                 key={`burst-${winEffect.id}-${index}`}
                 style={{
@@ -1051,15 +1527,20 @@ spinTickerRef.current = window.setInterval(() => {
 
           <div className="clown-coin-rain">
             {Array.from({
-              length:
-                winEffect.level === "mega"
-                  ? 56
-                  : winEffect.level === "big" ||
-                    winEffect.level === "bonus"
-                  ? 40
-                  : winEffect.level === "medium"
-                  ? 24
-                  : 12,
+              length: isIOS
+                ? winEffect.level === "mega" ||
+                  winEffect.level === "big" ||
+                  winEffect.level === "bonus"
+                  ? 8
+                  : 6
+                : winEffect.level === "mega"
+                ? 22
+                : winEffect.level === "big" ||
+                  winEffect.level === "bonus"
+                ? 18
+                : winEffect.level === "medium"
+                ? 12
+                : 8,
             }).map((_, index) => (
               <span
                 key={`coin-${winEffect.id}-${index}`}
@@ -1080,35 +1561,6 @@ spinTickerRef.current = window.setInterval(() => {
           </div>
         </div>
       )}
-
-      <div className="clown-confetti" aria-hidden="true">
-        {Array.from({ length: 12 }).map(
-          (_, index) => (
-            <span
-              key={index}
-              style={{
-                "--confetti-left": `${
-                  (index * 37) % 100
-                }%`,
-                "--confetti-delay": `${
-                  (index % 10) * 0.25
-                }s`,
-                "--confetti-duration": `${
-                  4 + (index % 5)
-                }s`,
-              }}
-            >
-              {index % 4 === 0
-                ? "●"
-                : index % 4 === 1
-                ? "★"
-                : index % 4 === 2
-                ? "■"
-                : "▲"}
-            </span>
-          )
-        )}
-      </div>
 
       <section
         className={[
@@ -1133,13 +1585,13 @@ spinTickerRef.current = window.setInterval(() => {
         </div>
 
         <div className="clown-frame-bulbs clown-frame-bulbs-top" aria-hidden="true">
-          {Array.from({ length: 20 }).map((_, index) => (
+          {Array.from({ length: isIOS ? 10 : 20 }).map((_, index) => (
             <span key={`top-${index}`} />
           ))}
         </div>
 
         <div className="clown-frame-bulbs clown-frame-bulbs-bottom" aria-hidden="true">
-          {Array.from({ length: 20 }).map((_, index) => (
+          {Array.from({ length: isIOS ? 10 : 20 }).map((_, index) => (
             <span key={`bottom-${index}`} />
           ))}
         </div>
@@ -1147,9 +1599,7 @@ spinTickerRef.current = window.setInterval(() => {
         <button
           type="button"
           className="clown-sound-button"
-          onClick={() =>
-            setSoundEnabled((current) => !current)
-          }
+          onClick={() => { playUiClickSound(); setSoundEnabled((current) => !current); }}
           title={
             soundEnabled
               ? "Apagar sonido"
@@ -1178,6 +1628,52 @@ spinTickerRef.current = window.setInterval(() => {
           <div className="clown-reels-corner clown-reels-corner-tr" aria-hidden="true" />
           <div className="clown-reels-corner clown-reels-corner-bl" aria-hidden="true" />
           <div className="clown-reels-corner clown-reels-corner-br" aria-hidden="true" />
+
+          {winningLines.length > 0 && !spinning && (
+            <svg
+              className="clown-winning-lines"
+              viewBox="0 0 100 100"
+              preserveAspectRatio="none"
+              aria-hidden="true"
+            >
+              {winningLines.map((lineIndex, visibleIndex) => {
+                const payline = PAYLINES[lineIndex];
+
+                if (!payline) return null;
+
+                const points = payline
+                  .map(
+                    (rowIndex, columnIndex) =>
+                      `${10 + columnIndex * 20},${10 + rowIndex * 20}`
+                  )
+                  .join(" ");
+
+                const lineHue = (42 + visibleIndex * 58) % 360;
+
+                return (
+                  <g
+                    key={`winning-line-${lineIndex}`}
+                    style={{
+                      "--clown-line-hue": lineHue,
+                      animationDelay: `${visibleIndex * 0.12}s`,
+                    }}
+                  >
+                    {!isIOS && (
+                      <polyline
+                        className="clown-winning-line-glow"
+                        points={points}
+                      />
+                    )}
+                    <polyline
+                      className="clown-winning-line-core"
+                      points={points}
+                    />
+                  </g>
+                );
+              })}
+            </svg>
+          )}
+
           {grid.map(
             (column, columnIndex) => (
               <div
@@ -1274,7 +1770,7 @@ spinTickerRef.current = window.setInterval(() => {
           <button
             type="button"
             className="clown-small-button"
-            onClick={decreaseBet}
+            onClick={() => { playUiClickSound(); decreaseBet(); }}
             disabled={
               spinning ||
               freeSpins > 0 ||
@@ -1292,10 +1788,7 @@ spinTickerRef.current = window.setInterval(() => {
                 : ""
             }`}
             onClick={spin}
-            disabled={
-              spinning ||
-              (!freeSpins && credits < bet)
-            }
+            disabled={spinning}
           >
             {spinning
               ? "GIRANDO..."
@@ -1307,7 +1800,7 @@ spinTickerRef.current = window.setInterval(() => {
           <button
             type="button"
             className="clown-small-button"
-            onClick={increaseBet}
+            onClick={() => { playUiClickSound(); increaseBet(); }}
             disabled={
               spinning ||
               freeSpins > 0 ||
@@ -1324,7 +1817,7 @@ spinTickerRef.current = window.setInterval(() => {
           <button
             type="button"
             className="clown-back-button"
-            onClick={onBack}
+            onClick={() => { playUiClickSound(); onBack(); }}
             disabled={spinning}
           >
             ← CASINO
@@ -1333,7 +1826,7 @@ spinTickerRef.current = window.setInterval(() => {
           <button
             type="button"
             className="clown-logout-button"
-            onClick={onLogout}
+            onClick={() => { playUiClickSound(); onLogout(); }}
             disabled={spinning}
           >
             CERRAR SESIÓN

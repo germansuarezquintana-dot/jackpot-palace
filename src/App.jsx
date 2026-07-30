@@ -4,6 +4,7 @@ import { supabase } from "./supabase";
 import Login from "./Login";
 import Game from "./Game";
 import ClownParty from "./ClownParty";
+import Wheel from "./Wheel";
 import Lobby from "./Lobby";
 import Admin from "./Admin";
 import Cashier from "./Cashier";
@@ -89,13 +90,13 @@ export default function App() {
   }, []);
 
   useEffect(() => {
-    if (
-      !session?.user?.id ||
-      !player?.id ||
-      ["admin", "super_admin"].includes(player.role)
-    ) {
-      return;
-    }
+   if (
+  !session?.user?.id ||
+  !player?.id ||
+  player.role === "super_admin"
+) {
+  return;
+}
 
     let active = true;
 
@@ -251,6 +252,21 @@ if (screen === "clown-party") {
         }))
       }
       onBack={() => setScreen("lobby")}
+      onLogout={() => supabase.auth.signOut()}
+    />
+  );
+}
+if (screen === "wheel") {
+  return (
+    <Wheel
+      player={player}
+      onBack={() => setScreen("lobby")}
+      onCreditsChange={(credits) =>
+        setPlayer((current) => ({
+          ...current,
+          credits,
+        }))
+      }
       onLogout={() => supabase.auth.signOut()}
     />
   );

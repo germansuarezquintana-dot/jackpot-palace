@@ -278,15 +278,41 @@ Deno.serve(async (req) => {
 
       if (playerError) throw playerError;
 
-      const canManage =
-        caller.role === "super_admin" ||
-        (caller.role === "admin" &&
-          player.role === "cashier" &&
-          player.parent_id === caller.id);
+    let parentCashier = null;
 
-      if (!player || !canManage) {
-        return json({ error: "Usuario inválido." }, 400);
-      }
+if (player?.role === "player" && player.parent_id) {
+  const { data, error } = await adminClient
+    .from("players")
+    .select("role,parent_id")
+    .eq("id", player.parent_id)
+    .maybeSingle();
+
+  if (error) throw error;
+
+  parentCashier = data;
+}
+
+const canManage =
+  caller.role === "super_admin" ||
+  (
+    caller.role === "admin" &&
+    (
+      (
+        player.role === "cashier" &&
+        player.parent_id === caller.id
+      ) ||
+      (
+        player.role === "player" &&
+        (
+          player.parent_id === caller.id ||
+          (
+            parentCashier?.role === "cashier" &&
+            parentCashier.parent_id === caller.id
+          )
+        )
+      )
+    )
+  );
 
       const { error: passwordError } =
         await adminClient.auth.admin.updateUserById(
@@ -294,7 +320,17 @@ Deno.serve(async (req) => {
           { password: body.password }
         );
 
-      if (passwordError) throw passwordError;
+     if (passwordError) {
+  console.error("updateUserById:", passwordError);
+
+  return json(
+    {
+      error: "updateUserById",
+      details: passwordError,
+    },
+    500
+  );
+}
 
       const { error: logoutUpdateError } = await adminClient
         .from("players")
@@ -308,22 +344,55 @@ Deno.serve(async (req) => {
 
     if (body.action === "force_logout") {
       const { data: player, error: playerError } = await adminClient
-        .from("players")
-        .select("role,parent_id")
-        .eq("id", body.player_id)
-        .single();
+  .from("players")
+  .select("role,parent_id")
+  .eq("id", body.player_id)
+  .single();
 
-      if (playerError) throw playerError;
+if (playerError) throw playerError;
 
-      const canManage =
-        caller.role === "super_admin" ||
-        (caller.role === "admin" &&
-          player.role === "cashier" &&
-          player.parent_id === caller.id);
+let parentCashier = null;
+
+if (player?.role === "player" && player.parent_id) {
+  const { data, error } = await adminClient
+    .from("players")
+    .select("role,parent_id")
+    .eq("id", player.parent_id)
+    .maybeSingle();
+
+  if (error) throw error;
+  parentCashier = data;
+}
+
+const canManage =
+  caller.role === "super_admin" ||
+  (
+    caller.role === "admin" &&
+    (
+      (
+        player.role === "cashier" &&
+        player.parent_id === caller.id
+      ) ||
+      (
+        player.role === "player" &&
+        (
+          player.parent_id === caller.id ||
+          (
+            parentCashier?.role === "cashier" &&
+            parentCashier.parent_id === caller.id
+          )
+        )
+      )
+    )
+  );
 
       if (!player || !canManage) {
-        return json({ error: "Usuario inválido." }, 400);
-      }
+  return json({
+    player,
+    canManage,
+    caller,
+  }, 400);
+}
 
       const { error: logoutUpdateError } = await adminClient
         .from("players")

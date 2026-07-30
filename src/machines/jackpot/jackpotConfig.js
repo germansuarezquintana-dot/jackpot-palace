@@ -57,14 +57,14 @@ export const JACKPOT_CONFIG = {
     "7️⃣", "👑",
   ],
 
-  OUTCOME_RATES: {
-    jackpot: 0.00005,
-    mega: 0.002,
-    big: 0.015,
-    medium: 0.06,
-    scatter: 0.008,
-    small: 0.38,
-  },
+OUTCOME_RATES: {
+  jackpot: 0.00002,
+  mega: 0.0008,
+  big: 0.006,
+  medium: 0.025,
+  scatter: 0.004,
+  small: 0.11,
+},
 
   LINE_PAYOUT_FACTOR: GAME_CONFIG.LINE_PAYOUT_FACTOR,
   SCATTER_MULTIPLIERS: GAME_CONFIG.SCATTER_MULTIPLIERS,

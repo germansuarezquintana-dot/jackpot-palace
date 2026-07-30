@@ -1,0 +1,2126 @@
+:root {
+  --wheel-gold: #f4cf72;
+  --wheel-gold-dark: #8a5b16;
+  --wheel-panel: rgba(8, 13, 24, 0.92);
+  --wheel-panel-soft: rgba(20, 27, 43, 0.92);
+  --wheel-line: rgba(244, 207, 114, 0.32);
+  --wheel-red: #d91f45;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+.wheel-page {
+  min-height: 100vh;
+  min-height: 100dvh;
+  padding: 18px;
+  overflow-x: hidden;
+  color: #fff;
+  background:
+    radial-gradient(circle at 50% -10%, rgba(42, 96, 146, 0.38), transparent 34%),
+    radial-gradient(circle at 85% 35%, rgba(138, 19, 53, 0.22), transparent 30%),
+    linear-gradient(155deg, #030711 0%, #07101d 45%, #02040a 100%);
+}
+
+button {
+  font: inherit;
+}
+
+.wheel-machine {
+  width: min(1180px, 100%);
+  min-height: calc(100dvh - 36px);
+  margin: 0 auto;
+  padding: 18px;
+  border: 1px solid rgba(244, 207, 114, 0.48);
+  border-radius: 28px;
+  background:
+    linear-gradient(180deg, rgba(15, 22, 36, 0.96), rgba(5, 9, 17, 0.98)),
+    radial-gradient(circle at center, rgba(199, 29, 67, 0.08), transparent 50%);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.08),
+    0 0 0 5px rgba(5, 8, 14, 0.88),
+    0 24px 80px rgba(0, 0, 0, 0.65);
+}
+
+.wheel-topbar {
+  min-height: 64px;
+  display: grid;
+  grid-template-columns: 130px 1fr 52px;
+  align-items: center;
+  gap: 14px;
+  padding: 8px 10px 14px;
+  border-bottom: 1px solid var(--wheel-line);
+}
+
+.wheel-brand {
+  text-align: center;
+}
+
+.wheel-brand span {
+  display: block;
+  color: var(--wheel-gold);
+  font-size: 12px;
+  font-weight: 900;
+  letter-spacing: 0.34em;
+}
+
+.wheel-brand strong {
+  display: block;
+  margin-top: 3px;
+  font-size: clamp(25px, 4vw, 42px);
+  line-height: 1;
+  letter-spacing: 0.08em;
+  text-shadow: 0 0 20px rgba(244, 207, 114, 0.28);
+}
+
+.wheel-back-button,
+.wheel-sound-button,
+.wheel-action-button {
+  border: 1px solid var(--wheel-line);
+  color: #fff;
+  background: linear-gradient(180deg, rgba(37, 47, 65, 0.95), rgba(12, 18, 29, 0.98));
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  cursor: pointer;
+}
+
+.wheel-back-button {
+  min-height: 42px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+}
+
+.wheel-sound-button {
+  width: 46px;
+  height: 46px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  font-size: 20px;
+}
+
+.wheel-back-button:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+
+.wheel-dashboard {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin: 16px 0;
+}
+
+.wheel-dashboard > div {
+  min-height: 76px;
+  display: grid;
+  place-content: center;
+  text-align: center;
+  border: 1px solid var(--wheel-line);
+  border-radius: 16px;
+  background: linear-gradient(180deg, rgba(26, 35, 53, 0.92), rgba(8, 13, 23, 0.98));
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06);
+}
+
+.wheel-dashboard span,
+.wheel-section-title {
+  color: rgba(255, 255, 255, 0.58);
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: 0.17em;
+}
+
+.wheel-dashboard strong {
+  margin-top: 5px;
+  color: #fff8d6;
+  font-size: clamp(22px, 3.5vw, 34px);
+}
+
+.wheel-game-layout {
+  display: grid;
+  grid-template-columns: 180px minmax(0, 1fr);
+  gap: 18px;
+  align-items: stretch;
+}
+
+.wheel-history-panel {
+  padding: 16px;
+  border: 1px solid var(--wheel-line);
+  border-radius: 18px;
+  background: var(--wheel-panel);
+}
+
+.wheel-history-list {
+  display: grid;
+  gap: 8px;
+  margin-top: 14px;
+}
+
+.wheel-history-list p {
+  margin: 20px 0;
+  color: rgba(255, 255, 255, 0.4);
+  text-align: center;
+}
+
+.wheel-history-item {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 10px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.wheel-history-item strong {
+  color: #fff4bf;
+}
+
+.wheel-history-item span {
+  color: #8ef0b3;
+  font-weight: 900;
+}
+
+.wheel-main-area {
+  min-width: 0;
+  display: grid;
+  place-items: center;
+  padding: 12px 16px 4px;
+  border: 1px solid var(--wheel-line);
+  border-radius: 22px;
+  background:
+    radial-gradient(circle at center, rgba(123, 21, 48, 0.18), transparent 48%),
+    linear-gradient(180deg, rgba(14, 20, 33, 0.88), rgba(5, 9, 16, 0.96));
+}
+
+.wheel-stage {
+  position: relative;
+  width: min(62vw, 560px);
+  max-width: 100%;
+  aspect-ratio: 1;
+  margin: 12px auto 0;
+}
+
+.wheel-pointer {
+  position: absolute;
+  top: -23px;
+  left: 50%;
+  z-index: 30;
+  transform: translateX(-50%);
+  color: #fff2ae;
+  font-size: 52px;
+  line-height: 1;
+  filter: drop-shadow(0 5px 4px rgba(0, 0, 0, 0.8));
+  text-shadow: 0 0 13px rgba(255, 205, 76, 0.9);
+}
+
+.wheel-disc {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  overflow: hidden;
+  border: clamp(9px, 1.4vw, 16px) solid #d9aa39;
+  border-radius: 50%;
+  transition: transform 5.4s cubic-bezier(0.08, 0.67, 0.08, 1);
+  will-change: transform;
+  box-shadow:
+    inset 0 0 0 7px #66390c,
+    inset 0 0 55px rgba(0, 0, 0, 0.72),
+    0 0 0 7px #7b1028,
+    0 0 0 13px #160811,
+    0 0 42px rgba(255, 191, 44, 0.58);
+}
+
+.wheel-disc::before {
+  content: "";
+  position: absolute;
+  inset: 8px;
+  z-index: 5;
+  border: 2px solid rgba(255, 244, 178, 0.55);
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+.wheel-disc::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  border-radius: 50%;
+  pointer-events: none;
+  background:
+    radial-gradient(circle at center, transparent 0 32%, rgba(0, 0, 0, 0.08) 58%, rgba(0, 0, 0, 0.4) 100%),
+    repeating-conic-gradient(from 0deg, rgba(255, 255, 255, 0.08) 0deg 0.7deg, transparent 0.7deg 15deg);
+}
+
+.wheel-labels {
+  position: absolute;
+  inset: 0;
+  z-index: 6;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  pointer-events: none;
+}
+
+.wheel-labels text {
+  dominant-baseline: middle;
+  text-anchor: middle;
+  fill: #fff;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 2.15px;
+  font-weight: 1000;
+  paint-order: stroke fill;
+  stroke: rgba(0, 0, 0, 0.95);
+  stroke-width: 0.72px;
+}
+
+.wheel-labels text.is-bonus,
+.wheel-labels text.is-multiplier {
+  fill: #fff2a1;
+  font-size: 2px;
+}
+
+.wheel-labels text.is-jackpot {
+  fill: #fff1a1;
+  font-size: 1.72px;
+}
+
+.wheel-labels text.is-lose {
+  font-size: 1.82px;
+}
+
+.wheel-center {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  z-index: 20;
+  width: 31%;
+  aspect-ratio: 1;
+  display: grid;
+  place-content: center;
+  transform: translate(-50%, -50%);
+  border: 8px solid #dcae3a;
+  border-radius: 50%;
+  background: radial-gradient(circle at 38% 30%, #b83355, #390713 65%, #100006 100%);
+  box-shadow:
+    inset 0 0 30px rgba(0, 0, 0, 0.72),
+    0 0 0 4px #6f3510,
+    0 0 25px rgba(255, 198, 45, 0.75);
+}
+
+.wheel-center span {
+  color: #fff3ad;
+  font-size: clamp(34px, 7vw, 66px);
+  font-weight: 1000;
+  line-height: 0.85;
+}
+
+.wheel-center strong {
+  margin-top: 5px;
+  font-size: clamp(8px, 1.5vw, 14px);
+  letter-spacing: 0.2em;
+}
+
+.wheel-lights-ring {
+  position: absolute;
+  inset: -17px;
+  z-index: 4;
+  border-radius: 50%;
+  pointer-events: none;
+  background: repeating-conic-gradient(
+    from 0deg,
+    #fff5a6 0deg 3deg,
+    #ffb82e 3deg 6deg,
+    transparent 6deg 9deg
+  );
+  mask: radial-gradient(circle, transparent 0 86%, #000 86.5% 94%, transparent 94.5%);
+  -webkit-mask: radial-gradient(circle, transparent 0 86%, #000 86.5% 94%, transparent 94.5%);
+  filter: drop-shadow(0 0 7px rgba(255, 202, 64, 0.85));
+  animation: wheelLightsRun 3.5s linear infinite;
+}
+
+.wheel-shine {
+  position: absolute;
+  inset: 5%;
+  z-index: 12;
+  overflow: hidden;
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+.wheel-shine::before {
+  content: "";
+  position: absolute;
+  top: -40%;
+  left: -70%;
+  width: 55%;
+  height: 180%;
+  transform: rotate(24deg);
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.04),
+    rgba(255, 246, 184, 0.34),
+    rgba(255, 255, 255, 0.05),
+    transparent
+  );
+  filter: blur(5px);
+  animation: wheelShinePass 4.6s ease-in-out infinite;
+}
+
+.wheel-result {
+  width: 100%;
+  min-height: 48px;
+  display: grid;
+  place-items: center;
+  margin: 10px 0 4px;
+  padding: 9px 14px;
+  color: #d8deeb;
+  font-size: clamp(15px, 2.4vw, 24px);
+  font-weight: 1000;
+  letter-spacing: 0.04em;
+  text-align: center;
+}
+
+.wheel-result.is-win {
+  color: #fff0a2;
+  text-shadow: 0 0 14px rgba(255, 210, 75, 0.72);
+}
+
+.wheel-betting-panel {
+  margin-top: 18px;
+  padding: 16px;
+  border: 1px solid var(--wheel-line);
+  border-radius: 20px;
+  background: var(--wheel-panel);
+}
+
+.wheel-chips {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin: 14px 0 16px;
+}
+
+.wheel-chip {
+  width: 72px;
+  aspect-ratio: 1;
+  border: 5px dashed rgba(255, 255, 255, 0.88);
+  border-radius: 50%;
+  color: #fff;
+  background:
+    radial-gradient(circle, #1f2d47 0 42%, transparent 43%),
+    conic-gradient(#d91f45 0 12.5%, #f3d06f 12.5% 25%, #d91f45 25% 37.5%, #f3d06f 37.5% 50%, #d91f45 50% 62.5%, #f3d06f 62.5% 75%, #d91f45 75% 87.5%, #f3d06f 87.5%);
+  box-shadow:
+    inset 0 0 0 4px #0e1728,
+    0 5px 12px rgba(0, 0, 0, 0.42);
+  font-size: 13px;
+  font-weight: 1000;
+  cursor: pointer;
+  transition: transform 0.15s ease, filter 0.15s ease;
+}
+
+.wheel-chip:hover:not(:disabled),
+.wheel-chip.is-selected {
+  transform: translateY(-4px) scale(1.04);
+  filter: brightness(1.18);
+}
+
+.wheel-chip.is-selected {
+  box-shadow:
+    inset 0 0 0 4px #0e1728,
+    0 0 0 4px rgba(255, 226, 128, 0.32),
+    0 0 22px rgba(255, 202, 64, 0.62);
+}
+
+.wheel-chip:disabled,
+.wheel-action-button:disabled,
+.wheel-spin-button:disabled {
+  opacity: 0.38;
+  cursor: not-allowed;
+}
+
+.wheel-actions {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(100px, 1fr)) minmax(190px, 1.45fr);
+  gap: 10px;
+}
+
+.wheel-action-button,
+.wheel-spin-button {
+  min-height: 52px;
+  border-radius: 14px;
+  font-weight: 1000;
+  letter-spacing: 0.06em;
+}
+
+.wheel-action-button {
+  padding: 0 16px;
+}
+
+.wheel-spin-button {
+  border: 1px solid #ffe599;
+  color: #fff;
+  background: linear-gradient(180deg, #f0375b, #b01135 58%, #66091d);
+  box-shadow:
+    0 5px 0 #43030f,
+    inset 0 1px 0 rgba(255, 255, 255, 0.34),
+    0 0 22px rgba(235, 42, 84, 0.32);
+  font-size: 21px;
+  cursor: pointer;
+}
+
+.wheel-action-button:hover:not(:disabled),
+.wheel-spin-button:hover:not(:disabled),
+.wheel-back-button:hover:not(:disabled),
+.wheel-sound-button:hover:not(:disabled) {
+  filter: brightness(1.14);
+}
+
+.wheel-spin-button:active:not(:disabled),
+.wheel-action-button:active:not(:disabled) {
+  transform: translateY(2px);
+}
+
+@keyframes wheelLightsRun {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes wheelShinePass {
+  0%, 25% {
+    left: -70%;
+    opacity: 0;
+  }
+
+  40% {
+    opacity: 1;
+  }
+
+  70%, 100% {
+    left: 125%;
+    opacity: 0;
+  }
+}
+
+@media (max-width: 760px) {
+  .wheel-page {
+    padding: 0;
+  }
+
+  .wheel-machine {
+    min-height: 100dvh;
+    padding: 10px;
+    border: 0;
+    border-radius: 0;
+  }
+
+  .wheel-topbar {
+    grid-template-columns: 82px 1fr 42px;
+    padding: 4px 2px 10px;
+  }
+
+  .wheel-back-button {
+    min-height: 38px;
+    font-size: 10px;
+  }
+
+  .wheel-sound-button {
+    width: 40px;
+    height: 40px;
+  }
+
+  .wheel-brand span {
+    font-size: 8px;
+    letter-spacing: 0.22em;
+  }
+
+  .wheel-brand strong {
+    font-size: 21px;
+  }
+
+  .wheel-dashboard {
+    gap: 6px;
+    margin: 10px 0;
+  }
+
+  .wheel-dashboard > div {
+    min-height: 60px;
+    border-radius: 12px;
+  }
+
+  .wheel-dashboard span {
+    font-size: 8px;
+    letter-spacing: 0.08em;
+  }
+
+  .wheel-dashboard strong {
+    font-size: 18px;
+  }
+
+  .wheel-game-layout {
+    display: block;
+  }
+
+  .wheel-history-panel {
+    padding: 10px;
+    overflow: hidden;
+  }
+
+  .wheel-history-list {
+    display: flex;
+    overflow-x: auto;
+    gap: 6px;
+    margin-top: 8px;
+    scrollbar-width: none;
+  }
+
+  .wheel-history-list::-webkit-scrollbar {
+    display: none;
+  }
+
+  .wheel-history-item {
+    min-width: 90px;
+    padding: 7px 8px;
+    font-size: 11px;
+  }
+
+  .wheel-main-area {
+    margin-top: 8px;
+    padding: 7px 4px 0;
+    border-radius: 16px;
+  }
+
+  .wheel-stage {
+    width: min(86vw, 460px);
+    margin-top: 10px;
+  }
+
+  .wheel-pointer {
+    top: -16px;
+    font-size: 40px;
+  }
+
+  .wheel-lights-ring {
+    inset: -10px;
+  }
+
+  .wheel-result {
+    min-height: 40px;
+    margin: 4px 0 0;
+    font-size: 14px;
+  }
+
+  .wheel-betting-panel {
+    margin-top: 8px;
+    padding: 10px;
+    border-radius: 16px;
+  }
+
+  .wheel-chips {
+    flex-wrap: nowrap;
+    justify-content: flex-start;
+    overflow-x: auto;
+    gap: 9px;
+    margin: 10px 0 12px;
+    padding: 2px 2px 6px;
+    scrollbar-width: none;
+  }
+
+  .wheel-chips::-webkit-scrollbar {
+    display: none;
+  }
+
+  .wheel-chip {
+    flex: 0 0 58px;
+    width: 58px;
+    border-width: 4px;
+    font-size: 11px;
+  }
+
+  .wheel-actions {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 7px;
+  }
+
+  .wheel-action-button {
+    min-height: 43px;
+    padding: 0 5px;
+    font-size: 10px;
+  }
+
+  .wheel-spin-button {
+    grid-column: 1 / -1;
+    min-height: 54px;
+    font-size: 20px;
+  }
+}
+
+@media (max-width: 380px) {
+  .wheel-stage {
+    width: 82vw;
+  }
+
+  .wheel-dashboard strong {
+    font-size: 16px;
+  }
+
+  .wheel-center span {
+    font-size: 30px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .wheel-lights-ring,
+  .wheel-shine::before {
+    animation: none;
+  }
+}
+
+/* ===== MODO PANTALLA COMPLETA ===== */
+html,
+body,
+#root {
+  width: 100%;
+  min-width: 100%;
+  height: 100%;
+  min-height: 100%;
+  margin: 0;
+}
+
+body {
+}
+
+.wheel-page {
+  width: 100vw;
+  height: 100vh;
+  height: 100dvh;
+  min-height: 0;
+  padding: 0;
+  overflow: hidden;
+}
+
+.wheel-machine {
+  width: 100%;
+  max-width: none;
+  height: 100vh;
+  height: 100dvh;
+  min-height: 0;
+  margin: 0;
+  padding: clamp(8px, 1.3vw, 18px);
+  display: grid;
+  grid-template-rows: auto auto minmax(0, 1fr) auto;
+  border-width: 0;
+  border-radius: 0;
+  overflow: hidden;
+}
+
+.wheel-topbar {
+  min-height: clamp(48px, 7vh, 66px);
+  padding-top: 2px;
+  padding-bottom: 8px;
+}
+
+.wheel-dashboard {
+  margin: clamp(6px, 1vh, 12px) 0;
+}
+
+.wheel-dashboard > div {
+  min-height: clamp(52px, 8vh, 72px);
+}
+
+.wheel-game-layout {
+  min-height: 0;
+  grid-template-columns: clamp(145px, 15vw, 210px) minmax(0, 1fr);
+}
+
+.wheel-history-panel,
+.wheel-main-area {
+  min-height: 0;
+  overflow: hidden;
+}
+
+.wheel-history-list {
+  max-height: calc(100% - 30px);
+  overflow-y: auto;
+}
+
+.wheel-main-area {
+  height: 100%;
+  grid-template-rows: minmax(0, 1fr) auto;
+}
+
+.wheel-stage {
+  width: min(58vh, 54vw, 610px);
+  max-height: 100%;
+  margin-top: 4px;
+}
+
+.wheel-result {
+  min-height: 36px;
+  margin: 2px 0 0;
+  padding: 4px 10px;
+}
+
+.wheel-betting-panel {
+  margin-top: clamp(6px, 1vh, 12px);
+  padding: clamp(8px, 1vw, 14px);
+}
+
+.wheel-chips {
+  margin: 8px 0 10px;
+}
+
+.wheel-chip {
+  width: clamp(52px, 6vh, 68px);
+}
+
+.wheel-actions {
+  gap: 8px;
+}
+
+.wheel-action-button,
+.wheel-spin-button {
+  min-height: clamp(42px, 6vh, 54px);
+}
+
+/* Notebook o monitor con poca altura */
+@media (min-width: 761px) and (max-height: 760px) {
+  .wheel-machine {
+    padding: 8px 12px;
+  }
+
+  .wheel-topbar {
+    min-height: 46px;
+    padding-bottom: 5px;
+  }
+
+  .wheel-brand span {
+    font-size: 9px;
+  }
+
+  .wheel-brand strong {
+    font-size: 25px;
+  }
+
+  .wheel-dashboard {
+    margin: 5px 0;
+  }
+
+  .wheel-dashboard > div {
+    min-height: 48px;
+  }
+
+  .wheel-dashboard strong {
+    font-size: 21px;
+  }
+
+  .wheel-game-layout {
+    gap: 10px;
+  }
+
+  .wheel-stage {
+    width: min(50vh, 45vw, 500px);
+  }
+
+  .wheel-betting-panel {
+    margin-top: 5px;
+    padding: 7px 10px;
+  }
+
+  .wheel-chips {
+    margin: 5px 0 7px;
+  }
+
+  .wheel-chip {
+    width: 50px;
+    border-width: 3px;
+    font-size: 10px;
+  }
+
+  .wheel-action-button,
+  .wheel-spin-button {
+    min-height: 40px;
+  }
+}
+
+/* Celular vertical: usa toda la pantalla y permite desplazamiento interno */
+@media (max-width: 760px) {
+  body {
+    overflow: auto;
+  }
+
+  .wheel-page {
+    height: auto;
+    min-height: 100dvh;
+    overflow-y: auto;
+  }
+
+  .wheel-machine {
+    height: auto;
+    min-height: 100dvh;
+    display: block;
+    overflow: visible;
+  }
+}
+
+/* Celular horizontal: rueda y controles entran sin desperdiciar pantalla */
+@media (max-width: 950px) and (orientation: landscape) and (max-height: 520px) {
+  body {
+  }
+
+  .wheel-page,
+  .wheel-machine {
+    height: 100dvh;
+    min-height: 0;
+    overflow: hidden;
+  }
+
+  .wheel-machine {
+    display: grid;
+    grid-template-rows: auto auto minmax(0, 1fr) auto;
+    padding: 5px 8px;
+  }
+
+  .wheel-topbar {
+    min-height: 38px;
+    grid-template-columns: 78px 1fr 38px;
+    padding: 0 2px 4px;
+  }
+
+  .wheel-brand span {
+    font-size: 7px;
+  }
+
+  .wheel-brand strong {
+    font-size: 18px;
+  }
+
+  .wheel-back-button,
+  .wheel-sound-button {
+    min-height: 34px;
+    height: 34px;
+  }
+
+  .wheel-sound-button {
+    width: 34px;
+  }
+
+  .wheel-dashboard {
+    margin: 3px 0;
+  }
+
+  .wheel-dashboard > div {
+    min-height: 38px;
+  }
+
+  .wheel-dashboard strong {
+    margin-top: 1px;
+    font-size: 15px;
+  }
+
+  .wheel-game-layout {
+    display: grid;
+    grid-template-columns: 115px minmax(0, 1fr);
+    gap: 6px;
+  }
+
+  .wheel-history-panel {
+    padding: 7px;
+  }
+
+  .wheel-history-list {
+    display: grid;
+    overflow-y: auto;
+  }
+
+  .wheel-history-item {
+    min-width: 0;
+    padding: 5px;
+    font-size: 10px;
+  }
+
+  .wheel-main-area {
+    margin-top: 0;
+    padding: 2px;
+  }
+
+  .wheel-stage {
+    width: min(54vh, 340px);
+    margin-top: 1px;
+  }
+
+  .wheel-result {
+    min-height: 24px;
+    font-size: 11px;
+  }
+
+  .wheel-betting-panel {
+    margin-top: 3px;
+    padding: 5px 8px;
+  }
+
+  .wheel-section-title {
+    font-size: 8px;
+  }
+
+  .wheel-chips {
+    flex-wrap: nowrap;
+    justify-content: center;
+    margin: 3px 0 5px;
+    gap: 6px;
+  }
+
+  .wheel-chip {
+    flex-basis: 38px;
+    width: 38px;
+    border-width: 3px;
+    font-size: 8px;
+  }
+
+  .wheel-actions {
+    grid-template-columns: repeat(3, 1fr) 1.35fr;
+    gap: 5px;
+  }
+
+  .wheel-spin-button {
+    grid-column: auto;
+  }
+
+  .wheel-action-button,
+  .wheel-spin-button {
+    min-height: 33px;
+    font-size: 9px;
+  }
+}
+
+/* =========================================================
+   CORRECCIÓN FINAL: LA RUEDA SIEMPRE DEBE SER CIRCULAR
+   Evita que CSS Grid la estire vertical u horizontalmente.
+   ========================================================= */
+.wheel-main-area {
+  justify-items: center;
+  align-items: center;
+}
+
+.wheel-stage {
+  width: min(54vh, 48vw, 610px) !important;
+  height: auto !important;
+  min-width: 0;
+  min-height: 0;
+  max-width: calc(100% - 12px) !important;
+  max-height: none !important;
+  aspect-ratio: 1 / 1 !important;
+  align-self: center !important;
+  justify-self: center !important;
+  flex: 0 0 auto;
+}
+
+.wheel-disc,
+.wheel-lights-ring,
+.wheel-shine,
+.wheel-labels {
+  width: 100% !important;
+  height: 100% !important;
+  aspect-ratio: 1 / 1 !important;
+}
+
+.wheel-disc {
+  top: 0 !important;
+  right: auto !important;
+  bottom: auto !important;
+  left: 0 !important;
+  border-radius: 50% !important;
+}
+
+.wheel-labels {
+  display: block;
+  border-radius: 50%;
+}
+
+@media (min-width: 761px) and (max-height: 760px) {
+  .wheel-stage {
+    width: min(48vh, 42vw, 500px) !important;
+  }
+}
+
+@media (max-width: 760px) {
+  .wheel-stage {
+    width: min(88vw, 52vh, 480px) !important;
+    max-width: 100% !important;
+  }
+}
+
+@media (max-width: 950px) and (orientation: landscape) and (max-height: 520px) {
+  .wheel-stage {
+    width: min(50vh, 42vw, 340px) !important;
+  }
+}
+
+/* ===== DISTRIBUCIÓN CASINO PROFESIONAL ===== */
+.wheel-game-layout {
+  grid-template-columns: clamp(185px, 17vw, 250px) minmax(420px, 1fr) clamp(210px, 19vw, 285px);
+  gap: clamp(10px, 1.2vw, 18px);
+}
+
+.wheel-left-column,
+.wheel-info-column {
+  min-height: 0;
+  display: grid;
+  gap: 12px;
+}
+
+.wheel-left-column {
+  grid-template-rows: minmax(0, 1fr) auto;
+}
+
+.wheel-info-column {
+  grid-template-rows: auto 1fr;
+}
+
+.wheel-history-panel,
+.wheel-rules-panel,
+.wheel-info-panel,
+.wheel-status-panel {
+  min-height: 0;
+  padding: 15px;
+  border: 1px solid var(--wheel-line);
+  border-radius: 18px;
+  background: linear-gradient(180deg, rgba(15, 21, 34, .96), rgba(5, 9, 17, .98));
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.05);
+}
+
+.wheel-history-panel {
+  overflow: hidden;
+}
+
+.wheel-rules-panel,
+.wheel-info-panel,
+.wheel-status-panel {
+  display: grid;
+  align-content: start;
+  gap: 10px;
+}
+
+.wheel-rule-row,
+.wheel-info-row,
+.wheel-status-panel > div {
+  display: grid;
+  align-items: center;
+  min-height: 38px;
+  border-bottom: 1px solid rgba(244,207,114,.13);
+}
+
+.wheel-rule-row {
+  grid-template-columns: 1fr auto;
+  gap: 8px;
+  font-size: 12px;
+}
+
+.wheel-rule-row b,
+.wheel-info-row strong {
+  color: #f4cf72;
+}
+
+.wheel-rule-row span,
+.wheel-status-panel span {
+  color: rgba(255,255,255,.62);
+}
+
+.wheel-info-row {
+  grid-template-columns: 34px 1fr auto;
+  gap: 8px;
+}
+
+.wheel-info-row i {
+  width: 29px;
+  height: 29px;
+  display: grid;
+  place-items: center;
+  border: 1px solid rgba(244,207,114,.45);
+  border-radius: 50%;
+  color: #ffd96e;
+  font-style: normal;
+  background: rgba(255,255,255,.04);
+}
+
+.wheel-info-row b {
+  font-size: 12px;
+  letter-spacing: .06em;
+}
+
+.wheel-info-row strong {
+  font-size: 18px;
+}
+
+.wheel-status-panel > div {
+  grid-template-columns: 1fr auto;
+}
+
+.wheel-status-panel strong {
+  color: #fff2b2;
+  font-size: 17px;
+}
+
+.wheel-main-area {
+  position: relative;
+  overflow: visible;
+  background:
+    radial-gradient(circle at center, rgba(145, 20, 48, .26), transparent 54%),
+    linear-gradient(180deg, rgba(13,18,30,.9), rgba(4,7,13,.98));
+}
+
+.wheel-stage {
+  width: min(63vh, 46vw, 650px);
+  height: auto;
+  max-height: calc(100% - 52px);
+  aspect-ratio: 1 / 1;
+  flex: 0 0 auto;
+}
+
+.wheel-betting-panel {
+  padding: 10px 14px 12px;
+}
+
+.wheel-chips {
+  margin: 8px 0 10px;
+}
+
+.wheel-chip {
+  width: clamp(54px, 4.7vw, 68px);
+}
+
+.wheel-actions {
+  grid-template-columns: 1fr 1fr 1fr 1.45fr;
+}
+
+.wheel-action-button:nth-child(1) {
+  background: linear-gradient(180deg, #7a1820, #3f070d);
+}
+
+.wheel-action-button:nth-child(2) {
+  background: linear-gradient(180deg, #174f86, #092542);
+}
+
+.wheel-action-button:nth-child(3) {
+  background: linear-gradient(180deg, #7a5913, #3d2905);
+}
+
+.wheel-spin-button {
+  background: linear-gradient(180deg, #27952d, #0d5c19 60%, #06350d);
+  box-shadow: 0 5px 0 #032608, inset 0 1px 0 rgba(255,255,255,.34), 0 0 25px rgba(46,214,70,.28);
+}
+
+@media (max-width: 980px) {
+  .wheel-game-layout {
+    grid-template-columns: 160px minmax(0,1fr);
+  }
+
+  .wheel-info-column {
+    display: none;
+  }
+
+  .wheel-stage {
+    width: min(60vh, 58vw, 560px);
+  }
+}
+
+@media (max-width: 760px) {
+  body { overflow: auto; }
+
+  .wheel-page,
+  .wheel-machine {
+    height: auto;
+    min-height: 100dvh;
+    overflow: visible;
+  }
+
+  .wheel-machine {
+    display: block;
+  }
+
+  .wheel-game-layout {
+    display: block;
+  }
+
+  .wheel-left-column {
+    display: block;
+  }
+
+  .wheel-rules-panel {
+    display: none;
+  }
+
+  .wheel-history-panel {
+    margin-bottom: 8px;
+  }
+
+  .wheel-main-area {
+    overflow: hidden;
+  }
+
+  .wheel-stage {
+    width: min(86vw, 480px);
+    max-height: none;
+  }
+}
+
+/* =========================================================
+   AJUSTE FINAL PC: máximo aprovechamiento + rueda circular
+   ========================================================= */
+@media (min-width: 901px) {
+  html,
+  body,
+  #root {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    overflow: hidden;
+  }
+
+  .wheel-page {
+    width: 100vw;
+    height: 100vh;
+    height: 100dvh;
+    min-height: 0;
+    padding: 0;
+    overflow: hidden;
+  }
+
+  .wheel-machine {
+    width: 100%;
+    height: 100%;
+    min-height: 0;
+    margin: 0;
+    padding: 6px 12px 8px;
+    border: 0;
+    border-radius: 0;
+    display: grid;
+    grid-template-rows: 54px 48px minmax(0, 1fr) 142px;
+    gap: 5px;
+    overflow: hidden;
+  }
+
+  .wheel-topbar {
+    min-height: 0;
+    height: 54px;
+    padding: 2px 10px 5px;
+  }
+
+  .wheel-brand span {
+    font-size: 9px;
+  }
+
+  .wheel-brand strong {
+    margin-top: 1px;
+    font-size: 27px;
+  }
+
+  .wheel-back-button {
+    min-height: 40px;
+  }
+
+  .wheel-sound-button {
+    width: 42px;
+    height: 42px;
+  }
+
+  .wheel-dashboard {
+    height: 48px;
+    min-height: 0;
+    margin: 0;
+    gap: 10px;
+  }
+
+  .wheel-dashboard > div {
+    min-height: 0;
+    height: 48px;
+    border-radius: 14px;
+  }
+
+  .wheel-dashboard span {
+    font-size: 9px;
+  }
+
+  .wheel-dashboard strong {
+    margin-top: 0;
+    font-size: 21px;
+    line-height: 1;
+  }
+
+  .wheel-game-layout {
+    min-height: 0;
+    height: 100%;
+    display: grid;
+    grid-template-columns: 220px minmax(420px, 1fr) 260px;
+    gap: 12px;
+    align-items: stretch;
+    overflow: hidden;
+  }
+
+  .wheel-left-column,
+  .wheel-info-column {
+    min-height: 0;
+    height: 100%;
+    gap: 10px;
+    overflow: hidden;
+  }
+
+  .wheel-history-panel,
+  .wheel-rules-panel,
+  .wheel-info-panel,
+  .wheel-status-panel {
+    min-height: 0;
+    padding: 12px 14px;
+    border-radius: 16px;
+  }
+
+  .wheel-history-panel {
+    flex: 1 1 auto;
+    overflow: hidden;
+  }
+
+  .wheel-history-list {
+    max-height: calc(100% - 28px);
+    margin-top: 9px;
+    gap: 5px;
+    overflow-y: auto;
+  }
+
+  .wheel-history-item {
+    padding: 7px 9px;
+    font-size: 12px;
+  }
+
+  .wheel-rules-panel {
+    flex: 0 0 auto;
+  }
+
+  .wheel-rule-row,
+  .wheel-info-row {
+    padding: 8px 0;
+    font-size: 12px;
+  }
+
+  .wheel-info-column {
+    display: grid;
+    grid-template-rows: auto 1fr;
+  }
+
+  .wheel-main-area {
+    position: relative;
+    min-width: 0;
+    min-height: 0;
+    height: 100%;
+    padding: 2px 8px 0;
+    display: grid;
+    grid-template-rows: minmax(0, 1fr) 34px;
+    place-items: center;
+    overflow: visible;
+  }
+
+  .wheel-stage {
+    --wheel-size: min(
+      calc(100dvh - 268px),
+      calc(100vw - 540px),
+      500px
+    );
+    width: var(--wheel-size) !important;
+    height: var(--wheel-size) !important;
+    min-width: var(--wheel-size);
+    min-height: var(--wheel-size);
+    max-width: var(--wheel-size);
+    max-height: var(--wheel-size);
+    aspect-ratio: auto;
+    margin: 8px auto 0;
+    align-self: center;
+    flex: none;
+  }
+
+  .wheel-disc,
+  .wheel-labels {
+    width: 100%;
+    height: 100%;
+    aspect-ratio: 1 / 1;
+  }
+
+  .wheel-labels text {
+    font-size: 2.55px;
+    stroke-width: 0.78px;
+  }
+
+  .wheel-labels text.is-bonus,
+  .wheel-labels text.is-multiplier {
+    font-size: 2.3px;
+  }
+
+  .wheel-labels text.is-jackpot,
+  .wheel-labels text.is-lose {
+    font-size: 2.05px;
+  }
+
+  .wheel-center {
+    width: 27%;
+  }
+
+  .wheel-center span {
+    font-size: clamp(34px, 4vw, 58px);
+  }
+
+  .wheel-result {
+    min-height: 34px;
+    height: 34px;
+    margin: 0;
+    padding: 2px 8px;
+    font-size: 19px;
+    line-height: 1;
+    align-self: end;
+  }
+
+  .wheel-betting-panel {
+    min-height: 0;
+    height: 142px;
+    margin: 0;
+    padding: 8px 12px;
+    border-radius: 18px;
+    overflow: hidden;
+  }
+
+  .wheel-betting-panel .wheel-section-title {
+    display: block;
+    line-height: 16px;
+  }
+
+  .wheel-chips {
+    height: 58px;
+    margin: 3px 0 6px;
+    gap: 10px;
+    flex-wrap: nowrap;
+  }
+
+  .wheel-chip {
+    width: 56px;
+    height: 56px;
+    flex: 0 0 56px;
+    border-width: 4px;
+    font-size: 10px;
+  }
+
+  .wheel-actions {
+    height: 48px;
+    gap: 8px;
+  }
+
+  .wheel-action-button,
+  .wheel-spin-button {
+    min-height: 0;
+    height: 48px;
+    border-radius: 13px;
+  }
+
+  .wheel-spin-button {
+    font-size: 20px;
+  }
+}
+
+/* Notebook baja: sacrifica paneles, no la rueda */
+@media (min-width: 901px) and (max-height: 680px) {
+  .wheel-machine {
+    grid-template-rows: 48px 44px minmax(0, 1fr) 118px;
+    gap: 4px;
+    padding-top: 3px;
+  }
+
+  .wheel-topbar {
+    height: 48px;
+  }
+
+  .wheel-dashboard,
+  .wheel-dashboard > div {
+    height: 44px;
+  }
+
+  .wheel-brand strong {
+    font-size: 25px;
+  }
+
+  .wheel-game-layout {
+    grid-template-columns: 205px minmax(390px, 1fr) 230px;
+    gap: 9px;
+  }
+
+  .wheel-stage {
+    --wheel-size: min(
+      calc(100dvh - 224px),
+      calc(100vw - 500px),
+      470px
+    );
+    margin-top: 4px;
+  }
+
+  .wheel-betting-panel {
+    height: 118px;
+    padding: 5px 10px;
+  }
+
+  .wheel-chips {
+    height: 49px;
+    margin: 1px 0 4px;
+  }
+
+  .wheel-chip {
+    width: 47px;
+    height: 47px;
+    flex-basis: 47px;
+    font-size: 9px;
+  }
+
+  .wheel-actions,
+  .wheel-action-button,
+  .wheel-spin-button {
+    height: 43px;
+  }
+
+  .wheel-history-panel,
+  .wheel-rules-panel,
+  .wheel-info-panel,
+  .wheel-status-panel {
+    padding: 9px 12px;
+  }
+
+  .wheel-rule-row,
+  .wheel-info-row {
+    padding: 6px 0;
+  }
+}
+
+/* ===== AJUSTE FINAL DE TAMAÑOS: PC 1366x768 ===== */
+@media (min-width: 1000px) {
+  .wheel-machine {
+    grid-template-rows: 52px 44px minmax(0, 1fr) 112px !important;
+    padding: 6px 12px !important;
+    gap: 5px !important;
+  }
+
+  .wheel-topbar {
+    min-height: 52px !important;
+    height: 52px !important;
+    padding: 2px 10px 5px !important;
+  }
+
+  .wheel-brand span {
+    font-size: 9px !important;
+  }
+
+  .wheel-brand strong {
+    font-size: 25px !important;
+  }
+
+  .wheel-dashboard {
+    height: 44px !important;
+    min-height: 44px !important;
+    margin: 0 !important;
+    gap: 10px !important;
+  }
+
+  .wheel-dashboard > div {
+    height: 44px !important;
+    min-height: 44px !important;
+    border-radius: 14px !important;
+  }
+
+  .wheel-dashboard span {
+    font-size: 9px !important;
+    line-height: 1 !important;
+  }
+
+  .wheel-dashboard strong {
+    margin-top: 1px !important;
+    font-size: 20px !important;
+    line-height: 1 !important;
+  }
+
+  .wheel-game-layout {
+    height: 100% !important;
+    min-height: 0 !important;
+    grid-template-columns: 205px minmax(0, 1fr) 230px !important;
+    gap: 10px !important;
+    overflow: hidden !important;
+  }
+
+  .wheel-left-column,
+  .wheel-info-column {
+    min-height: 0 !important;
+    height: 100% !important;
+    gap: 9px !important;
+    overflow: hidden !important;
+  }
+
+  .wheel-history-panel,
+  .wheel-rules-panel,
+  .wheel-info-panel,
+  .wheel-status-panel {
+    padding: 10px 12px !important;
+    border-radius: 15px !important;
+  }
+
+  .wheel-main-area {
+    min-width: 0 !important;
+    min-height: 0 !important;
+    height: 100% !important;
+    padding: 3px 8px 0 !important;
+    display: grid !important;
+    grid-template-rows: minmax(0, 1fr) 30px !important;
+    place-items: center !important;
+    overflow: hidden !important;
+  }
+
+  .wheel-stage {
+    --wheel-size: min(
+      calc(100dvh - 282px),
+      calc(100vw - 525px),
+      390px
+    );
+    width: var(--wheel-size) !important;
+    height: var(--wheel-size) !important;
+    min-width: 0 !important;
+    min-height: 0 !important;
+    max-width: 100% !important;
+    max-height: 100% !important;
+    aspect-ratio: 1 / 1 !important;
+    margin: 7px auto 0 !important;
+    align-self: center !important;
+  }
+
+  .wheel-disc,
+  .wheel-lights-ring,
+  .wheel-shine,
+  .wheel-labels {
+    width: 100% !important;
+    height: 100% !important;
+    aspect-ratio: 1 / 1 !important;
+  }
+
+  .wheel-pointer {
+    top: -15px !important;
+    font-size: 39px !important;
+  }
+
+  .wheel-lights-ring {
+    inset: -9px !important;
+  }
+
+  .wheel-result {
+    min-height: 30px !important;
+    height: 30px !important;
+    margin: 0 !important;
+    padding: 2px 8px !important;
+    font-size: 17px !important;
+    line-height: 1 !important;
+    position: relative !important;
+    z-index: 40 !important;
+  }
+
+  .wheel-betting-panel {
+    height: 112px !important;
+    min-height: 112px !important;
+    margin-top: 0 !important;
+    padding: 6px 10px 8px !important;
+    overflow: hidden !important;
+  }
+
+  .wheel-section-title {
+    font-size: 10px !important;
+  }
+
+  .wheel-chips {
+    height: 45px !important;
+    margin: 2px 0 4px !important;
+    gap: 10px !important;
+    align-items: center !important;
+  }
+
+  .wheel-chip {
+    width: 44px !important;
+    height: 44px !important;
+    flex: 0 0 44px !important;
+    border-width: 3px !important;
+    font-size: 9px !important;
+  }
+
+  .wheel-actions {
+    height: 43px !important;
+    gap: 8px !important;
+  }
+
+  .wheel-action-button,
+  .wheel-spin-button {
+    min-height: 43px !important;
+    height: 43px !important;
+    font-size: 16px !important;
+  }
+
+  .wheel-center {
+    width: 28% !important;
+    border-width: 6px !important;
+  }
+
+  .wheel-center span {
+    font-size: clamp(31px, 4vw, 48px) !important;
+  }
+
+  .wheel-center strong {
+    font-size: 9px !important;
+  }
+
+  .wheel-labels text {
+    font-size: 2.35px !important;
+  }
+
+  .wheel-labels text.is-bonus,
+  .wheel-labels text.is-multiplier {
+    font-size: 2.15px !important;
+  }
+
+  .wheel-labels text.is-jackpot,
+  .wheel-labels text.is-lose {
+    font-size: 1.9px !important;
+  }
+}
+
+/* Alturas muy bajas: evita cualquier recorte sin deformar la rueda */
+@media (min-width: 1000px) and (max-height: 650px) {
+  .wheel-stage {
+    --wheel-size: min(calc(100dvh - 270px), 350px) !important;
+  }
+}
+
+/* =========================================================
+   CELULAR VERTICAL — PANTALLA COMPLETA SIN SCROLL
+   ========================================================= */
+@media (max-width: 760px) and (orientation: portrait) {
+  html,
+  body,
+  #root {
+    width: 100%;
+    height: 100%;
+    min-height: 100%;
+    margin: 0;
+    overflow: auto !important;
+    overscroll-behavior: none;
+  }
+
+  .wheel-page {
+    width: 100vw;
+    height: 100dvh;
+    min-height: 0;
+    padding: 0;
+    overflow: hidden !important;
+  }
+
+  .wheel-machine {
+    width: 100%;
+    height: 100dvh;
+    min-height: 0;
+    padding: 5px 7px 7px;
+    display: grid;
+    grid-template-rows: 42px 44px minmax(0, 1fr) 154px;
+    gap: 5px;
+    border: 0;
+    border-radius: 0;
+    overflow: hidden !important;
+  }
+
+  .wheel-topbar {
+    min-height: 0;
+    height: 42px;
+    grid-template-columns: 66px minmax(0, 1fr) 36px;
+    gap: 5px;
+    padding: 0 1px 4px;
+  }
+
+  .wheel-back-button {
+    min-height: 32px;
+    height: 32px;
+    padding: 0 5px;
+    border-radius: 9px;
+    font-size: 8px;
+  }
+
+  .wheel-sound-button {
+    width: 34px;
+    height: 34px;
+    font-size: 16px;
+  }
+
+  .wheel-brand span {
+    font-size: 6px;
+    letter-spacing: 0.18em;
+  }
+
+  .wheel-brand strong {
+    margin-top: 1px;
+    font-size: clamp(17px, 5.1vw, 21px);
+    line-height: 0.95;
+    white-space: nowrap;
+  }
+
+  .wheel-dashboard {
+    height: 44px;
+    min-height: 0;
+    gap: 4px;
+    margin: 0;
+  }
+
+  .wheel-dashboard > div {
+    min-height: 0;
+    height: 44px;
+    border-radius: 9px;
+  }
+
+  .wheel-dashboard span {
+    font-size: 6px;
+    letter-spacing: 0.04em;
+    line-height: 1;
+  }
+
+  .wheel-dashboard strong {
+    margin-top: 2px;
+    font-size: clamp(14px, 4.4vw, 18px);
+    line-height: 1;
+  }
+
+  .wheel-game-layout {
+    width: 100%;
+    min-height: 0;
+    display: block;
+    overflow: hidden;
+  }
+
+  /* En celular se ocultan paneles secundarios para priorizar juego y controles. */
+  .wheel-left-column,
+  .wheel-info-column,
+  .wheel-history-panel,
+  .wheel-rules-panel,
+  .wheel-info-panel,
+  .wheel-status-panel {
+    display: none !important;
+  }
+
+  .wheel-main-area {
+    width: 100%;
+    height: 100%;
+    min-height: 0;
+    margin: 0;
+    padding: 2px 3px 0;
+    display: grid;
+    grid-template-rows: minmax(0, 1fr) 27px;
+    place-items: center;
+    border-radius: 13px;
+    overflow: hidden;
+  }
+
+  .wheel-stage {
+    width: min(91vw, calc(100dvh - 265px));
+    height: min(91vw, calc(100dvh - 265px));
+    max-width: 100%;
+    max-height: 100%;
+    aspect-ratio: 1 / 1;
+    margin: 7px auto 0;
+    flex: none;
+  }
+
+  .wheel-disc {
+    width: 100%;
+    height: 100%;
+    inset: 0;
+    border-width: 7px;
+    border-radius: 50%;
+    box-shadow:
+      inset 0 0 0 4px #66390c,
+      inset 0 0 30px rgba(0, 0, 0, 0.72),
+      0 0 0 4px #7b1028,
+      0 0 0 7px #160811,
+      0 0 20px rgba(255, 191, 44, 0.5);
+  }
+
+  .wheel-disc::before {
+    inset: 5px;
+    border-width: 1px;
+  }
+
+  .wheel-pointer {
+    top: -12px;
+    font-size: 32px;
+  }
+
+  .wheel-lights-ring {
+    inset: -7px;
+  }
+
+  .wheel-labels text {
+    font-size: 2.25px;
+    stroke-width: 0.62px;
+  }
+
+  .wheel-labels text.is-bonus,
+  .wheel-labels text.is-multiplier {
+    font-size: 2.05px;
+  }
+
+  .wheel-labels text.is-jackpot,
+  .wheel-labels text.is-lose {
+    font-size: 1.82px;
+  }
+
+  .wheel-center {
+    width: 29%;
+    border-width: 5px;
+  }
+
+  .wheel-center span {
+    font-size: clamp(25px, 11vw, 43px);
+  }
+
+  .wheel-center strong {
+    margin-top: 2px;
+    font-size: clamp(6px, 2.3vw, 9px);
+  }
+
+  .wheel-result {
+    width: 100%;
+    min-height: 0;
+    height: 27px;
+    margin: 0;
+    padding: 2px 5px;
+    font-size: clamp(11px, 3.5vw, 14px);
+    line-height: 1;
+  }
+
+  .wheel-betting-panel {
+    height: 154px;
+    min-height: 0;
+    margin: 0;
+    padding: 6px 7px 7px;
+    display: grid;
+    grid-template-rows: 12px 54px minmax(0, 1fr);
+    gap: 5px;
+    border-radius: 13px;
+    overflow: hidden;
+  }
+
+  .wheel-section-title {
+    font-size: 7px;
+    letter-spacing: 0.1em;
+    line-height: 12px;
+  }
+
+  .wheel-chips {
+    width: 100%;
+    height: 54px;
+    min-height: 0;
+    display: flex;
+    flex-wrap: nowrap;
+    justify-content: center;
+    align-items: center;
+    gap: clamp(5px, 2vw, 9px);
+    margin: 0;
+    padding: 0;
+    overflow: visible;
+  }
+
+  .wheel-chip {
+    flex: 0 0 clamp(43px, 12vw, 50px);
+    width: clamp(43px, 12vw, 50px);
+    height: clamp(43px, 12vw, 50px);
+    border-width: 3px;
+    font-size: clamp(8px, 2.4vw, 10px);
+  }
+
+  .wheel-chip:hover:not(:disabled),
+  .wheel-chip.is-selected {
+    transform: scale(1.04);
+  }
+
+  .wheel-actions {
+    min-height: 0;
+    height: 100%;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-rows: 34px 38px;
+    gap: 5px;
+  }
+
+  .wheel-action-button,
+  .wheel-spin-button {
+    min-height: 0;
+    height: 100%;
+    border-radius: 9px;
+    line-height: 1;
+  }
+
+  .wheel-action-button {
+    padding: 0 2px;
+    font-size: clamp(8px, 2.6vw, 10px);
+  }
+
+  .wheel-spin-button {
+    grid-column: 1 / -1;
+    min-height: 0;
+    font-size: clamp(15px, 4.7vw, 19px);
+    box-shadow:
+      0 3px 0 #43030f,
+      inset 0 1px 0 rgba(255, 255, 255, 0.34),
+      0 0 14px rgba(235, 42, 84, 0.28);
+  }
+}
+
+/* Celulares muy bajos: compacta un poco más sin habilitar scroll. */
+@media (max-width: 760px) and (orientation: portrait) and (max-height: 700px) {
+  .wheel-machine {
+    grid-template-rows: 36px 39px minmax(0, 1fr) 138px;
+    gap: 3px;
+    padding: 3px 5px 5px;
+  }
+
+  .wheel-topbar {
+    height: 36px;
+  }
+
+  .wheel-dashboard,
+  .wheel-dashboard > div {
+    height: 39px;
+  }
+
+  .wheel-stage {
+    width: min(86vw, calc(100dvh - 235px));
+    height: min(86vw, calc(100dvh - 235px));
+    margin-top: 5px;
+  }
+
+  .wheel-betting-panel {
+    height: 138px;
+    grid-template-rows: 10px 47px minmax(0, 1fr);
+    gap: 4px;
+    padding: 4px 6px 5px;
+  }
+
+  .wheel-chips {
+    height: 47px;
+  }
+
+  .wheel-chip {
+    flex-basis: 41px;
+    width: 41px;
+    height: 41px;
+  }
+
+  .wheel-actions {
+    grid-template-rows: 30px 34px;
+    gap: 4px;
+  }
+}

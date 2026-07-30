@@ -3999,3 +3999,720 @@
   }
 }
 
+
+/* =========================================================
+   CLOWN PARTY — AJUSTE VISUAL PREMIUM RÁPIDO
+   Acerca la estética a Gold Palace sin tocar la lógica.
+   ========================================================= */
+
+.clown-machine {
+  border-color: #ffd75a;
+  background:
+    linear-gradient(180deg, rgba(255,255,255,.13) 0%, rgba(255,255,255,.025) 18%, transparent 34%),
+    radial-gradient(circle at 50% 0%, rgba(255,220,95,.20), transparent 30%),
+    linear-gradient(145deg, #7d174f 0%, #3f073f 42%, #200326 72%, #0c010f 100%);
+  box-shadow:
+    0 0 0 3px #7f0d2e,
+    0 0 0 7px rgba(255,215,90,.22),
+    0 0 24px rgba(255,235,150,.26),
+    0 0 48px rgba(255,203,70,.48),
+    0 0 88px rgba(255,35,145,.24),
+    inset 0 3px 0 rgba(255,255,255,.18),
+    inset 0 -24px 45px rgba(0,0,0,.52),
+    inset 0 0 60px rgba(0,0,0,.68);
+}
+
+.clown-machine-neon {
+  box-shadow:
+    0 0 10px rgba(255,224,110,.9),
+    0 0 24px rgba(255,196,60,.62),
+    0 0 42px rgba(255,50,160,.34);
+}
+
+.clown-header h1 {
+  font-family: Georgia, "Times New Roman", serif;
+  font-weight: 900;
+  letter-spacing: 1px;
+  background: linear-gradient(180deg, #fffbd2 0%, #ffe36b 34%, #f1ae2a 66%, #b3123a 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  filter: drop-shadow(0 4px 0 #65102d);
+  text-shadow:
+    0 0 8px rgba(255,247,185,.72),
+    0 0 20px rgba(255,187,42,.42);
+}
+
+.clown-reels {
+  border-color: #ffd75a;
+  background:
+    linear-gradient(180deg, rgba(255,255,255,.14) 0%, rgba(255,255,255,.035) 12%, rgba(18,5,24,.98) 22%, #08010c 100%);
+  box-shadow:
+    inset 0 2px 0 rgba(255,255,255,.28),
+    inset 0 -22px 34px rgba(0,0,0,.78),
+    inset 0 0 74px rgba(255,255,255,.025),
+    0 0 14px rgba(255,220,105,.58),
+    0 0 36px rgba(255,77,173,.18);
+}
+
+.clown-symbol {
+  border-color: #f4cf61;
+  background:
+    radial-gradient(circle at 30% 18%, rgba(255,255,255,.96) 0%, rgba(255,255,255,.58) 16%, rgba(255,239,247,.97) 40%, #f7aad8 68%, #d850a3 100%);
+  font-size: clamp(42px, 7.6vw, 74px);
+  box-shadow:
+    inset 0 3px 0 rgba(255,255,255,.78),
+    inset 0 -13px 20px rgba(115,0,58,.25),
+    inset 0 0 18px rgba(255,255,255,.38),
+    0 0 9px rgba(255,210,90,.36),
+    0 5px 14px rgba(0,0,0,.35);
+}
+
+.clown-control-deck {
+  border-color: rgba(255,215,90,.72);
+  background:
+    linear-gradient(180deg, rgba(255,255,255,.07), transparent),
+    linear-gradient(180deg, #3a0a3b, #110315);
+  box-shadow:
+    inset 0 0 18px rgba(0,0,0,.72),
+    0 0 18px rgba(255,215,90,.18);
+}
+
+.clown-spin-button {
+  border: 3px solid #ffd75a;
+  color: #fff8d1;
+  background:
+    linear-gradient(180deg, #d92a4d 0%, #a30c2f 48%, #650719 100%);
+  text-shadow: 0 2px 0 rgba(0,0,0,.5), 0 0 10px rgba(255,230,120,.45);
+  box-shadow:
+    inset 0 3px 0 rgba(255,255,255,.26),
+    inset 0 -7px 0 rgba(70,0,18,.34),
+    0 0 0 2px rgba(96,5,30,.75),
+    0 0 18px rgba(255,211,75,.44),
+    0 8px 16px rgba(0,0,0,.38);
+}
+
+.clown-spin-button:not(:disabled):hover {
+  filter: brightness(1.12);
+  transform: translateY(-1px);
+}
+
+.clown-small-button {
+  border: 3px solid #ffd75a;
+  color: #fff7c8;
+  background: linear-gradient(180deg, #6e1766 0%, #3a083d 55%, #1a021f 100%);
+  text-shadow: 0 2px 0 rgba(0,0,0,.5);
+  box-shadow:
+    inset 0 3px 0 rgba(255,255,255,.18),
+    inset 0 -6px 0 rgba(0,0,0,.28),
+    0 0 12px rgba(255,215,90,.30),
+    0 6px 12px rgba(0,0,0,.32);
+}
+
+.clown-small-button:not(:disabled):hover {
+  filter: brightness(1.14);
+  transform: translateY(-1px);
+}
+
+@media (max-width: 600px) {
+  .clown-symbol {
+    font-size: clamp(34px, 11vw, 58px);
+  }
+
+  .clown-machine {
+    box-shadow:
+      0 0 0 2px #7f0d2e,
+      0 0 0 5px rgba(255,215,90,.20),
+      0 0 24px rgba(255,203,70,.34),
+      inset 0 -20px 36px rgba(0,0,0,.50),
+      inset 0 0 48px rgba(0,0,0,.66);
+  }
+}
+
+
+/* =========================================================
+   CLOWN PARTY — FASE 3 · CIRCUS DELUXE
+   Paleta más circense, colorida y menos rosa.
+   Solo modifica la piel visual.
+   ========================================================= */
+
+:root {
+  --clown-red: #e32636;
+  --clown-red-dark: #6d0815;
+  --clown-yellow: #ffd93d;
+  --clown-yellow-soft: #fff1a8;
+  --clown-blue: #2f8cff;
+  --clown-pink: #ff6f61;
+  --clown-purple: #44348f;
+  --clown-green: #35d26f;
+  --clown-ink: #071426;
+}
+
+/* Fondo general: feria nocturna, rojo y azul */
+.clown-page {
+  background:
+    radial-gradient(circle at 50% -8%, rgba(255, 221, 77, 0.34), transparent 28%),
+    radial-gradient(circle at 8% 68%, rgba(227, 38, 54, 0.28), transparent 30%),
+    radial-gradient(circle at 92% 70%, rgba(47, 140, 255, 0.30), transparent 31%),
+    linear-gradient(180deg, #4a0a14 0%, #13285d 48%, #050b18 100%);
+}
+
+.clown-page::before {
+  background:
+    radial-gradient(circle at center, transparent 36%, rgba(0, 0, 0, 0.70) 100%),
+    repeating-linear-gradient(
+      90deg,
+      transparent 0,
+      transparent 89px,
+      rgba(255, 228, 110, 0.026) 90px
+    );
+}
+
+.clown-tent-bg {
+  opacity: 0.42;
+  background:
+    repeating-conic-gradient(
+      from -18deg at 50% -5%,
+      rgba(255, 244, 196, 0.17) 0deg 10deg,
+      rgba(211, 20, 45, 0.34) 10deg 20deg,
+      rgba(35, 86, 174, 0.22) 20deg 30deg
+    );
+}
+
+.clown-cloud-left {
+  background: #d91f36;
+}
+
+.clown-cloud-right {
+  background: #237cff;
+}
+
+/* Gabinete principal: rojo de circo + azul noche + dorado */
+.clown-machine {
+  border-color: #ffd93d;
+  background:
+    linear-gradient(
+      180deg,
+      rgba(255,255,255,.18) 0%,
+      rgba(255,255,255,.05) 15%,
+      transparent 30%
+    ),
+    radial-gradient(
+      circle at 50% 0%,
+      rgba(255, 223, 92, .30),
+      transparent 34%
+    ),
+    linear-gradient(
+      145deg,
+      #d71f35 0%,
+      #8c0b21 31%,
+      #1e3f87 66%,
+      #071429 100%
+    );
+  box-shadow:
+    0 0 0 3px #7d0717,
+    0 0 0 7px rgba(255, 217, 61, .34),
+    0 0 20px rgba(255,255,255,.24),
+    0 0 42px rgba(255, 217, 61, .66),
+    0 0 80px rgba(47, 140, 255, .34),
+    inset 0 3px 0 rgba(255,255,255,.22),
+    inset 0 -28px 48px rgba(0,0,0,.48),
+    inset 0 0 58px rgba(0,0,0,.58);
+}
+
+.clown-machine-neon {
+  box-shadow:
+    0 0 14px #ffd93d,
+    0 0 30px #e32636,
+    0 0 54px rgba(47, 140, 255, 0.68);
+}
+
+.clown-machine-neon::before,
+.clown-machine-neon::after {
+  box-shadow:
+    0 0 8px #fff,
+    0 0 18px var(--clown-blue);
+}
+
+/* Sonido y controles con colores propios */
+.clown-sound-button {
+  border-color: var(--clown-yellow-soft);
+  background: linear-gradient(180deg, #ef3347, #750816);
+  box-shadow:
+    0 0 13px rgba(255, 224, 89, 0.68),
+    inset 0 0 10px rgba(0, 0, 0, 0.48);
+}
+
+.clown-small-button {
+  border-color: var(--clown-yellow);
+  background: linear-gradient(180deg, #2d73d8, #123a82);
+}
+
+.clown-small-button:first-child {
+  background: linear-gradient(180deg, #f04452, #8a0b18);
+}
+
+.clown-small-button:last-child {
+  background: linear-gradient(180deg, #49dd79, #11763a);
+}
+
+.clown-back-button {
+  border-color: #70b7ff;
+  background: linear-gradient(180deg, #2f82dd, #173d83);
+}
+
+.clown-logout-button {
+  border-color: #ff9a8e;
+  background: linear-gradient(180deg, #d93745, #6f0a17);
+}
+
+/* Displays y panel de controles: azul noche, menos violeta */
+.clown-prize-panel > div {
+  background:
+    linear-gradient(180deg, rgba(255,255,255,.07), transparent 24%),
+    linear-gradient(180deg, #173b7a, #08172f);
+}
+
+.clown-control-deck {
+  background:
+    linear-gradient(180deg, rgba(255,255,255,.08), transparent),
+    linear-gradient(180deg, #173d7e, #08172f);
+}
+
+/* Rodillos: marco dorado y fondo azul oscuro */
+.clown-reels {
+  border-color: #ffd93d;
+  background:
+    linear-gradient(
+      180deg,
+      rgba(255,255,255,.20) 0%,
+      rgba(255,255,255,.06) 12%,
+      rgba(12,31,68,.97) 18%,
+      #06152e 100%
+    );
+  box-shadow:
+    inset 0 2px 0 rgba(255,255,255,.36),
+    inset 0 -18px 30px rgba(0,0,0,.72),
+    inset 0 0 70px rgba(255,255,255,.05),
+    0 0 17px rgba(255, 217, 61, .58),
+    0 0 45px rgba(47, 140, 255, .30);
+}
+
+/* Casillas: marfil/dorado en vez de rosa */
+.clown-symbol {
+  border-color: #f4c63d;
+  background:
+    radial-gradient(
+      circle at 30% 18%,
+      rgba(255,255,255,.98) 0%,
+      rgba(255,255,255,.72) 18%,
+      #fff7cf 42%,
+      #ffe477 70%,
+      #f5b92f 100%
+    );
+  box-shadow:
+    inset 0 3px 0 rgba(255,255,255,.78),
+    inset 0 -12px 18px rgba(126,79,0,.18),
+    inset 0 0 18px rgba(255,255,255,.42),
+    0 0 10px rgba(255, 214, 61, .44),
+    0 4px 12px rgba(0,0,0,.30);
+}
+
+/* Título con apariencia de marquesina clásica */
+.clown-header h1 {
+  background: linear-gradient(
+    180deg,
+    #fffbd4 0%,
+    #ffd93d 32%,
+    #ff8a39 61%,
+    #d71932 100%
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  filter: drop-shadow(0 4px 0 #751020);
+  text-shadow:
+    0 0 8px rgba(255, 247, 185, .88),
+    0 0 22px rgba(47, 140, 255, .44);
+}
+
+.clown-kicker,
+.clown-help {
+  color: #dceaff;
+}
+
+/* Celebraciones: rojo, dorado y azul */
+.clown-celebration {
+  background: rgba(2, 10, 28, 0.86);
+}
+
+.clown-celebration-card {
+  background:
+    radial-gradient(circle at top, rgba(255, 218, 61, .32), transparent 55%),
+    linear-gradient(180deg, #c51b31, #173d7e 62%, #07152c);
+  box-shadow:
+    0 0 16px #fff,
+    0 0 42px var(--clown-yellow),
+    0 0 90px var(--clown-blue);
+}
+
+.clown-celebration-card strong {
+  text-shadow:
+    0 0 8px #fff,
+    0 0 20px #ffd93d;
+}
+
+/* Confeti verdaderamente multicolor */
+.clown-confetti span:nth-child(3n) {
+  color: #e32636;
+}
+
+.clown-confetti span:nth-child(4n) {
+  color: #2f8cff;
+}
+
+.clown-confetti span:nth-child(5n) {
+  color: #35d26f;
+}
+
+.clown-confetti span:nth-child(7n) {
+  color: #ffd93d;
+}
+
+
+
+/* =========================================================
+   FASE 3.1 - Casillas multicolor estilo circo
+   ========================================================= */
+
+.clown-reel .clown-symbol:nth-child(4n+1){
+  background:
+    radial-gradient(circle at 30% 18%,
+      rgba(255,255,255,.98) 0%,
+      rgba(255,255,255,.72) 18%,
+      #fff7cf 42%,
+      #ffe477 70%,
+      #f5b92f 100%);
+}
+
+.clown-reel .clown-symbol:nth-child(4n+2){
+  background:
+    radial-gradient(circle at 30% 18%,
+      rgba(255,255,255,.98) 0%,
+      rgba(255,255,255,.72) 18%,
+      #dff7ff 42%,
+      #8fd8ff 70%,
+      #43a9ff 100%);
+}
+
+.clown-reel .clown-symbol:nth-child(4n+3){
+  background:
+    radial-gradient(circle at 30% 18%,
+      rgba(255,255,255,.98) 0%,
+      rgba(255,255,255,.72) 18%,
+      #e8ffd8 42%,
+      #93ef8f 70%,
+      #34c76d 100%);
+}
+
+.clown-reel .clown-symbol:nth-child(4n){
+  background:
+    radial-gradient(circle at 30% 18%,
+      rgba(255,255,255,.98) 0%,
+      rgba(255,255,255,.72) 18%,
+      #fff3cf 42%,
+      #ffd88d 70%,
+      #ff9b4d 100%);
+}
+
+
+/* =========================================================
+   LUCES SINCRONIZADAS CON EL JUEGO
+   Giro: secuencia rápida.
+   Detención: vuelve gradualmente al ritmo normal.
+   Premio: parpadeo festivo durante el efecto de victoria.
+   ========================================================= */
+
+/* Modo normal */
+.clown-lights-idle .clown-frame-bulbs span {
+  animation-duration: 1s;
+}
+
+/* Mientras giran los rodillos: persecución rápida alrededor del gabinete */
+.clown-lights-spin .clown-frame-bulbs span {
+  animation-name: clownBulbSpinChase;
+  animation-duration: .48s;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+}
+
+.clown-lights-spin .clown-frame-bulbs-top span:nth-child(4n + 1),
+.clown-lights-spin .clown-frame-bulbs-bottom span:nth-child(4n + 3) {
+  animation-delay: -.12s;
+}
+
+.clown-lights-spin .clown-frame-bulbs-top span:nth-child(4n + 2),
+.clown-lights-spin .clown-frame-bulbs-bottom span:nth-child(4n + 2) {
+  animation-delay: -.24s;
+}
+
+.clown-lights-spin .clown-frame-bulbs-top span:nth-child(4n + 3),
+.clown-lights-spin .clown-frame-bulbs-bottom span:nth-child(4n + 1) {
+  animation-delay: -.36s;
+}
+
+.clown-lights-spin .clown-machine-neon {
+  animation-duration: .55s;
+  filter: brightness(1.16) saturate(1.15);
+}
+
+/* Cuando los rodillos están frenando: secuencia más lenta y estable */
+.clown-lights-stop .clown-frame-bulbs span {
+  animation-name: clownBulbStopSettle;
+  animation-duration: .72s;
+  animation-timing-function: ease-out;
+  animation-iteration-count: infinite;
+}
+
+.clown-lights-stop .clown-machine-neon {
+  animation-duration: .78s;
+}
+
+/* Al ganar: todas las bombitas festejan rápido */
+.clown-lights-win .clown-frame-bulbs span,
+.clown-lights-mega .clown-frame-bulbs span,
+.clown-lights-bonus .clown-frame-bulbs span {
+  animation-name: clownBulbWinFlash;
+  animation-duration: .22s;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+}
+
+.clown-lights-win .clown-machine-neon,
+.clown-lights-mega .clown-machine-neon,
+.clown-lights-bonus .clown-machine-neon {
+  animation-name: clownWinningNeonPulse;
+  animation-duration: .38s;
+  animation-iteration-count: infinite;
+  animation-direction: alternate;
+}
+
+/* El modo premio normal queda visible durante el tiempo del winEffect.
+   En premios chicos y medios dura aproximadamente 2 segundos. */
+@keyframes clownBulbSpinChase {
+  0%, 100% {
+    opacity: .22;
+    transform: scale(.72);
+    filter: brightness(.82);
+  }
+  45% {
+    opacity: 1;
+    transform: scale(1.42);
+    filter: brightness(1.8);
+  }
+}
+
+@keyframes clownBulbStopSettle {
+  0% {
+    opacity: 1;
+    transform: scale(1.3);
+  }
+  55% {
+    opacity: .48;
+    transform: scale(.86);
+  }
+  100% {
+    opacity: .82;
+    transform: scale(1);
+  }
+}
+
+@keyframes clownBulbWinFlash {
+  0%, 100% {
+    opacity: .35;
+    transform: scale(.78);
+    background: currentColor;
+    filter: brightness(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.5);
+    background: #fff;
+    filter: brightness(2);
+  }
+}
+
+@keyframes clownWinningNeonPulse {
+  from {
+    opacity: .62;
+    filter: brightness(1) saturate(1.05);
+  }
+  to {
+    opacity: 1;
+    filter: brightness(1.55) saturate(1.35);
+  }
+}
+
+@media (max-width: 600px) {
+  .clown-lights-spin .clown-frame-bulbs span {
+    animation-duration: .55s;
+  }
+
+  .clown-lights-win .clown-frame-bulbs span,
+  .clown-lights-mega .clown-frame-bulbs span,
+  .clown-lights-bonus .clown-frame-bulbs span {
+    animation-duration: .28s;
+  }
+}
+
+
+/* ================= RELEASE FINAL - AMBIENTE ================= */
+
+.clown-page::after{
+content:"";
+position:fixed;
+inset:0;
+pointer-events:none;
+background:
+radial-gradient(circle at 18% 22%, rgba(255,255,255,.08) 0 2px, transparent 3px),
+radial-gradient(circle at 72% 36%, rgba(255,255,255,.06) 0 2px, transparent 3px),
+radial-gradient(circle at 40% 74%, rgba(255,255,255,.07) 0 2px, transparent 3px),
+radial-gradient(circle at 84% 66%, rgba(255,255,255,.05) 0 2px, transparent 3px);
+animation: clownDust 18s linear infinite;
+opacity:.6;
+}
+
+.clown-machine::before{
+backdrop-filter:blur(1px);
+}
+
+.clown-machine:hover{
+transform:translateY(-2px);
+transition:transform .4s ease;
+}
+
+.clown-frame-bulbs span{
+animation-duration:1.15s;
+}
+
+.clown-frame-bulbs span:nth-child(5n){
+animation-duration:1.55s;
+opacity:.7;
+}
+
+.clown-frame-bulbs span:nth-child(7n){
+animation-duration:.82s;
+}
+
+.clown-frame-bulbs span:nth-child(9n){
+opacity:.45;
+}
+
+.clown-header h1{
+letter-spacing:3px;
+}
+
+.clown-spin-button{
+overflow:hidden;
+}
+
+.clown-spin-button::after{
+content:"";
+position:absolute;
+inset:0;
+background:linear-gradient(90deg,transparent,rgba(255,255,255,.12),transparent);
+transform:translateX(-100%);
+animation:clownButtonGlass 3.2s linear infinite;
+}
+
+@keyframes clownButtonGlass{
+0%{transform:translateX(-120%);}
+100%{transform:translateX(220%);}
+}
+
+@keyframes clownDust{
+from{transform:translateY(0);}
+to{transform:translateY(40px);}
+}
+/* =========================================================
+   MODO DE SEGURIDAD PARA IPHONE / SAFARI
+   Prueba para evitar reinicios por exceso de GPU y memoria
+   ========================================================= */
+
+@supports (-webkit-touch-callout: none) {
+  @media (max-width: 600px) {
+    .clown-page *,
+    .clown-page *::before,
+    .clown-page *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+
+    .clown-spotlight,
+    .clown-cloud,
+    .clown-machine-neon,
+    .clown-win-flash,
+    .clown-premium-effects,
+    .clown-premium-flash,
+    .clown-premium-burst,
+    .clown-coin-rain,
+    .clown-frame-bulbs,
+    .clown-control-lights,
+    .clown-side-decor,
+    .clown-reels-glass {
+  display: none !important;
+}
+
+    .clown-reel,
+    .clown-reel-strip,
+    .clown-symbol,
+    .clown-machine,
+    .clown-celebration,
+    .clown-celebration-card {
+      filter: none !important;
+      backdrop-filter: none !important;
+      -webkit-backdrop-filter: none !important;
+      box-shadow: none !important;
+      text-shadow: none !important;
+      will-change: auto !important;
+      transform: none;
+    }
+
+    .clown-reel-running .clown-reel-strip {
+      animation: none !important;
+      filter: none !important;
+    }
+
+    .clown-reel-stopping,
+    .clown-reel-stopping .clown-reel-strip {
+      animation: none !important;
+      transform: none !important;
+      filter: none !important;
+    }
+
+    .clown-winning-symbol,
+    .clown-scatter-symbol,
+    .clown-wild-symbol {
+      animation: none !important;
+      filter: none !important;
+    }
+  }
+}
+@supports (-webkit-touch-callout: none) {
+  @media (max-width: 600px) {
+    .clown-winning-line-glow {
+      display: none !important;
+    }
+
+    .clown-winning-line-core {
+      display: block !important;
+      stroke: hsl(var(--clown-line-hue) 100% 60%) !important;
+      animation:
+        clownWinningLineDraw 0.45s ease-out forwards,
+        clownWinningLinePulse 0.65s ease-in-out 0.45s 2 alternate !important;
+      filter: none !important;
+      stroke-width: 3.5 !important;
+    }
+  }
+}

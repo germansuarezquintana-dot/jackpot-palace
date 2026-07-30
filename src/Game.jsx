@@ -38,9 +38,7 @@ const spinningSymbols = Array.from(
 
 
 export default function Game({ player, onCreditsChange, onLogout, onOpenAdmin }) {
-  const [showIntro, setShowIntro] = useState(
-    () => sessionStorage.getItem("charly_game_started") !== "true"
-  );
+  const [showIntro, setShowIntro] = useState(true);
   const [grid, setGrid] = useState(createGrid());
 
   const [reelSpinning, setReelSpinning] = useState(
@@ -61,7 +59,7 @@ export default function Game({ player, onCreditsChange, onLogout, onOpenAdmin })
     if (start === end) return undefined;
 
     const difference = Math.abs(end - start);
-    const duration = Math.min(1600, Math.max(450, difference * 0.8));
+    const duration = Math.min(1000, Math.max(350, difference * 0.5));
     const startedAt = performance.now();
     let frameId;
 
@@ -121,7 +119,7 @@ export default function Game({ player, onCreditsChange, onLogout, onOpenAdmin })
   useEffect(() => {
     if (lastPrize <= 0) return undefined;
 
-    const duration = Math.min(1800, Math.max(650, lastPrize * 2));
+    const duration = Math.min(1000, Math.max(450, lastPrize * 0.8));
     const startedAt = performance.now();
     let frameId;
 
@@ -582,7 +580,7 @@ function playCoinSound(amount = 3) {
       index < COLUMNS;
       index += 1
     ) {
-      const stopTime = 1100 + index * 350;
+      const stopTime = 800 + index * 300;
 
       const timeoutId = window.setTimeout(async () => {
         setGrid((currentGrid) => {
@@ -722,27 +720,10 @@ if (winRatio < 8) {
     spinActionRef.current = spin;
   });
 
-  async function startGame() {
-    if (soundEnabled) {
-      await unlockAudio();
-      await playTone({
-        frequency: 660,
-        duration: 0.12,
-        volume: 0.18,
-        type: "sine",
-      });
-      await playTone({
-        frequency: 880,
-        duration: 0.18,
-        volume: 0.2,
-        type: "sine",
-        delay: 0.1,
-      });
-    }
-
-    sessionStorage.setItem("charly_game_started", "true");
-    setShowIntro(false);
-  }
+  useEffect(() => {
+    const timer = setTimeout(() => setShowIntro(false), 1000);
+    return () => clearTimeout(timer);
+  }, []);
 
   return (
     <main className="page">
@@ -772,13 +753,7 @@ if (winRatio < 8) {
               WILD · SCATTER · JACKPOT · GIROS GRATIS
             </p>
 
-            <button className="intro-play-button" onClick={startGame}>
-              🎰 JUGAR
-            </button>
-
-            <small className="intro-help">
-              Tocá JUGAR para activar el sonido y entrar al casino
-            </small>
+            <div className="intro-loading"><h2>Preparando máquina...</h2><small>Un momento...</small></div>
           </div>
         </section>
       )}
@@ -1085,13 +1060,13 @@ if (winRatio < 8) {
             {Array.from({
               length:
                 celebration.type === "jackpot"
-                  ? 140
+                  ? 70
                   : celebration.type === "mega"
-                  ? 90
+                  ? 45
                   : celebration.type === "big"
-                  ? 60
+                  ? 30
                   : celebration.type === "bonus"
-                  ? 50
+                  ? 25
                   : 35,
             }).map((_, index) => (
               <span

@@ -55,7 +55,14 @@ console.log(passwordPlayer);
     setChangingPassword(true);
     setPasswordError("");
 
-    await changePlayerPassword(passwordPlayer.id, newPassword);
+  const currentPasswordPlayer =
+  players.find(
+    (item) =>
+      item.username === passwordPlayer.username ||
+      item.display_name === passwordPlayer.display_name
+  ) || passwordPlayer;
+
+await changePlayerPassword(currentPasswordPlayer.id, newPassword);
 
     setMessage(`Contraseña cambiada para ${passwordPlayer.display_name || passwordPlayer.username}`);
 
@@ -117,13 +124,11 @@ if (user) {
   useEffect(() => {
     const initialTimer = window.setTimeout(loadAdminData, 0);
 
-    const refreshTimer = window.setInterval(() => {
-      loadAdminData();
-    }, 15000);
+  
 
     return () => {
       window.clearTimeout(initialTimer);
-      window.clearInterval(refreshTimer);
+  
     };
   }, []);
 

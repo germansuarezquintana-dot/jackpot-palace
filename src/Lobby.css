@@ -1996,4 +1996,398 @@ body,
     height: 30px !important;
     font-size: 23px !important;
   }
+  /* ===== Optimización iPhone / Android ===== */
+
+  .grand-machine-v2::after,
+  .grand-machine-v2__glass,
+  .grand-machine-v2__halo,
+  .grand-brand-v2__rays,
+  .grand-shell-v2__neon{
+    animation:none;
+  }
+
+  .grand-machine-v2__bulbs span,
+  .grand-machine-v2__console-lights span{
+    animation:none;
+  }
+
+  .grand-machine-v2__console > button,
+  .grand-machine-v2__console > button::before{
+    animation:none;
+  }
+
+  .grand-machine-v2{
+    will-change:auto;
+  }
+
+  .grand-machine-v2__screen{
+    box-shadow:
+      inset 0 0 18px rgba(0,0,0,.9),
+      0 0 10px rgba(255,185,60,.20);
+  }
+
+  .grand-machine-v2__neon{
+    box-shadow:
+      0 0 8px var(--machine-a);
+  }
+
+  .grand-lobby-v2__mist,
+  .grand-lobby-v2__spot{
+    display:none;
+  }
+}
+
+/* =========================================================
+   PREVIEW PROPIA DE FORTUNE WHEEL EN EL LOBBY
+   ========================================================= */
+
+.grand-machine-v2__icon--wheel {
+  overflow: visible !important;
+  border: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+.grand-machine-v2__icon--wheel::before {
+  display: none !important;
+}
+
+.lobby-wheel-preview {
+  position: relative;
+  width: 142px;
+  height: 142px;
+  display: grid;
+  place-items: center;
+  flex: 0 0 auto;
+}
+
+.lobby-wheel-preview__glow {
+  position: absolute;
+  inset: 6px;
+  border-radius: 50%;
+  background: rgba(255, 190, 45, 0.18);
+  filter: blur(13px);
+  animation: lobbyWheelGlow 1.8s ease-in-out infinite alternate;
+}
+
+.lobby-wheel-preview__pointer {
+  position: absolute;
+  top: -8px;
+  left: 50%;
+  z-index: 8;
+  width: 0;
+  height: 0;
+  transform: translateX(-50%);
+  border-left: 11px solid transparent;
+  border-right: 11px solid transparent;
+  border-top: 0;
+  border-bottom: 23px solid #fff0a1;
+  filter:
+    drop-shadow(0 2px 0 #6b3100)
+    drop-shadow(0 0 7px #ffcc4c);
+}
+
+.lobby-wheel-preview__disc {
+  position: relative;
+  width: 128px;
+  height: 128px;
+  overflow: hidden;
+  border: 7px solid #e2b547;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle at center, transparent 0 27%, rgba(0, 0, 0, 0.16) 28% 100%),
+    conic-gradient(
+      #c81937 0deg 15deg,
+      #171717 15deg 30deg,
+      #d7a719 30deg 45deg,
+      #c81937 45deg 60deg,
+      #171717 60deg 75deg,
+      #d7a719 75deg 90deg,
+      #c81937 90deg 105deg,
+      #171717 105deg 120deg,
+      #d7a719 120deg 135deg,
+      #c81937 135deg 150deg,
+      #171717 150deg 165deg,
+      #d7a719 165deg 180deg,
+      #c81937 180deg 195deg,
+      #171717 195deg 210deg,
+      #d7a719 210deg 225deg,
+      #c81937 225deg 240deg,
+      #171717 240deg 255deg,
+      #d7a719 255deg 270deg,
+      #c81937 270deg 285deg,
+      #171717 285deg 300deg,
+      #d7a719 300deg 315deg,
+      #c81937 315deg 330deg,
+      #171717 330deg 345deg,
+      #d7a719 345deg 360deg
+    );
+  box-shadow:
+    inset 0 0 0 4px #6a350b,
+    inset 0 0 18px rgba(0, 0, 0, 0.75),
+    0 0 0 4px #6d1025,
+    0 0 18px rgba(255, 191, 45, 0.85);
+  animation: lobbyWheelTurn 24s linear infinite;
+}
+
+.lobby-wheel-preview__disc::before {
+  content: "";
+  position: absolute;
+  inset: 5px;
+  border: 1px solid rgba(255, 246, 183, 0.58);
+  border-radius: 50%;
+}
+
+.lobby-wheel-preview__label {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  z-index: 3;
+  width: 24px;
+  margin-left: -12px;
+  margin-top: -7px;
+  color: #fff;
+  font-size: 7px;
+  font-weight: 1000;
+  line-height: 1;
+  text-align: center;
+  text-shadow:
+    0 1px 1px #000,
+    0 0 3px #000;
+  transform:
+    rotate(var(--wheel-label-angle))
+    translateY(-48px)
+    rotate(calc(var(--wheel-label-angle) * -1));
+}
+
+.lobby-wheel-preview__center {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  z-index: 6;
+  width: 48px;
+  height: 48px;
+  display: grid;
+  place-content: center;
+  transform: translate(-50%, -50%);
+  border: 4px solid #e0b14a;
+  border-radius: 50%;
+  color: #fff2a5;
+  background: radial-gradient(circle at 38% 28%, #a52d4d, #350511 68%, #100005);
+  box-shadow:
+    inset 0 0 12px rgba(0, 0, 0, 0.8),
+    0 0 8px rgba(255, 204, 67, 0.85);
+}
+
+.lobby-wheel-preview__center strong {
+  font-size: 22px;
+  line-height: 0.9;
+}
+
+.lobby-wheel-preview__center small {
+  margin-top: 2px;
+  font-size: 5px;
+  font-weight: 1000;
+  letter-spacing: 0.1em;
+}
+
+@keyframes lobbyWheelTurn {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes lobbyWheelGlow {
+  from {
+    opacity: 0.45;
+    transform: scale(0.92);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1.08);
+  }
+}
+
+@media (max-width: 620px) {
+  .lobby-wheel-preview {
+    width: 120px;
+    height: 120px;
+  }
+
+  .lobby-wheel-preview__disc {
+    width: 108px;
+    height: 108px;
+    border-width: 6px;
+  }
+
+  .lobby-wheel-preview__label {
+    transform:
+      rotate(var(--wheel-label-angle))
+      translateY(-40px)
+      rotate(calc(var(--wheel-label-angle) * -1));
+    font-size: 6px;
+  }
+
+  .lobby-wheel-preview__center {
+    width: 42px;
+    height: 42px;
+  }
+
+  .lobby-wheel-preview__center strong {
+    font-size: 19px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lobby-wheel-preview__disc,
+  .lobby-wheel-preview__glow {
+    animation: none;
+  }
+}
+
+
+/* =========================================================
+   CORRECCIÓN MÓVIL FINAL — LOBBY Y PREVIEW DE WHEEL
+   Mantiene el lobby desplazable y evita tarjetas amontonadas.
+   ========================================================= */
+
+@media (max-width: 620px) {
+  html,
+  body,
+  #root {
+    height: auto !important;
+    min-height: 100% !important;
+    overflow-x: hidden !important;
+    overflow-y: auto !important;
+  }
+
+  .grand-lobby-v2 {
+    position: relative !important;
+    width: 100% !important;
+    min-height: 100dvh !important;
+    height: auto !important;
+    overflow-x: hidden !important;
+    overflow-y: visible !important;
+  }
+
+  .grand-shell-v2 {
+    min-height: 0 !important;
+    height: auto !important;
+    overflow: visible !important;
+  }
+
+  .grand-grid-v2 {
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) !important;
+    gap: 16px !important;
+    align-items: start !important;
+  }
+
+  .grand-machine-v2 {
+    width: 100% !important;
+    min-width: 0 !important;
+    height: auto !important;
+    margin: 0 !important;
+    transform: none !important;
+  }
+
+  .grand-machine-v2--available:hover {
+    transform: none !important;
+  }
+
+  .grand-machine-v2__screen {
+    min-height: 220px !important;
+    height: auto !important;
+    padding: 14px 8px 10px !important;
+    overflow: hidden !important;
+  }
+
+  .grand-machine-v2__icon--preview {
+    width: 100% !important;
+    max-width: 190px !important;
+    height: 122px !important;
+    min-height: 122px !important;
+    margin: 0 auto 8px !important;
+    overflow: hidden !important;
+  }
+
+  .grand-machine-v2__icon--wheel {
+    width: 100% !important;
+    max-width: 170px !important;
+    height: 132px !important;
+    min-height: 132px !important;
+    overflow: visible !important;
+  }
+
+  .lobby-wheel-preview {
+    position: relative !important;
+    width: 126px !important;
+    height: 126px !important;
+    margin: 0 auto !important;
+    flex: 0 0 126px !important;
+  }
+
+  .lobby-wheel-preview__disc {
+    width: 112px !important;
+    height: 112px !important;
+    border-width: 6px !important;
+    animation: lobbyWheelTurn 18s linear infinite !important;
+  }
+
+  .lobby-wheel-preview__label {
+    font-size: 6px !important;
+    transform:
+      rotate(var(--wheel-label-angle))
+      translateY(-42px)
+      rotate(calc(var(--wheel-label-angle) * -1)) !important;
+  }
+
+  .lobby-wheel-preview__center {
+    width: 42px !important;
+    height: 42px !important;
+    border-width: 3px !important;
+  }
+
+  .lobby-wheel-preview__pointer {
+    top: -5px !important;
+  }
+
+  .grand-machine-v2 h2 {
+    margin-top: 4px !important;
+  }
+
+  .grand-machine-v2 p {
+    min-height: 0 !important;
+    padding-bottom: 4px !important;
+  }
+}
+
+@media (max-width: 390px) {
+  .grand-machine-v2__screen {
+    min-height: 205px !important;
+  }
+
+  .grand-machine-v2__icon--wheel {
+    height: 120px !important;
+    min-height: 120px !important;
+  }
+
+  .lobby-wheel-preview {
+    width: 114px !important;
+    height: 114px !important;
+    flex-basis: 114px !important;
+  }
+
+  .lobby-wheel-preview__disc {
+    width: 102px !important;
+    height: 102px !important;
+  }
+
+  .lobby-wheel-preview__label {
+    transform:
+      rotate(var(--wheel-label-angle))
+      translateY(-38px)
+      rotate(calc(var(--wheel-label-angle) * -1)) !important;
+  }
 }

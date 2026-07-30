@@ -3,6 +3,25 @@ import { supabase } from "./supabase";
 import "./Login.css";
 const APP_VERSION = __APP_VERSION__;
 const BUILD_DATE = __BUILD_DATE__;
+
+function playClickSound() {
+  try {
+    const Ctx = window.AudioContext || window.webkitAudioContext;
+    if (!Ctx) return;
+    const ctx = new Ctx();
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.type="square";
+    osc.frequency.value=900;
+    gain.gain.value=0.03;
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    osc.start();
+    osc.stop(ctx.currentTime+0.045);
+    osc.onended=()=>ctx.close();
+  } catch {}
+}
+
 export default function Login() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -63,7 +82,7 @@ export default function Login() {
 
           {error && <div className="login-error">{error}</div>}
 
-          <button type="submit" disabled={loading}>
+          <button type="submit" disabled={loading} onClick={playClickSound}>
             {loading ? "INGRESANDO..." : "🎰 INGRESAR"}
           </button>
         </form>

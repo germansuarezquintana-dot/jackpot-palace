@@ -1,5 +1,24 @@
 import logoJackpotPalace from "./assets/logo-jackpot-palace.png";
 import "./Lobby.css";
+
+function playClickSound() {
+  try {
+    const Ctx = window.AudioContext || window.webkitAudioContext;
+    if (!Ctx) return;
+    const ctx = new Ctx();
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.type="square";
+    osc.frequency.value=900;
+    gain.gain.value=0.03;
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    osc.start();
+    osc.stop(ctx.currentTime+0.045);
+    osc.onended=()=>ctx.close();
+  } catch {}
+}
+
 const GAME_PREVIEWS = {
   "jackpot-palace": [
     ["💎", "7️⃣", "👑"],
@@ -25,6 +44,36 @@ const GAME_PREVIEWS = {
     ["⭐", "🐎", "💰"],
   ],
 };
+
+function WheelLobbyPreview() {
+  const labels = ["100", "200", "500", "X2", "100", "BONUS", "200", "JP"];
+
+  return (
+    <div className="lobby-wheel-preview" aria-hidden="true">
+      <div className="lobby-wheel-preview__pointer" />
+      <div className="lobby-wheel-preview__glow" />
+      <div className="lobby-wheel-preview__disc">
+        {labels.map((label, index) => (
+          <span
+            key={`${label}-${index}`}
+            className="lobby-wheel-preview__label"
+            style={{
+              "--wheel-label-angle": `${index * 45}deg`,
+            }}
+          >
+            {label}
+          </span>
+        ))}
+
+        <div className="lobby-wheel-preview__center">
+          <strong>JP</strong>
+          <small>WHEEL</small>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 const games = [
   {
     id: "jackpot-palace",
@@ -46,6 +95,16 @@ const games = [
     badge: "NUEVO",
     available: true,
   },
+  {
+  id: "wheel",
+  name: "Wheel",
+  icon: "🎡",
+  subtitle: "RUEDA DE PREMIOS",
+  description: "Giros, multiplicadores, bonus y jackpot.",
+  theme: "gold",
+  badge: "NUEVO",
+  available: true,
+},
   {
     id: "egyptian-gold",
     name: "Egyptian Gold",
@@ -149,7 +208,7 @@ export default function Lobby({
                 <button
                   type="button"
                   className="grand-action-v2 grand-action-v2--admin"
-                  onClick={onOpenAdmin}
+                  onClick={() => { playClickSound(); onOpenAdmin(); }}
                 >
                   👑 PANEL
                 </button>
@@ -158,7 +217,7 @@ export default function Lobby({
               <button
                 type="button"
                 className="grand-action-v2 grand-action-v2--logout"
-                onClick={onLogout}
+                onClick={() => { playClickSound(); onLogout(); }}
               >
                 SALIR
               </button>
@@ -208,21 +267,27 @@ export default function Lobby({
                 <div className="grand-machine-v2__glass" aria-hidden="true" />
                 <div className="grand-machine-v2__halo" aria-hidden="true" />
 
-                <div className="grand-machine-v2__icon grand-machine-v2__icon--preview">
-  <div className="slot-preview">
-    {(GAME_PREVIEWS[game.id] ?? [[game.icon], [game.icon], [game.icon]]).map(
-      (reel, reelIndex) => (
-        <div className="slot-reel" key={`${game.id}-reel-${reelIndex}`}>
-          {reel.map((symbol, symbolIndex) => (
-            <span key={`${game.id}-${reelIndex}-${symbolIndex}`}>
-              {symbol}
-            </span>
-          ))}
-        </div>
-      )
-    )}
-  </div>
-</div>
+                {game.id === "wheel" ? (
+                  <div className="grand-machine-v2__icon grand-machine-v2__icon--preview grand-machine-v2__icon--wheel">
+                    <WheelLobbyPreview />
+                  </div>
+                ) : (
+                  <div className="grand-machine-v2__icon grand-machine-v2__icon--preview">
+                    <div className="slot-preview">
+                      {(GAME_PREVIEWS[game.id] ?? [[game.icon], [game.icon], [game.icon]]).map(
+                        (reel, reelIndex) => (
+                          <div className="slot-reel" key={`${game.id}-reel-${reelIndex}`}>
+                            {reel.map((symbol, symbolIndex) => (
+                              <span key={`${game.id}-${reelIndex}-${symbolIndex}`}>
+                                {symbol}
+                              </span>
+                            ))}
+                          </div>
+                        )
+                      )}
+                    </div>
+                  </div>
+                )}
 
                 <h2>{game.name}</h2>
                 <p>{game.description}</p>
@@ -233,7 +298,7 @@ export default function Lobby({
                   type="button"
                   disabled={!game.available}
                   onClick={() =>
-                    game.available && onOpenGame(game.id)
+                    game.available && (playClickSound(), onOpenGame(game.id))
                   }
                 >
                   <span>
