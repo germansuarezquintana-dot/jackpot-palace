@@ -2504,3 +2504,164 @@ body {
     animation: none !important;
   }
 }
+
+
+/* =========================================================
+   CORRECCIÓN DE CAPAS — EFECTOS VISIBLES
+   ========================================================= */
+
+.wheel-page {
+  position: relative;
+  isolation: isolate;
+}
+
+.wheel-machine {
+  position: relative !important;
+  isolation: isolate !important;
+}
+
+.wheel-machine::before {
+  z-index: 0 !important;
+  opacity: 1 !important;
+}
+
+.wheel-machine::after {
+  z-index: 1 !important;
+}
+
+.wheel-topbar,
+.wheel-dashboard,
+.wheel-game-layout,
+.wheel-betting-panel {
+  position: relative;
+  z-index: 3;
+}
+
+.wheel-main-area {
+  position: relative !important;
+  isolation: isolate;
+}
+
+.wheel-main-area::before {
+  z-index: 0 !important;
+  opacity: 0.9 !important;
+}
+
+.wheel-main-area::after {
+  z-index: 1 !important;
+  opacity: 1 !important;
+}
+
+.wheel-stage {
+  position: relative !important;
+  z-index: 5 !important;
+}
+
+.wheel-stage::before {
+  z-index: 1 !important;
+  opacity: 1 !important;
+}
+
+.wheel-stage::after {
+  z-index: 15 !important;
+}
+
+.wheel-disc {
+  z-index: 4 !important;
+}
+
+.wheel-pointer {
+  z-index: 30 !important;
+}
+
+.wheel-lights-ring {
+  z-index: 8 !important;
+  opacity: 1 !important;
+  filter:
+    drop-shadow(0 0 5px #fff4b0)
+    drop-shadow(0 0 13px #ffb52a)
+    drop-shadow(0 0 22px rgba(255, 170, 30, 0.85)) !important;
+}
+
+.wheel-center {
+  z-index: 20 !important;
+}
+
+.wheel-shine {
+  z-index: 13 !important;
+}
+
+/* Efecto visible de luces alrededor de la rueda */
+.wheel-stage {
+  box-shadow:
+    0 0 18px rgba(255, 240, 150, 0.55),
+    0 0 42px rgba(255, 183, 38, 0.45),
+    0 0 75px rgba(173, 20, 55, 0.28);
+  border-radius: 50%;
+  animation: wheelStageGlowVisible 1.7s ease-in-out infinite alternate;
+}
+
+/* Pulso dorado visible en la máquina */
+.wheel-main-area {
+  box-shadow:
+    inset 0 0 35px rgba(255, 208, 72, 0.10),
+    inset 0 0 80px rgba(128, 13, 42, 0.18),
+    0 0 22px rgba(255, 191, 49, 0.12);
+}
+
+/* Más brillo en el centro JP */
+.wheel-center {
+  box-shadow:
+    inset 0 0 26px rgba(0, 0, 0, 0.72),
+    0 0 0 4px #7b3d0f,
+    0 0 18px #fff0a0,
+    0 0 38px rgba(255, 192, 45, 0.95) !important;
+}
+
+/* Puntero claramente iluminado */
+.wheel-pointer {
+  text-shadow:
+    0 0 6px #fff,
+    0 0 13px #ffd45b,
+    0 0 25px rgba(255, 171, 24, 0.95) !important;
+}
+
+/* Botón girar con luz permanente */
+.wheel-spin-button:not(:disabled) {
+  box-shadow:
+    0 4px 0 #032608,
+    inset 0 1px 0 rgba(255,255,255,.34),
+    0 0 16px rgba(69, 255, 91, 0.55),
+    0 0 34px rgba(46, 214, 70, 0.34) !important;
+}
+
+@keyframes wheelStageGlowVisible {
+  from {
+    filter: brightness(0.95);
+    box-shadow:
+      0 0 12px rgba(255, 240, 150, 0.42),
+      0 0 28px rgba(255, 183, 38, 0.34),
+      0 0 48px rgba(173, 20, 55, 0.22);
+  }
+
+  to {
+    filter: brightness(1.12);
+    box-shadow:
+      0 0 22px rgba(255, 248, 185, 0.82),
+      0 0 50px rgba(255, 183, 38, 0.64),
+      0 0 85px rgba(173, 20, 55, 0.42);
+  }
+}
+
+@media (max-width: 760px) {
+  .wheel-stage {
+    animation-duration: 2.2s;
+    box-shadow:
+      0 0 12px rgba(255, 240, 150, 0.48),
+      0 0 28px rgba(255, 183, 38, 0.38);
+  }
+
+  .wheel-main-area::before {
+    opacity: 0.55 !important;
+  }
+}
