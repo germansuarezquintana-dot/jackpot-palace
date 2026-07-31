@@ -556,7 +556,7 @@ button {
   text-anchor: middle;
   fill: #fff;
   font-family: Arial, Helvetica, sans-serif;
-  font-size: 2.6px;
+  font-size: 5px !important;
   font-weight: 1000;
   paint-order: stroke fill;
   stroke: rgba(0, 0, 0, 0.95);
@@ -570,13 +570,13 @@ button {
 .fortune-wheel-labels text.is-bonus,
 .fortune-wheel-labels text.is-multiplier {
   fill: #fff2a1;
-  font-size: 2.6px;
+  font-size: 4.3px !important;
 }
 
 .fortune-wheel-labels text.is-jackpot,
 .fortune-wheel-labels text.is-lose {
   fill: #fff1a1;
-  font-size: 2.6px;
+  font-size: 3.35px !important;
 }
 
 .fortune-wheel-center {
@@ -1038,18 +1038,18 @@ button {
   }
 
   .fortune-wheel-labels text {
-    font-size: 2.6px;
+    font-size: 5px !important;
     stroke-width: 0.70px;
   }
 
   .fortune-wheel-labels text.is-bonus,
   .fortune-wheel-labels text.is-multiplier {
-    font-size: 2.6px;
+    font-size: 4.3px !important;
   }
 
   .fortune-wheel-labels text.is-jackpot,
   .fortune-wheel-labels text.is-lose {
-    font-size: 2.6px;
+    font-size: 3.35px !important;
   }
 
   .fortune-wheel-center {
@@ -1985,18 +1985,18 @@ button {
   }
 
   .fortune-wheel-labels text {
-    font-size: 2.6px;
+    font-size: 5px !important;
     stroke-width: 0.72px !important;
   }
 
   .fortune-wheel-labels text.is-bonus,
   .fortune-wheel-labels text.is-multiplier {
-    font-size: 2.6px;
+    font-size: 4.3px !important;
   }
 
   .fortune-wheel-labels text.is-jackpot,
   .fortune-wheel-labels text.is-lose {
-    font-size: 2.6px;
+    font-size: 3.35px !important;
   }
 
   .fortune-wheel-pointer {
@@ -2085,38 +2085,42 @@ button {
 }
 
 
-
+/* =========================================================
+   ETIQUETAS GRANDES Y HORIZONTALES — AJUSTE FINAL
+   ========================================================= */
+.fortune-wheel-labels text {
+  font-size: 5px !important;
+  font-weight: 1000 !important;
+  text-anchor: middle;
+  dominant-baseline: middle;
+  paint-order: stroke fill;
+  stroke: rgba(0, 0, 0, 0.98);
+  stroke-width: 0.62px;
+  stroke-linejoin: round;
+}
 
 .fortune-wheel-labels text.is-bonus,
 .fortune-wheel-labels text.is-multiplier {
-  font-size: 2.6px;
+  font-size: 4.3px !important;
 }
 
 .fortune-wheel-labels text.is-jackpot,
 .fortune-wheel-labels text.is-lose {
-  font-size: 2.6px;
+  font-size: 3.35px !important;
 }
 
 @media (max-width: 760px) {
   .fortune-wheel-labels text {
-    font-size: 2.6px;
+    font-size: 4.45px !important;
   }
 
   .fortune-wheel-labels text.is-bonus,
   .fortune-wheel-labels text.is-multiplier {
-    font-size: 2.6px;
+    font-size: 3.9px !important;
   }
 
   .fortune-wheel-labels text.is-jackpot,
   .fortune-wheel-labels text.is-lose {
-    font-size: 2.6px;
+    font-size: 3.05px !important;
   }
-}
-
-
-/* Fortune Wheel: etiquetas finales, sin sobrescrituras gigantes */
-.fortune-wheel-labels text {
-  font-weight: 1000;
-  paint-order: stroke fill;
-  stroke-linejoin: round;
 }
