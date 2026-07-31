@@ -1838,3 +1838,244 @@ button {
     grid-column: auto;
   }
 }
+
+/* =========================================================
+   OVERRIDE FINAL MÓVIL — RUEDA PROPORCIONADA Y GIRAR VISIBLE
+   Este bloque va al final para anular versiones móviles previas.
+   ========================================================= */
+@media (max-width: 760px) and (orientation: portrait) {
+  html,
+  body,
+  #root {
+    width: 100% !important;
+    height: 100% !important;
+    min-height: 0 !important;
+    margin: 0 !important;
+    overflow: hidden !important;
+    overscroll-behavior: none !important;
+  }
+
+  .fortune-wheel-page {
+    position: fixed !important;
+    inset: 0 !important;
+    width: 100vw !important;
+    height: 100svh !important;
+    min-height: 0 !important;
+    max-height: 100svh !important;
+    padding: 4px !important;
+    padding-top: max(4px, env(safe-area-inset-top)) !important;
+    padding-bottom: max(4px, env(safe-area-inset-bottom)) !important;
+    overflow: hidden !important;
+  }
+
+  .fortune-wheel-machine {
+    width: 100% !important;
+    height: 100% !important;
+    min-height: 0 !important;
+    max-height: 100% !important;
+    margin: 0 !important;
+    padding: 3px 5px 4px !important;
+    grid-template-rows: 34px 36px minmax(0, 1fr) 108px !important;
+    gap: 3px !important;
+    overflow: hidden !important;
+    border-radius: 12px !important;
+  }
+
+  .fortune-wheel-topbar {
+    height: 34px !important;
+    min-height: 34px !important;
+    grid-template-columns: 66px minmax(0, 1fr) 32px !important;
+    gap: 4px !important;
+    padding: 0 1px 2px !important;
+  }
+
+  .fortune-wheel-back-button {
+    height: 30px !important;
+    min-height: 30px !important;
+    padding: 0 4px !important;
+    font-size: 8px !important;
+  }
+
+  .fortune-wheel-sound-button {
+    width: 30px !important;
+    height: 30px !important;
+    min-height: 30px !important;
+    font-size: 14px !important;
+  }
+
+  .fortune-wheel-brand span {
+    font-size: 5px !important;
+  }
+
+  .fortune-wheel-brand strong {
+    font-size: clamp(15px, 4.7vw, 19px) !important;
+  }
+
+  .fortune-wheel-dashboard,
+  .fortune-wheel-dashboard > div {
+    height: 36px !important;
+    min-height: 36px !important;
+  }
+
+  .fortune-wheel-dashboard {
+    gap: 3px !important;
+  }
+
+  .fortune-wheel-dashboard > div {
+    border-radius: 8px !important;
+  }
+
+  .fortune-wheel-dashboard span {
+    font-size: 6px !important;
+  }
+
+  .fortune-wheel-dashboard strong {
+    font-size: 16px !important;
+  }
+
+  .fortune-wheel-game-layout {
+    display: block !important;
+    min-height: 0 !important;
+    height: 100% !important;
+    overflow: hidden !important;
+  }
+
+  .fortune-wheel-left-column,
+  .fortune-wheel-info-column {
+    display: none !important;
+  }
+
+  .fortune-wheel-main-area {
+    width: 100% !important;
+    height: 100% !important;
+    min-height: 0 !important;
+    padding: 2px 4px 0 !important;
+    display: grid !important;
+    grid-template-rows: minmax(0, 1fr) 24px !important;
+    align-items: center !important;
+    justify-items: center !important;
+    overflow: hidden !important;
+    border-radius: 11px !important;
+  }
+
+  .fortune-wheel-main-area::before {
+    width: 72% !important;
+    opacity: 0.55 !important;
+  }
+
+  .fortune-wheel-main-area::after {
+    width: 68% !important;
+  }
+
+  .fortune-wheel-stage {
+    --fortune-wheel-size: min(76vw, 325px) !important;
+    width: var(--fortune-wheel-size) !important;
+    height: var(--fortune-wheel-size) !important;
+    min-width: var(--fortune-wheel-size) !important;
+    min-height: var(--fortune-wheel-size) !important;
+    max-width: var(--fortune-wheel-size) !important;
+    max-height: var(--fortune-wheel-size) !important;
+    margin: 0 auto !important;
+    align-self: center !important;
+    justify-self: center !important;
+  }
+
+  .fortune-wheel-labels text {
+    font-size: 2.45px !important;
+    stroke-width: 0.72px !important;
+  }
+
+  .fortune-wheel-labels text.is-bonus,
+  .fortune-wheel-labels text.is-multiplier {
+    font-size: 2.18px !important;
+  }
+
+  .fortune-wheel-labels text.is-jackpot,
+  .fortune-wheel-labels text.is-lose {
+    font-size: 1.95px !important;
+  }
+
+  .fortune-wheel-pointer {
+    top: -10px !important;
+    font-size: 28px !important;
+  }
+
+  .fortune-wheel-result {
+    width: 100% !important;
+    height: 24px !important;
+    min-height: 24px !important;
+    padding: 0 4px !important;
+    font-size: 13px !important;
+    line-height: 1 !important;
+  }
+
+  .fortune-wheel-betting-panel {
+    height: 108px !important;
+    min-height: 108px !important;
+    max-height: 108px !important;
+    padding: 3px 5px 5px !important;
+    overflow: hidden !important;
+    border-radius: 11px !important;
+  }
+
+  .fortune-wheel-betting-panel > .fortune-wheel-section-title {
+    display: none !important;
+  }
+
+  .fortune-wheel-chips {
+    height: 38px !important;
+    min-height: 38px !important;
+    margin: 0 0 3px !important;
+    gap: 7px !important;
+  }
+
+  .fortune-wheel-chip {
+    width: 36px !important;
+    height: 36px !important;
+    min-width: 36px !important;
+    min-height: 36px !important;
+    flex: 0 0 36px !important;
+    font-size: 7px !important;
+    border-width: 2px !important;
+  }
+
+  .fortune-wheel-actions {
+    height: 62px !important;
+    min-height: 62px !important;
+    display: grid !important;
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+    grid-template-rows: 27px 32px !important;
+    gap: 3px !important;
+  }
+
+  .fortune-wheel-action-button {
+    height: 27px !important;
+    min-height: 27px !important;
+    border-radius: 8px !important;
+    font-size: 8px !important;
+  }
+
+  .fortune-wheel-spin-button {
+    grid-column: 1 / -1 !important;
+    height: 32px !important;
+    min-height: 32px !important;
+    border-radius: 10px !important;
+    font-size: 16px !important;
+  }
+}
+
+@media (max-width: 760px) and (orientation: portrait) and (max-height: 720px) {
+  .fortune-wheel-machine {
+    grid-template-rows: 32px 34px minmax(0, 1fr) 102px !important;
+  }
+
+  .fortune-wheel-stage {
+    --fortune-wheel-size: min(69vw, 285px) !important;
+  }
+
+  .fortune-wheel-betting-panel {
+    height: 102px !important;
+    min-height: 102px !important;
+    max-height: 102px !important;
+  }
+}

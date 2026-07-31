@@ -30,6 +30,7 @@ const SEGMENTS = [
 ];
 
 const SPIN_DURATION_MS = 5400;
+const BASE_BET = 100;
 
 function getSegmentClass(segment) {
   if (segment.jackpot) return "fortune-wheel-segment-label is-jackpot";
@@ -350,9 +351,15 @@ export default function Wheel({
     if (segment.bonus) return currentBet * 3;
     if (segment.multiplier) return currentBet * segment.multiplier;
 
-    // Los premios fijos son ganancia adicional:
-    // se devuelve la apuesta y se suma el valor del casillero.
-    if (segment.value > 0) return currentBet + segment.value;
+    // Los números de la rueda están calculados sobre una apuesta base de 100.
+    // Ejemplos:
+    // apuesta 100 + casillero 100 = premio 100
+    // apuesta 2500 + casillero 100 = premio 2500
+    // apuesta 2500 + casillero 200 = premio 5000
+    if (segment.value > 0) {
+      const prizeMultiplier = segment.value / BASE_BET;
+      return Math.floor(currentBet * prizeMultiplier);
+    }
 
     return 0;
   }
@@ -575,6 +582,7 @@ export default function Wheel({
 
             <section className="fortune-wheel-rules-panel">
               <span className="fortune-wheel-section-title">REGLAS</span>
+              <div className="fortune-wheel-rule-row"><b>100 / 200 / 500</b><span>escala con la apuesta</span></div>
               <div className="fortune-wheel-rule-row"><b>BONUS</b><span>×3 apuesta</span></div>
               <div className="fortune-wheel-rule-row"><b>X2</b><span>duplica</span></div>
               <div className="fortune-wheel-rule-row"><b>JACKPOT</b><span>×10 apuesta</span></div>
