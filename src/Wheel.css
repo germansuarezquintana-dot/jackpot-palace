@@ -2473,3 +2473,27 @@ will-change: background-position;
     filter: brightness(1.25);
   }
 }
+/* CELULAR: fondo limpio, sin lucecitas */
+@media (max-width: 760px) {
+  .fortune-wheel-main-area::before {
+    content: "" !important;
+    display: block !important;
+    animation: none !important;
+    background:
+      radial-gradient(
+        circle at 50% 46%,
+        rgba(255, 205, 70, 0.22) 0%,
+        rgba(138, 45, 126, 0.16) 32%,
+        transparent 60%
+      ) !important;
+    opacity: 1 !important;
+    filter: none !important;
+    transform: none !important;
+  }
+
+  .fortune-wheel-main-area::after {
+    content: none !important;
+    display: none !important;
+    animation: none !important;
+  }
+}
