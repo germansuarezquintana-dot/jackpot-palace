@@ -75,12 +75,52 @@ button {
   z-index: 0;
   pointer-events: none;
   background:
-    radial-gradient(circle at 50% 18%, rgba(255, 211, 82, 0.10), transparent 30%),
-    radial-gradient(circle at 14% 58%, rgba(229, 27, 74, 0.08), transparent 25%),
-    radial-gradient(circle at 86% 60%, rgba(61, 130, 255, 0.07), transparent 26%);
-  animation: wheelAmbientPulse 4.8s ease-in-out infinite alternate;
-}
+  /* Glow central */
+  radial-gradient(circle at 50% 50%,
+    rgba(255,210,70,.18) 0%,
+    rgba(255,120,0,.10) 18%,
+    transparent 55%),
 
+  /* Luces violeta */
+  radial-gradient(circle at 15% 20%,
+    rgba(130,70,255,.18),
+    transparent 28%),
+
+  /* Luces azules */
+  radial-gradient(circle at 85% 20%,
+    rgba(0,180,255,.18),
+    transparent 30%),
+
+  /* Luces rojas */
+  radial-gradient(circle at 20% 80%,
+    rgba(255,40,90,.14),
+    transparent 26%),
+
+  radial-gradient(circle at 80% 80%,
+    rgba(255,180,40,.12),
+    transparent 24%);
+}
+.fortune-wheel-machine::after{
+    content:"";
+    position:absolute;
+    inset:0;
+    pointer-events:none;
+    z-index:1;
+    opacity:.35;
+
+    background-image:
+
+      radial-gradient(#ffd84a 1px, transparent 1px),
+      radial-gradient(#fff3a8 1px, transparent 1px),
+      radial-gradient(#ffcc55 2px, transparent 2px);
+
+    background-size:
+      120px 120px,
+      180px 180px,
+      260px 260px;
+
+    animation: casinoStars 18s linear infinite;
+}
 .fortune-wheel-topbar,
 .fortune-wheel-dashboard,
 .fortune-wheel-game-layout,
@@ -455,28 +495,37 @@ button {
   animation: wheelStageGlow 1.8s ease-in-out infinite alternate;
 }
 
-.fortune-wheel-stage::before {
-  content: "";
-  position: absolute;
-  inset: -9px;
-  z-index: 1;
-  pointer-events: none;
-  border-radius: 50%;
-  background:
-    repeating-conic-gradient(
-      from 0deg,
-      #fff5b0 0deg 2deg,
-      #ffb32a 2deg 4deg,
-      transparent 4deg 8deg
-    );
-  mask: radial-gradient(circle, transparent 0 89%, #000 89.5% 94%, transparent 94.5%);
-  -webkit-mask: radial-gradient(circle, transparent 0 89%, #000 89.5% 94%, transparent 94.5%);
-  filter:
-    drop-shadow(0 0 4px #fff1a5)
-    drop-shadow(0 0 10px rgba(255, 181, 35, 0.90));
-  animation: wheelOuterBulbs 3.6s linear infinite;
-}
+.fortune-wheel-stage::before{
+    content:"";
+    position:absolute;
+    inset:-18px;
+    border-radius:50%;
+    pointer-events:none;
+    z-index:2;
 
+    background:
+    radial-gradient(circle,#fff9c0 0 2px,#ffcb37 3px,transparent 5px);
+
+    background-size:26px 26px;
+
+    mask:
+      radial-gradient(circle,
+      transparent 0 90%,
+      #000 91% 96%,
+      transparent 97%);
+
+    -webkit-mask:
+      radial-gradient(circle,
+      transparent 0 90%,
+      #000 91% 96%,
+      transparent 97%);
+
+    filter:
+      drop-shadow(0 0 6px #ffd44c)
+      drop-shadow(0 0 12px #ffb300);
+
+    animation:wheelBulbs 1.2s linear infinite;
+}
 .fortune-wheel-pointer {
   position: absolute;
   top: -15px;
@@ -2124,3 +2173,39 @@ button {
     font-size: 3.05px !important;
   }
 }
+@keyframes casinoStars{
+
+    from{
+
+        transform:translateY(0);
+
+    }
+
+    to{
+
+        transform:translateY(-80px);
+
+    }
+
+}
+@keyframes wheelBulbs{
+
+    0%{
+        transform:rotate(0deg);
+        filter:
+        drop-shadow(0 0 5px #ffe26d)
+        drop-shadow(0 0 12px #ffb300);
+    }
+
+    50%{
+        filter:
+        drop-shadow(0 0 2px #ffd54a)
+        drop-shadow(0 0 6px #ff9f00);
+    }
+
+    100%{
+        transform:rotate(360deg);
+        filter:
+        drop-shadow(0 0 5px #ffe26d)
+        drop-shadow(0 0 12px #ffb300);
+    }
