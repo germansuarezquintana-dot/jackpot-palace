@@ -2266,3 +2266,51 @@ button {
     }
 
 }
+/* =========================================================
+   CELULAR — EFECTOS SOLO DENTRO DEL FONDO DE LA RUEDA
+   ========================================================= */
+@media (max-width: 760px) {
+
+  /* Quita las partículas del fondo general únicamente en celular */
+  .fortune-wheel-machine::before,
+  .fortune-wheel-machine::after {
+    content: none !important;
+    display: none !important;
+  }
+
+  /* Encierra los efectos dentro del panel negro central */
+  .fortune-wheel-main-area {
+    position: relative !important;
+    isolation: isolate !important;
+    overflow: hidden !important;
+  }
+
+  .fortune-wheel-main-area::before,
+  .fortune-wheel-main-area::after {
+    position: absolute !important;
+    inset: 0 !important;
+    width: auto !important;
+    height: auto !important;
+    border-radius: inherit !important;
+    pointer-events: none !important;
+  }
+
+  .fortune-wheel-main-area::before {
+    z-index: 0 !important;
+  }
+
+  .fortune-wheel-main-area::after {
+    z-index: 1 !important;
+  }
+
+  /* Mantiene rueda y texto por encima de los efectos */
+  .fortune-wheel-stage {
+    position: relative !important;
+    z-index: 3 !important;
+  }
+
+  .fortune-wheel-result {
+    position: relative !important;
+    z-index: 4 !important;
+  }
+}
