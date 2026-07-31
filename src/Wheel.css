@@ -48,6 +48,7 @@ button {
 
 .fortune-wheel-machine {
   position: relative;
+  z-index:2;
   width: min(1120px, calc(100% - 24px));
   height: min(620px, calc(100dvh - 28px));
   min-height: 0;
@@ -119,7 +120,7 @@ button {
       180px 180px,
       260px 260px;
 
-    animation: casinoStars 18s linear infinite;
+    animation: casinoStars 2s linear infinite;
 }
 .fortune-wheel-topbar,
 .fortune-wheel-dashboard,
@@ -435,38 +436,56 @@ button {
 .fortune-wheel-main-area::before {
   content: "";
   position: absolute;
-  width: min(92%, 620px);
-  aspect-ratio: 1;
+  inset: 0;
   z-index: 0;
   pointer-events: none;
-  border-radius: 50%;
+  border-radius: inherit;
+
   background:
-    repeating-conic-gradient(
-      from 0deg,
-      rgba(255, 213, 81, 0.11) 0deg 1deg,
-      transparent 1deg 15deg
-    );
-  mask: radial-gradient(circle, transparent 0 54%, #000 55% 70%, transparent 71%);
-  -webkit-mask: radial-gradient(circle, transparent 0 54%, #000 55% 70%, transparent 71%);
-  animation: wheelBackgroundRays 20s linear infinite;
+    radial-gradient(circle at 50% 48%,
+      rgba(255, 210, 70, 0.18) 0%,
+      rgba(255, 120, 0, 0.10) 22%,
+      transparent 58%),
+
+    radial-gradient(circle at 15% 20%,
+      rgba(130, 70, 255, 0.20),
+      transparent 30%),
+
+    radial-gradient(circle at 85% 20%,
+      rgba(0, 180, 255, 0.20),
+      transparent 30%),
+
+    radial-gradient(circle at 18% 82%,
+      rgba(255, 40, 90, 0.16),
+      transparent 28%),
+
+    radial-gradient(circle at 82% 82%,
+      rgba(255, 180, 40, 0.14),
+      transparent 26%);
+
+  animation: wheelAmbientPulse 4.8s ease-in-out infinite alternate;
 }
 
 .fortune-wheel-main-area::after {
   content: "";
   position: absolute;
-  width: min(78%, 560px);
-  aspect-ratio: 1;
-  z-index: 0;
+  inset: 0;
+  z-index: 1;
   pointer-events: none;
-  border-radius: 50%;
-  background: radial-gradient(
-    circle,
-    rgba(255, 205, 71, 0.18),
-    rgba(184, 21, 62, 0.09) 42%,
-    transparent 70%
-  );
-  filter: blur(15px);
-  animation: wheelAuraBreathe 2.6s ease-in-out infinite alternate;
+  border-radius: inherit;
+  opacity: 0.45;
+
+  background-image:
+    radial-gradient(#ffd84a 1px, transparent 1px),
+    radial-gradient(#fff3a8 1px, transparent 1px),
+    radial-gradient(#ffcc55 2px, transparent 2px);
+
+  background-size:
+    110px 110px,
+    170px 170px,
+    240px 240px;
+
+  animation: casinoStars 18s linear infinite;
 }
 
 .fortune-wheel-stage {
@@ -474,6 +493,7 @@ button {
     calc(100dvh - 255px),
     calc(100vw - 500px),
     350px
+    overflow: visible;
   );
 
   position: relative;
@@ -2183,7 +2203,7 @@ button {
 
     to{
 
-        transform:translateY(-80px);
+        transform:translateY(-400px);
 
     }
 
@@ -2209,3 +2229,40 @@ button {
         drop-shadow(0 0 5px #ffe26d)
         drop-shadow(0 0 12px #ffb300);
     }
+  }
+  .fortune-wheel-stage::before{
+    content:"";
+    position:absolute;
+    inset:-22px;
+    border-radius:50%;
+    pointer-events:none;
+    z-index:1;
+
+    background:
+    radial-gradient(circle,#ffe27a 0 2px,transparent 3px);
+
+    background-size:40px 40px;
+
+    opacity:.65;
+
+    filter:
+    drop-shadow(0 0 8px #fff0a0)
+    drop-shadow(0 0 18px #ffd700)
+    drop-shadow(0 0 30px #ff9900);
+
+    animation:wheelBulbsFlash .5s steps(2) infinite;
+}
+
+@keyframes wheelBulbsFlash{
+
+    0%{
+        opacity:.55;
+        transform:rotate(0deg);
+    }
+
+    100%{
+        opacity:1;
+        transform:rotate(15deg);
+    }
+
+}
