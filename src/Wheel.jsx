@@ -614,18 +614,23 @@ export default function Wheel({
                     const angle = index * segmentAngle + segmentAngle / 2;
                     const radians = ((angle - 90) * Math.PI) / 180;
                     // Texto radial centrado dentro de cada casillero.
-                    const radius = 34;
+                    const radius = 38;
                     const x = 50 + Math.cos(radians) * radius;
                     const y = 50 + Math.sin(radians) * radius;
 
+                    let textRotation = angle - 90;
+                    if (angle > 180) {
+                      textRotation += 180;
+                    }
+
                     const labelFontSize =
                       segment.jackpot || segment.bonus
-                        ? 2.15
+                        ? 1.9
                         : segment.lossBet
-                          ? 2.05
+                          ? 1.75
                           : segment.label.length >= 5
-                            ? 1.95
-                            : 2.85;
+                            ? 1.7
+                            : 2.35;
 
                     return (
                       <text
@@ -635,13 +640,14 @@ export default function Wheel({
                         y={y}
                         textAnchor="middle"
                         dominantBaseline="middle"
+                        transform={`rotate(${textRotation} ${x} ${y})`}
                         style={{
                           fontSize: `${labelFontSize}px`,
                           fontWeight: 900,
-                          letterSpacing: "0.02px",
+                          letterSpacing: "0px",
                           paintOrder: "stroke fill",
                           stroke: "rgba(0, 0, 0, 0.95)",
-                          strokeWidth: 0.38,
+                          strokeWidth: 0.30,
                           strokeLinejoin: "round",
                         }}
                       >
