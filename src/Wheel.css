@@ -2267,43 +2267,75 @@ button {
 
 }
 /* =========================================================
-   CELULAR — EFECTOS SOLO DENTRO DEL FONDO DE LA RUEDA
+   CELULAR — LUCES DENTRO DEL PANEL DE LA RUEDA
    ========================================================= */
 @media (max-width: 760px) {
 
-  /* Quita las partículas del fondo general únicamente en celular */
+  /* Apaga solo el fondo decorativo general */
   .fortune-wheel-machine::before,
   .fortune-wheel-machine::after {
-    content: none !important;
     display: none !important;
   }
 
-  /* Encierra los efectos dentro del panel negro central */
   .fortune-wheel-main-area {
     position: relative !important;
     isolation: isolate !important;
     overflow: hidden !important;
   }
 
-  .fortune-wheel-main-area::before,
-  .fortune-wheel-main-area::after {
+  .fortune-wheel-main-area::before {
+    content: "" !important;
     position: absolute !important;
     inset: 0 !important;
-    width: auto !important;
-    height: auto !important;
-    border-radius: inherit !important;
-    pointer-events: none !important;
-  }
-
-  .fortune-wheel-main-area::before {
     z-index: 0 !important;
+    pointer-events: none !important;
+    border-radius: inherit !important;
+
+    background:
+      radial-gradient(circle at 50% 48%,
+        rgba(255, 210, 70, 0.18) 0%,
+        rgba(255, 120, 0, 0.10) 22%,
+        transparent 58%),
+
+      radial-gradient(circle at 15% 20%,
+        rgba(130, 70, 255, 0.20),
+        transparent 30%),
+
+      radial-gradient(circle at 85% 20%,
+        rgba(0, 180, 255, 0.20),
+        transparent 30%),
+
+      radial-gradient(circle at 18% 82%,
+        rgba(255, 40, 90, 0.16),
+        transparent 28%),
+
+      radial-gradient(circle at 82% 82%,
+        rgba(255, 180, 40, 0.14),
+        transparent 26%);
   }
 
   .fortune-wheel-main-area::after {
+    content: "" !important;
+    position: absolute !important;
+    inset: 0 !important;
     z-index: 1 !important;
+    pointer-events: none !important;
+    border-radius: inherit !important;
+    opacity: 0.5 !important;
+
+    background-image:
+      radial-gradient(#ffd84a 1px, transparent 1px),
+      radial-gradient(#fff3a8 1px, transparent 1px),
+      radial-gradient(#ffcc55 2px, transparent 2px);
+
+    background-size:
+      90px 90px,
+      135px 135px,
+      190px 190px;
+
+    animation: casinoStars 3s linear infinite !important;
   }
 
-  /* Mantiene rueda y texto por encima de los efectos */
   .fortune-wheel-stage {
     position: relative !important;
     z-index: 3 !important;
