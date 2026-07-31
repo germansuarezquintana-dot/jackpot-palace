@@ -614,14 +614,19 @@ export default function Wheel({
                   {SEGMENTS.map((segment, index) => {
                     const angle = index * segmentAngle + segmentAngle / 2;
                     const radians = ((angle - 90) * Math.PI) / 180;
-                    const radius = 40;
+                    // El texto queda orientado desde el centro hacia el borde,
+                    // aprovechando el largo completo de cada casillero.
+                    const radius = 36.5;
                     const x = 50 + Math.cos(radians) * radius;
                     const y = 50 + Math.sin(radians) * radius;
-                    const normalizedAngle = ((angle % 360) + 360) % 360;
-                    const textRotation =
-                      normalizedAngle > 90 && normalizedAngle < 270
-                        ? angle + 180
-                        : angle;
+
+                    let textRotation = angle - 90;
+
+                    // En la mitad izquierda se invierte para que nunca quede
+                    // escrito cabeza abajo.
+                    if (angle > 180) {
+                      textRotation += 180;
+                    }
 
                     return (
                       <text
@@ -629,6 +634,8 @@ export default function Wheel({
                         className={getSegmentClass(segment)}
                         x={x}
                         y={y}
+                        textAnchor="middle"
+                        dominantBaseline="middle"
                         transform={`rotate(${textRotation} ${x} ${y})`}
                       >
                         {segment.label}
