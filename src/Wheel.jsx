@@ -3,30 +3,30 @@ import "./Wheel.css";
 import { supabase } from "./supabase";
 
 const SEGMENTS = [
-  { label: "100", value: 100 },
+  { label: "X1", value: 100 },
   { label: "PIERDE", lossBet: true },
-  { label: "200", value: 200 },
-  { label: "100", value: 100 },
+  { label: "X2", value: 200 },
+  { label: "X1", value: 100 },
   { label: "-500", loss: 500 },
-  { label: "500", value: 500 },
-  { label: "100", value: 100 },
+  { label: "X5", value: 500 },
+  { label: "X1", value: 100 },
   { label: "-1000", loss: 1000 },
-  { label: "BONUS", bonus: true },
-  { label: "100", value: 100 },
+  { label: "B X3", bonus: true },
+  { label: "X1", value: 100 },
   { label: "PIERDE", lossBet: true },
-  { label: "200", value: 200 },
-  { label: "100", value: 100 },
+  { label: "X2", value: 200 },
+  { label: "X1", value: 100 },
   { label: "-2000", loss: 2000 },
   { label: "X2", multiplier: 2 },
-  { label: "100", value: 100 },
+  { label: "X1", value: 100 },
   { label: "-4000", loss: 4000 },
-  { label: "200", value: 200 },
-  { label: "100", value: 100 },
+  { label: "X2", value: 200 },
+  { label: "X1", value: 100 },
   { label: "-1000", loss: 1000 },
-  { label: "JACKPOT", jackpot: true },
-  { label: "200", value: 200 },
+  { label: "JP X10", jackpot: true },
+  { label: "X2", value: 200 },
   { label: "PIERDE", lossBet: true },
-  { label: "1000", value: 1000 },
+  { label: "X10", value: 1000 },
 ];
 
 const SPIN_DURATION_MS = 5400;
@@ -582,11 +582,10 @@ export default function Wheel({
 
             <section className="fortune-wheel-rules-panel">
               <span className="fortune-wheel-section-title">REGLAS</span>
-              <div className="fortune-wheel-rule-row"><b>100 / 200 / 500</b><span>escala con la apuesta</span></div>
-              <div className="fortune-wheel-rule-row"><b>BONUS</b><span>×3 apuesta</span></div>
-              <div className="fortune-wheel-rule-row"><b>X2</b><span>duplica</span></div>
-              <div className="fortune-wheel-rule-row"><b>JACKPOT</b><span>×10 apuesta</span></div>
-              <div className="fortune-wheel-rule-row"><b>PIERDE</b><span>resta créditos</span></div>
+              <div className="fortune-wheel-rule-row"><b>X1 / X2 / X5 / X10</b><span>multiplican la apuesta</span></div>
+              <div className="fortune-wheel-rule-row"><b>B X3</b><span>bonus: paga 3 veces</span></div>
+              <div className="fortune-wheel-rule-row"><b>JP X10</b><span>jackpot: paga 10 veces</span></div>
+              <div className="fortune-wheel-rule-row"><b>PIERDE</b><span>pierde la apuesta</span></div>
             </section>
           </aside>
 
@@ -614,14 +613,19 @@ export default function Wheel({
                   {SEGMENTS.map((segment, index) => {
                     const angle = index * segmentAngle + segmentAngle / 2;
                     const radians = ((angle - 90) * Math.PI) / 180;
-                    const radius = 40;
+                    // Texto radial centrado dentro de cada casillero.
+                    const radius = 34;
                     const x = 50 + Math.cos(radians) * radius;
                     const y = 50 + Math.sin(radians) * radius;
-                    const normalizedAngle = ((angle % 360) + 360) % 360;
-                    const textRotation =
-                      normalizedAngle > 90 && normalizedAngle < 270
-                        ? angle + 180
-                        : angle;
+
+                    const labelFontSize =
+                      segment.jackpot || segment.bonus
+                        ? 2.15
+                        : segment.lossBet
+                          ? 2.05
+                          : segment.label.length >= 5
+                            ? 1.95
+                            : 2.85;
 
                     return (
                       <text
@@ -629,7 +633,17 @@ export default function Wheel({
                         className={getSegmentClass(segment)}
                         x={x}
                         y={y}
-                        transform={`rotate(${textRotation} ${x} ${y})`}
+                        textAnchor="middle"
+                        dominantBaseline="middle"
+                        style={{
+                          fontSize: `${labelFontSize}px`,
+                          fontWeight: 900,
+                          letterSpacing: "0.02px",
+                          paintOrder: "stroke fill",
+                          stroke: "rgba(0, 0, 0, 0.95)",
+                          strokeWidth: 0.38,
+                          strokeLinejoin: "round",
+                        }}
                       >
                         {segment.label}
                       </text>
@@ -663,9 +677,9 @@ export default function Wheel({
           <aside className="fortune-wheel-info-column">
             <section className="fortune-wheel-info-panel">
               <span className="fortune-wheel-section-title">INFORMACIÓN</span>
-              <div className="fortune-wheel-info-row"><i>🎁</i><b>BONUS</b><strong>×3</strong></div>
-              <div className="fortune-wheel-info-row"><i>✦</i><b>DUPLICA</b><strong>×2</strong></div>
-              <div className="fortune-wheel-info-row"><i>♦</i><b>JACKPOT</b><strong>×10</strong></div>
+              <div className="fortune-wheel-info-row"><i>✦</i><b>MULTIPLICA</b><strong>X1 a X10</strong></div>
+              <div className="fortune-wheel-info-row"><i>🎁</i><b>BONUS</b><strong>X3</strong></div>
+              <div className="fortune-wheel-info-row"><i>♦</i><b>JACKPOT</b><strong>X10</strong></div>
               <div className="fortune-wheel-info-row"><i>−</i><b>PÉRDIDAS</b><strong>hasta 4.000</strong></div>
             </section>
 
