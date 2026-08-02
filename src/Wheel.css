@@ -2724,3 +2724,125 @@ will-change: background-position;
     animation: none !important;
   }
 }
+/* =========================================================
+   MOBILE PREMIUM — EFECTOS VISIBLES SIN ROMPER RESPONSIVE
+   ========================================================= */
+@media (max-width: 760px) {
+
+  .fortune-wheel-stage {
+    animation: mobileWheelGlow 1.8s ease-in-out infinite alternate !important;
+  }
+
+  .fortune-wheel-pointer {
+    animation: mobilePointerPulse 0.8s ease-in-out infinite alternate !important;
+  }
+
+  .fortune-wheel-spin-button {
+    position: relative;
+    overflow: hidden;
+    animation: mobileSpinPulse 1.2s ease-in-out infinite !important;
+  }
+
+  .fortune-wheel-spin-button::after {
+    content: "";
+    position: absolute;
+    top: -40%;
+    left: -55%;
+    width: 35%;
+    height: 180%;
+    transform: rotate(24deg);
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba(255,255,255,.5),
+      transparent
+    );
+    animation: mobileButtonShine 2.8s ease-in-out infinite;
+    pointer-events: none;
+  }
+
+  .fortune-wheel-chip.is-selected {
+    animation: mobileChipBounce 0.9s ease-in-out infinite alternate !important;
+  }
+
+  .fortune-wheel-result.is-win {
+    animation: mobileWinFlash 0.65s ease-in-out 4 alternate !important;
+  }
+}
+
+@keyframes mobileWheelGlow {
+  from {
+    filter:
+      brightness(0.98)
+      drop-shadow(0 0 8px rgba(255, 225, 120, 0.38));
+  }
+
+  to {
+    filter:
+      brightness(1.12)
+      drop-shadow(0 0 18px rgba(255, 210, 65, 0.82));
+  }
+}
+
+@keyframes mobilePointerPulse {
+  from {
+    transform: translateX(-50%) scale(1);
+    filter: brightness(0.95);
+  }
+
+  to {
+    transform: translateX(-50%) scale(1.08);
+    filter: brightness(1.25);
+  }
+}
+
+@keyframes mobileSpinPulse {
+  0%, 100% {
+    filter: brightness(1);
+  }
+
+  50% {
+    filter: brightness(1.18);
+  }
+}
+
+@keyframes mobileButtonShine {
+  0%, 55% {
+    left: -55%;
+    opacity: 0;
+  }
+
+  70% {
+    opacity: 1;
+  }
+
+  100% {
+    left: 125%;
+    opacity: 0;
+  }
+}
+
+@keyframes mobileChipBounce {
+  from {
+    transform: translateY(-1px) scale(1);
+  }
+
+  to {
+    transform: translateY(-3px) scale(1.08);
+  }
+}
+
+@keyframes mobileWinFlash {
+  from {
+    color: #fff3b0;
+    text-shadow: 0 0 8px rgba(255, 210, 70, 0.45);
+  }
+
+  to {
+    color: #fff;
+    text-shadow:
+      0 0 10px #fff,
+      0 0 22px #ffd54a,
+      0 0 34px rgba(255, 150, 20, 0.85);
+  }
+}
