@@ -709,7 +709,7 @@ spinTickerRef.current = window.setInterval(() => {
       columnIndex += 1
     ) {
       const stopTime =
-        1100 + columnIndex * 320;
+  950 + columnIndex * 260;
 
       const timeoutId = window.setTimeout(
         async () => {
