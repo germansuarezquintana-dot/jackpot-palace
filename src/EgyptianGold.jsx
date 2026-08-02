@@ -1,3 +1,5 @@
+import { useEffect, useRef, useState } from "react";
+import { supabase } from "./supabase";
 import "./EgyptianGold.css";
 import EgyptHeader from "./egypt/EgyptHeader";
 import { EGYPT_CONFIG } from "./machines/egypt/egyptConfig";
@@ -18,6 +20,25 @@ const SYMBOL_PAYS = EGYPT_CONFIG.SYMBOL_PAYS;
 
 const PAYLINES = EGYPT_CONFIG.PAYLINES;
 
+function egyptSymbolType(symbol) {
+  if (symbol === WILD) return "wild";
+  if (symbol === SCATTER) return "scatter";
+
+  const types = {
+    "🐪": "camel",
+    "🐍": "cobra",
+    "🦅": "falcon",
+    "🏺": "vase",
+    "📜": "papyrus",
+    "👑": "crown",
+    "💎": "gem",
+    "☀️": "sun",
+    "☀": "sun",
+  };
+
+  return types[symbol] || "relic";
+}
+
 function randomSymbol() {
   return WEIGHTED_SYMBOLS[
     Math.floor(Math.random() * WEIGHTED_SYMBOLS.length)
@@ -35,17 +56,9 @@ function hasPayingLine(grid) {
 }
 
 function createLosingGrid() {
-  const safeSymbols = [
-    TICKET,
-    CAROUSEL,
-    "🎈",
-    "🍿",
-    "🍭",
-    "🎭",
-    "⭐",
-    "🎁",
-  ];
-
+  const safeSymbols = SYMBOLS.filter(
+  (symbol) => symbol !== WILD && symbol !== SCATTER
+);
   for (let attempt = 0; attempt < 250; attempt += 1) {
     const candidate = Array.from(
       { length: COLUMNS },
@@ -74,9 +87,7 @@ function createLosingGrid() {
       Array.from(
         { length: ROWS },
         (_, rowIndex) =>
-          (columnIndex + rowIndex) % 2 === 0
-            ? TICKET
-            : CAROUSEL
+          safeSymbols[(columnIndex + rowIndex) % safeSymbols.length]
       )
   );
 }
@@ -89,7 +100,9 @@ function createSmallWinningGrid() {
       Math.floor(Math.random() * PAYLINES.length)
     ];
 
-  const smallSymbols = ["🎈", "🍿", "🍭"];
+  const smallSymbols = SYMBOLS.filter(
+    (symbol) => symbol !== WILD && symbol !== SCATTER
+  ).slice(0, 3);
 
   const winningSymbol =
     smallSymbols[
@@ -103,8 +116,15 @@ function createSmallWinningGrid() {
   }
 
   // Bloquea el cuarto símbolo para que normalmente no forme 4 o 5.
-  grid[3][payline[3]] =
-    winningSymbol === "🎈" ? CAROUSEL : TICKET;
+  const blockerSymbol =
+    SYMBOLS.find(
+      (symbol) =>
+        symbol !== WILD &&
+        symbol !== SCATTER &&
+        symbol !== winningSymbol
+    ) ?? smallSymbols[0];
+
+  grid[3][payline[3]] = blockerSymbol;
 
   return grid;
 }
@@ -276,7 +296,7 @@ function calculatePrize(grid, bet) {
   };
 }
 
-export default function ClownParty({
+export default function EgyptianGold({
   player,
   onCreditsChange,
   onBack,
@@ -302,7 +322,7 @@ export default function ClownParty({
   const [freeSpins, setFreeSpins] = useState(0);
   const [lastPrize, setLastPrize] = useState(0);
   const [message, setMessage] = useState(
-    "¡Bienvenido a Clown Party!"
+    "¡Bienvenido a Egyptian Gold!"
   );
 
   const [winningLines, setWinningLines] = useState([]);
@@ -776,7 +796,7 @@ spinTickerRef.current = window.setInterval(() => {
               });
 
               setMessage(
-                `🎪 BONUS: ${prize.freeSpinsWon} GIROS GRATIS`
+                `𓂀 BONUS: ${prize.freeSpinsWon} GIROS GRATIS`
               );
 
               playBonusSound();
@@ -800,11 +820,11 @@ spinTickerRef.current = window.setInterval(() => {
                 prize.surpriseMultiplier > 1
               ) {
                 setMessage(
-                  `🤡 MULTIPLICADOR ×${prize.surpriseMultiplier} — GANASTE ${prize.amount}`
+                  `𓆣 MULTIPLICADOR ×${prize.surpriseMultiplier} — GANASTE ${prize.amount}`
                 );
               } else {
                 setMessage(
-                  `🎉 GANASTE ${prize.amount} CRÉDITOS`
+                  `✦ GANASTE ${prize.amount} CRÉDITOS`
                 );
               }
 
@@ -886,16 +906,16 @@ spinTickerRef.current = window.setInterval(() => {
   }
 
   return (
-    <main className="clown-page">
+    <main className="egypt-page">
       <style>{`
-        .clown-reel {
+        .egypt-reel {
           position: relative;
           min-width: 0;
           overflow: hidden;
           isolation: isolate;
         }
 
-        .clown-reel-strip {
+        .egypt-reel-strip {
           position: relative;
           width: 100%;
           height: 100%;
@@ -907,24 +927,24 @@ spinTickerRef.current = window.setInterval(() => {
           backface-visibility: hidden;
         }
 
-        .clown-reel-strip > .clown-symbol {
+        .egypt-reel-strip > .egypt-symbol {
           min-height: 0;
         }
 
-        .clown-reel-running {
+        .egypt-reel-running {
           filter: brightness(1.08) saturate(1.08);
         }
 
-        .clown-reel-running .clown-reel-strip {
+        .egypt-reel-running .egypt-reel-strip {
           height: 200%;
           grid-template-rows: repeat(10, minmax(0, 1fr));
-          animation: clownStripRollPremium .34s linear infinite;
+          animation: egyptStripRollPremium .34s linear infinite;
           animation-delay:
-            calc(var(--clown-reel-index) * -68ms);
+            calc(var(--egypt-reel-index) * -68ms);
           filter: blur(.28px);
         }
 
-        .clown-reel-running::after {
+        .egypt-reel-running::after {
           content: "";
           position: absolute;
           inset: 0;
@@ -944,17 +964,17 @@ spinTickerRef.current = window.setInterval(() => {
             inset 0 -18px 20px rgba(0,0,0,.26);
         }
 
-        .clown-reel-stopping {
+        .egypt-reel-stopping {
           z-index: 6;
           transform-origin: center top;
-          animation: clownReelStopPremium .68s cubic-bezier(.15, .88, .2, 1.18);
+          animation: egyptReelStopPremium .68s cubic-bezier(.15, .88, .2, 1.18);
         }
 
-        .clown-reel-stopping .clown-reel-strip {
-          animation: clownStripSettle .68s cubic-bezier(.15, .88, .2, 1.18);
+        .egypt-reel-stopping .egypt-reel-strip {
+          animation: egyptStripSettle .68s cubic-bezier(.15, .88, .2, 1.18);
         }
 
-        @keyframes clownStripRollPremium {
+        @keyframes egyptStripRollPremium {
           0% {
             transform: translate3d(0, -50%, 0);
           }
@@ -963,7 +983,7 @@ spinTickerRef.current = window.setInterval(() => {
           }
         }
 
-        @keyframes clownReelStopPremium {
+        @keyframes egyptReelStopPremium {
           0% {
             transform: translateY(-12px) scaleY(1.045);
             filter: brightness(1.2);
@@ -986,7 +1006,7 @@ spinTickerRef.current = window.setInterval(() => {
           }
         }
 
-        @keyframes clownStripSettle {
+        @keyframes egyptStripSettle {
           0% {
             transform: translateY(-10px);
           }
@@ -1002,38 +1022,38 @@ spinTickerRef.current = window.setInterval(() => {
         }
 
         @media (max-width: 600px) {
-          .clown-reel-strip {
+          .egypt-reel-strip {
             gap: 3px;
           }
 
-          .clown-reel-running .clown-reel-strip {
+          .egypt-reel-running .egypt-reel-strip {
             animation-duration: .31s;
             filter: blur(.18px);
           }
         }
 
         @media (prefers-reduced-motion: reduce) {
-          .clown-reel-running .clown-reel-strip,
-          .clown-reel-stopping,
-          .clown-reel-stopping .clown-reel-strip {
+          .egypt-reel-running .egypt-reel-strip,
+          .egypt-reel-stopping,
+          .egypt-reel-stopping .egypt-reel-strip {
             animation-duration: .01ms !important;
             animation-iteration-count: 1 !important;
           }
         }
       `}</style>
 
-      <div className="clown-tent-bg" aria-hidden="true" />
-      <div className="clown-spotlight clown-spotlight-left" aria-hidden="true" />
-      <div className="clown-spotlight clown-spotlight-right" aria-hidden="true" />
-      <div className="clown-cloud clown-cloud-left" aria-hidden="true" />
-      <div className="clown-cloud clown-cloud-right" aria-hidden="true" />
+      <div className="egypt-tent-bg" aria-hidden="true" />
+      <div className="egypt-spotlight egypt-spotlight-left" aria-hidden="true" />
+      <div className="egypt-spotlight egypt-spotlight-right" aria-hidden="true" />
+      <div className="egypt-cloud egypt-cloud-left" aria-hidden="true" />
+      <div className="egypt-cloud egypt-cloud-right" aria-hidden="true" />
       {winEffect && (
         <div
-          className={`clown-premium-effects clown-premium-effects-${winEffect.level}`}
+          className={`egypt-premium-effects egypt-premium-effects-${winEffect.level}`}
           aria-hidden="true"
         >
-          <div className="clown-premium-flash" />
-          <div className="clown-premium-burst">
+          <div className="egypt-premium-flash" />
+          <div className="egypt-premium-burst">
             {Array.from({ length: 18 }).map((_, index) => (
               <span
                 key={`burst-${winEffect.id}-${index}`}
@@ -1045,7 +1065,7 @@ spinTickerRef.current = window.setInterval(() => {
             ))}
           </div>
 
-          <div className="clown-coin-rain">
+          <div className="egypt-coin-rain">
             {Array.from({
               length:
                 winEffect.level === "mega"
@@ -1070,14 +1090,14 @@ spinTickerRef.current = window.setInterval(() => {
                   }px`,
                 }}
               >
-                $
+                {["𓆣", "𓂀", "☥", "◆", "✦"][index % 5]}
               </span>
             ))}
           </div>
         </div>
       )}
 
-      <div className="clown-confetti" aria-hidden="true">
+      <div className="egypt-confetti" aria-hidden="true">
         {Array.from({ length: 12 }).map(
           (_, index) => (
             <span
@@ -1108,33 +1128,33 @@ spinTickerRef.current = window.setInterval(() => {
 
       <section
         className={[
-          "clown-machine",
-          celebration ? "clown-machine-winning" : "",
-          `clown-lights-${lightMode}`,
+          "egypt-machine",
+          celebration ? "egypt-machine-winning" : "",
+          `egypt-lights-${lightMode}`,
         ].join(" ")}
       >
-        <div className="clown-machine-neon" aria-hidden="true" />
-        <div className="clown-win-flash" aria-hidden="true" />
-        <div className="clown-side-decor clown-side-decor-left" aria-hidden="true">
+        <div className="egypt-machine-neon" aria-hidden="true" />
+        <div className="egypt-win-flash" aria-hidden="true" />
+        <div className="egypt-side-decor egypt-side-decor-left" aria-hidden="true">
           <span>★</span>
-          <span>🎈</span>
+          <span>𓂀</span>
           <span>✦</span>
-          <span>🎟️</span>
+          <span>𓆣</span>
         </div>
-        <div className="clown-side-decor clown-side-decor-right" aria-hidden="true">
-          <span>🎟️</span>
+        <div className="egypt-side-decor egypt-side-decor-right" aria-hidden="true">
+          <span>𓆣</span>
           <span>✦</span>
-          <span>🎈</span>
+          <span>𓂀</span>
           <span>★</span>
         </div>
 
-        <div className="clown-frame-bulbs clown-frame-bulbs-top" aria-hidden="true">
+        <div className="egypt-frame-bulbs egypt-frame-bulbs-top" aria-hidden="true">
           {Array.from({ length: 20 }).map((_, index) => (
             <span key={`top-${index}`} />
           ))}
         </div>
 
-        <div className="clown-frame-bulbs clown-frame-bulbs-bottom" aria-hidden="true">
+        <div className="egypt-frame-bulbs egypt-frame-bulbs-bottom" aria-hidden="true">
           {Array.from({ length: 20 }).map((_, index) => (
             <span key={`bottom-${index}`} />
           ))}
@@ -1142,7 +1162,7 @@ spinTickerRef.current = window.setInterval(() => {
 
         <button
           type="button"
-          className="clown-sound-button"
+          className="egypt-sound-button"
           onClick={() =>
             setSoundEnabled((current) => !current)
           }
@@ -1157,7 +1177,7 @@ spinTickerRef.current = window.setInterval(() => {
 
       
 
-        <ClownHeader
+        <EgyptHeader
   displayCredits={displayCredits}
   bet={bet}
   lastPrize={lastPrize}
@@ -1168,30 +1188,52 @@ spinTickerRef.current = window.setInterval(() => {
   }
 />
 
-        <div className="clown-reels">
-          <div className="clown-reels-glass" aria-hidden="true" />
-          <div className="clown-reels-corner clown-reels-corner-tl" aria-hidden="true" />
-          <div className="clown-reels-corner clown-reels-corner-tr" aria-hidden="true" />
-          <div className="clown-reels-corner clown-reels-corner-bl" aria-hidden="true" />
-          <div className="clown-reels-corner clown-reels-corner-br" aria-hidden="true" />
+        <section className="egypt-status-board" aria-label="Estado del juego">
+          <div className="egypt-status-card egypt-status-credits">
+            <span>CRÉDITOS</span>
+            <strong>{displayCredits.toLocaleString("es-AR")}</strong>
+          </div>
+
+          <div className="egypt-status-card egypt-status-bet">
+            <span>APUESTA</span>
+            <strong>{bet.toLocaleString("es-AR")}</strong>
+          </div>
+
+          <div className="egypt-status-card egypt-status-prize">
+            <span>ÚLTIMO PREMIO</span>
+            <strong>{lastPrize.toLocaleString("es-AR")}</strong>
+          </div>
+
+          <div className="egypt-status-card egypt-status-free">
+            <span>GIROS GRATIS</span>
+            <strong>{freeSpins.toLocaleString("es-AR")}</strong>
+          </div>
+        </section>
+
+        <div className="egypt-reels">
+          <div className="egypt-reels-glass" aria-hidden="true" />
+          <div className="egypt-reels-corner egypt-reels-corner-tl" aria-hidden="true" />
+          <div className="egypt-reels-corner egypt-reels-corner-tr" aria-hidden="true" />
+          <div className="egypt-reels-corner egypt-reels-corner-bl" aria-hidden="true" />
+          <div className="egypt-reels-corner egypt-reels-corner-br" aria-hidden="true" />
           {grid.map(
             (column, columnIndex) => (
               <div
                 className={[
-                  "clown-reel",
+                  "egypt-reel",
                   reelSpinning[columnIndex]
-                    ? "clown-spinning clown-reel-running"
+                    ? "egypt-spinning egypt-reel-running"
                     : "",
                   reelStopping[columnIndex]
-                    ? "clown-reel-stopping"
+                    ? "egypt-reel-stopping"
                     : "",
                 ].join(" ")}
                 style={{
-                  "--clown-reel-index": columnIndex,
+                  "--egypt-reel-index": columnIndex,
                 }}
                 key={columnIndex}
               >
-                <div className="clown-reel-strip">
+                <div className="egypt-reel-strip">
                   {(reelSpinning[columnIndex]
                     ? [...column, ...column]
                     : column
@@ -1211,20 +1253,22 @@ spinTickerRef.current = window.setInterval(() => {
                     return (
                       <div
                         className={[
-                          "clown-symbol",
+                          "egypt-symbol",
                           isWinning
-                            ? "clown-winning-symbol"
+                            ? "egypt-winning-symbol"
                             : "",
                           isScatter
-                            ? "clown-scatter-symbol"
+                            ? "egypt-scatter-symbol"
                             : "",
                           symbol === WILD
-                            ? "clown-wild-symbol"
+                            ? "egypt-wild-symbol"
                             : "",
+                          `egypt-symbol-${egyptSymbolType(symbol)}`,
                         ].join(" ")}
+                        data-symbol-type={egyptSymbolType(symbol)}
                         key={`${cellId}-${visualIndex}`}
                       >
-                        {symbol}
+                        <span className="egypt-symbol-glyph">{symbol}</span>
                       </div>
                     );
                   })}
@@ -1236,7 +1280,7 @@ spinTickerRef.current = window.setInterval(() => {
 
         {winEffect && !celebration && (
           <div
-            className={`clown-inline-win clown-inline-win-${winEffect.level}`}
+            className={`egypt-inline-win egypt-inline-win-${winEffect.level}`}
             aria-live="polite"
           >
             <span>GANASTE</span>
@@ -1248,9 +1292,9 @@ spinTickerRef.current = window.setInterval(() => {
         )}
 
         <div
-          className={`clown-message ${
+          className={`egypt-message ${
             lastPrize > 0
-              ? "clown-message-win"
+              ? "egypt-message-win"
               : ""
           }`}
         >
@@ -1259,17 +1303,17 @@ spinTickerRef.current = window.setInterval(() => {
             : message}
         </div>
 
-        <div className="clown-control-deck">
-          <div className="clown-control-lights" aria-hidden="true">
+        <div className="egypt-control-deck">
+          <div className="egypt-control-lights" aria-hidden="true">
             {Array.from({ length: 8 }).map((_, index) => (
               <span key={index} />
             ))}
           </div>
 
-          <div className="clown-controls">
+          <div className="egypt-controls">
           <button
             type="button"
-            className="clown-small-button"
+            className="egypt-small-button"
             onClick={decreaseBet}
             disabled={
               spinning ||
@@ -1282,9 +1326,9 @@ spinTickerRef.current = window.setInterval(() => {
 
           <button
             type="button"
-            className={`clown-spin-button ${
+            className={`egypt-spin-button ${
               freeSpins > 0
-                ? "clown-free-spin-button"
+                ? "egypt-free-spin-button"
                 : ""
             }`}
             onClick={spin}
@@ -1302,7 +1346,7 @@ spinTickerRef.current = window.setInterval(() => {
 
           <button
             type="button"
-            className="clown-small-button"
+            className="egypt-small-button"
             onClick={increaseBet}
             disabled={
               spinning ||
@@ -1316,48 +1360,48 @@ spinTickerRef.current = window.setInterval(() => {
           </div>
         </div>
 
-        <div className="clown-bottom-actions">
+        <div className="egypt-bottom-actions">
           <button
             type="button"
-            className="clown-back-button"
+            className="egypt-back-button"
             onClick={onBack}
             disabled={spinning}
           >
-            ← CASINO
+            ← LOBBY
           </button>
 
           <button
             type="button"
-            className="clown-logout-button"
+            className="egypt-logout-button"
             onClick={onLogout}
             disabled={spinning}
           >
-            CERRAR SESIÓN
+            SALIR
           </button>
         </div>
 
-        <div className="clown-help">
+        <div className="egypt-help">
           <span>
-            🤡 WILD reemplaza otros símbolos
+            𓆣 WILD reemplaza otros símbolos
           </span>
 
           <span>
-            🎪 3 o más activan giros gratis
+            𓂀 3 o más activan giros gratis
           </span>
 
           <span>
-            🎉 Premios con multiplicadores
+            ✦ Premios con multiplicadores
             sorpresa
           </span>
         </div>
 
-        <div className="clown-phase-stamp">CLOWN PARTY · RODILLOS PREMIUM</div>
+        <div className="egypt-phase-stamp">EGYPTIAN GOLD · TEMPLO DE LOS FARAONES</div>
       </section>
 
       {celebration && (
         <button
           type="button"
-          className={`clown-celebration clown-celebration-${celebration.type}`}
+          className={`egypt-celebration egypt-celebration-${celebration.type}`}
           onClick={() => {
             setCelebration(null);
             setWinEffect(null);
@@ -1365,16 +1409,16 @@ spinTickerRef.current = window.setInterval(() => {
           }}
           aria-label="Cerrar premio"
         >
-          <div className="clown-celebration-card">
+          <div className="egypt-celebration-card">
             <span>
               {celebration.type === "bonus"
-                ? "🎪 BONUS DE CIRCO"
+                ? "𓂀 BONUS DEL TEMPLO"
                 : celebration.type === "mega"
-                ? "🤡 MEGA PREMIO"
-                : "🎉 GRAN PREMIO"}
+                ? "𓆣 MEGA PREMIO"
+                : "✦ GRAN PREMIO"}
             </span>
 
-            <strong className="clown-celebration-count">
+            <strong className="egypt-celebration-count">
               {(animatedPrize || celebration.amount).toLocaleString(
                 "es-AR"
               )}

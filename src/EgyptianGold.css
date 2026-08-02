@@ -1,10 +1,1113 @@
-body{
-    background:#0d0b06;
+:root {
+  --egypt-gold: #d7ad45;
+  --egypt-gold-light: #fff0a8;
+  --egypt-gold-dark: #6e4712;
+  --egypt-blue: #00c8ff;
+  --egypt-blue-dark: #073b58;
+  --egypt-stone: #17130d;
+  --egypt-stone-2: #2a2113;
+  --egypt-panel: rgba(8, 8, 9, 0.92);
+  --egypt-line: rgba(230, 185, 73, 0.42);
 }
 
-.egypt-machine{
-    background:linear-gradient(#23190d,#3c2b12,#23190d);
-    border:4px solid #d4af37;
-    border-radius:22px;
-    box-shadow:0 0 25px rgba(255,215,0,.45);
+* { box-sizing: border-box; }
+
+.egypt-page {
+  position: fixed;
+  inset: 0;
+  min-width: 320px;
+  min-height: 100dvh;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  color: #fff;
+  font-family: Georgia, "Times New Roman", serif;
+  background:
+    radial-gradient(circle at 50% 7%, rgba(24, 120, 172, .20), transparent 27%),
+    radial-gradient(circle at 50% 75%, rgba(218, 148, 42, .14), transparent 35%),
+    linear-gradient(180deg, #02070c 0%, #07131c 45%, #150e06 100%);
+}
+
+.egypt-page::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: .58;
+  background:
+    linear-gradient(135deg, transparent 0 47%, rgba(215, 173, 69, .05) 48% 49%, transparent 50%) 0 0 / 46px 46px,
+    radial-gradient(circle at 50% 105%, rgba(238, 180, 66, .2), transparent 42%);
+  animation: egyptDustDrift 14s linear infinite;
+}
+
+.egypt-page::after {
+  content: "𓂀  𓆣  𓋹  𓁹  𓂀  𓆣  𓋹";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 2.5vh;
+  text-align: center;
+  color: rgba(224, 186, 85, .09);
+  font-size: clamp(30px, 6vw, 76px);
+  letter-spacing: .35em;
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+.egypt-machine {
+  position: relative;
+  z-index: 2;
+  width: min(1180px, calc(100vw - 24px));
+  height: min(720px, calc(100dvh - 22px));
+  min-height: 0;
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr) auto auto auto;
+  gap: 7px;
+  padding: 13px 18px 12px;
+  overflow: hidden;
+  isolation: isolate;
+  border: 3px solid var(--egypt-gold);
+  border-radius: 20px 20px 12px 12px;
+  background:
+    linear-gradient(90deg, rgba(255,255,255,.035), transparent 18% 82%, rgba(255,255,255,.035)),
+    repeating-linear-gradient(0deg, transparent 0 28px, rgba(215,173,69,.025) 29px 30px),
+    linear-gradient(180deg, #23190d, #0e0d0b 32%, #171109 100%);
+  box-shadow:
+    inset 0 0 0 5px #4b300e,
+    inset 0 0 65px rgba(0,0,0,.92),
+    0 0 0 4px rgba(5,5,5,.9),
+    0 18px 60px rgba(0,0,0,.72),
+    0 0 34px rgba(223,178,64,.28);
+}
+
+.egypt-machine::before,
+.egypt-machine::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 62px;
+  z-index: 0;
+  pointer-events: none;
+  border-inline: 1px solid rgba(255,223,133,.18);
+  background:
+    radial-gradient(circle at 50% 12%, rgba(0,200,255,.7) 0 4px, transparent 5px),
+    linear-gradient(90deg, #100b04, #382512 45%, #140d05 100%);
+  box-shadow: inset 0 0 18px rgba(0,0,0,.75);
+}
+.egypt-machine::before { left: 0; }
+.egypt-machine::after { right: 0; transform: scaleX(-1); }
+
+.egypt-machine-winning {
+  animation: egyptMachineWin 1s ease-in-out infinite alternate;
+}
+
+.egypt-machine-neon {
+  position: absolute;
+  inset: 5px;
+  z-index: 0;
+  pointer-events: none;
+  border: 1px solid rgba(255,218,116,.28);
+  border-radius: 14px;
+  box-shadow: inset 0 0 24px rgba(0,194,255,.06);
+}
+
+.egypt-win-flash {
+  position: absolute;
+  inset: 0;
+  z-index: 20;
+  pointer-events: none;
+  opacity: 0;
+  background: radial-gradient(circle, rgba(255,234,153,.48), transparent 58%);
+}
+.egypt-machine-winning .egypt-win-flash { animation: egyptWinFlash .8s ease-out; }
+
+.egypt-tent-bg,
+.egypt-cloud,
+.egypt-spotlight { position: absolute; pointer-events: none; }
+
+.egypt-tent-bg {
+  inset: 0;
+  opacity: .18;
+  background:
+    linear-gradient(150deg, transparent 0 48%, rgba(214,174,73,.1) 49% 50%, transparent 51%),
+    linear-gradient(30deg, transparent 0 48%, rgba(0,191,255,.06) 49% 50%, transparent 51%);
+}
+
+.egypt-spotlight {
+  top: -25%;
+  width: 42vw;
+  height: 95vh;
+  opacity: .14;
+  filter: blur(12px);
+  background: linear-gradient(180deg, rgba(0,201,255,.45), transparent 70%);
+  transform-origin: top;
+}
+.egypt-spotlight-left { left: 2%; transform: rotate(18deg); }
+.egypt-spotlight-right { right: 2%; transform: rotate(-18deg); }
+
+.egypt-cloud {
+  width: 45vw;
+  height: 18vh;
+  bottom: -5vh;
+  opacity: .18;
+  filter: blur(28px);
+  background: radial-gradient(ellipse, #d39c43, transparent 68%);
+  animation: egyptSandCloud 12s ease-in-out infinite alternate;
+}
+.egypt-cloud-left { left: -10vw; }
+.egypt-cloud-right { right: -10vw; animation-delay: -6s; }
+
+.egypt-side-decor {
+  position: absolute;
+  top: 18%;
+  bottom: 17%;
+  z-index: 2;
+  width: 38px;
+  display: grid;
+  place-content: space-around center;
+  color: var(--egypt-gold-light);
+  font-size: 22px;
+  text-shadow: 0 0 10px rgba(255,216,94,.55);
+  pointer-events: none;
+}
+.egypt-side-decor-left { left: 10px; }
+.egypt-side-decor-right { right: 10px; }
+
+.egypt-frame-bulbs {
+  position: absolute;
+  left: 74px;
+  right: 74px;
+  z-index: 3;
+  display: flex;
+  justify-content: space-around;
+  pointer-events: none;
+}
+.egypt-frame-bulbs-top { top: 4px; }
+.egypt-frame-bulbs-bottom { bottom: 4px; }
+.egypt-frame-bulbs span {
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: #64dfff;
+  box-shadow: 0 0 6px #00bfff, 0 0 12px rgba(255,210,80,.4);
+  animation: egyptTempleLights 1.8s steps(2) infinite;
+}
+.egypt-frame-bulbs span:nth-child(even) { animation-delay: -.9s; background: #ffd36c; }
+
+.egypt-sound-button {
+  position: absolute;
+  top: 14px;
+  right: 72px;
+  z-index: 15;
+  width: 38px;
+  height: 38px;
+  display: grid;
+  place-items: center;
+  border: 1px solid var(--egypt-line);
+  border-radius: 50%;
+  color: #fff;
+  background: radial-gradient(circle at 35% 25%, #426d7c, #08141b 72%);
+  box-shadow: 0 0 14px rgba(0,202,255,.3);
+  cursor: pointer;
+}
+
+.egypt-reels {
+  position: relative;
+  z-index: 4;
+  min-height: 0;
+  width: min(870px, calc(100% - 120px));
+  height: 100%;
+  margin: 0 auto;
+  padding: 15px;
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 8px;
+  overflow: hidden;
+  border: 5px solid #8a5f1a;
+  border-radius: 12px;
+  background:
+    linear-gradient(180deg, rgba(0,205,255,.08), transparent 18% 82%, rgba(0,205,255,.07)),
+    #050709;
+  box-shadow:
+    inset 0 0 0 3px #e2bd5a,
+    inset 0 0 38px rgba(0,0,0,.94),
+    0 0 24px rgba(0,187,255,.16),
+    0 12px 28px rgba(0,0,0,.55);
+}
+
+.egypt-reels::before {
+  content: "𓂀 𓆣 𓋹 𓁹 𓂀 𓆣 𓋹";
+  position: absolute;
+  inset: 2px 10px auto;
+  z-index: 10;
+  height: 12px;
+  overflow: hidden;
+  color: rgba(255,226,132,.18);
+  font-size: 10px;
+  letter-spacing: 1.8em;
+  pointer-events: none;
+}
+
+.egypt-reels-glass {
+  position: absolute;
+  inset: 9px;
+  z-index: 9;
+  pointer-events: none;
+  border-radius: 8px;
+  background: linear-gradient(115deg, rgba(255,255,255,.11), transparent 25% 68%, rgba(0,188,255,.05));
+}
+
+.egypt-reels-corner {
+  position: absolute;
+  z-index: 11;
+  width: 18px;
+  height: 18px;
+  border-color: #f2d079;
+  pointer-events: none;
+}
+.egypt-reels-corner-tl { top: 6px; left: 6px; border-top: 2px solid; border-left: 2px solid; }
+.egypt-reels-corner-tr { top: 6px; right: 6px; border-top: 2px solid; border-right: 2px solid; }
+.egypt-reels-corner-bl { bottom: 6px; left: 6px; border-bottom: 2px solid; border-left: 2px solid; }
+.egypt-reels-corner-br { bottom: 6px; right: 6px; border-bottom: 2px solid; border-right: 2px solid; }
+
+.egypt-reel {
+  position: relative;
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
+  isolation: isolate;
+  border: 1px solid rgba(219,181,76,.38);
+  border-radius: 7px;
+  background: linear-gradient(180deg, #121619, #050607 50%, #111516);
+  box-shadow: inset 0 0 14px rgba(0,0,0,.82);
+}
+
+.egypt-reel-strip {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: grid;
+  grid-template-rows: repeat(5, minmax(0, 1fr));
+  gap: 6px;
+  padding: 5px;
+  will-change: transform, filter;
+  backface-visibility: hidden;
+}
+
+.egypt-symbol {
+  min-height: 0;
+  display: grid;
+  place-items: center;
+  border: 1px solid rgba(214,176,72,.18);
+  border-radius: 7px;
+  font-family: "Segoe UI Symbol", "Apple Color Emoji", sans-serif;
+  font-size: clamp(24px, 4.4vw, 53px);
+  line-height: 1;
+  background:
+    radial-gradient(circle at 50% 35%, rgba(255,241,181,.08), transparent 56%),
+    linear-gradient(180deg, rgba(45,37,23,.72), rgba(8,9,10,.92));
+  text-shadow: 0 3px 5px #000, 0 0 12px rgba(242,191,67,.18);
+  filter: saturate(.94);
+}
+
+.egypt-winning-symbol {
+  z-index: 3;
+  border-color: #ffe59a;
+  animation: egyptWinningSymbol .72s ease-in-out infinite alternate;
+}
+.egypt-wild-symbol {
+  color: #fff6bb;
+  background: radial-gradient(circle, rgba(0,193,255,.24), rgba(17,10,3,.96) 70%);
+  text-shadow: 0 0 7px #fff, 0 0 17px #00c9ff, 0 0 30px rgba(255,190,40,.55);
+}
+.egypt-scatter-symbol {
+  background: radial-gradient(circle, rgba(255,210,74,.3), rgba(22,12,4,.97) 72%);
+  animation: egyptScatterPulse 1.1s ease-in-out infinite alternate;
+}
+
+.egypt-reel-running { filter: brightness(1.08) saturate(1.1); }
+.egypt-reel-running .egypt-reel-strip {
+  height: 200%;
+  grid-template-rows: repeat(10, minmax(0, 1fr));
+  animation: egyptStripRollPremium .34s linear infinite;
+  animation-delay: calc(var(--egypt-reel-index) * -68ms);
+  filter: blur(.25px);
+}
+.egypt-reel-stopping { z-index: 6; animation: egyptReelStopPremium .68s cubic-bezier(.15,.88,.2,1.18); }
+.egypt-reel-stopping .egypt-reel-strip { animation: egyptStripSettle .68s cubic-bezier(.15,.88,.2,1.18); }
+
+.egypt-message {
+  position: relative;
+  z-index: 8;
+  min-height: 28px;
+  display: grid;
+  place-items: center;
+  color: #dcd4bd;
+  font-family: Arial, sans-serif;
+  font-size: 14px;
+  font-weight: 800;
+  text-align: center;
+  text-shadow: 0 2px 4px #000;
+}
+.egypt-message-win { color: #fff0a3; text-shadow: 0 0 14px rgba(255,207,67,.76); }
+
+.egypt-inline-win {
+  position: absolute;
+  z-index: 30;
+  left: 50%;
+  top: 49%;
+  transform: translate(-50%, -50%);
+  min-width: 210px;
+  padding: 12px 24px;
+  display: grid;
+  place-items: center;
+  border: 2px solid #f0cb67;
+  border-radius: 5px;
+  color: #fff4b3;
+  background: linear-gradient(180deg, rgba(25,17,6,.94), rgba(2,14,21,.96));
+  box-shadow: 0 0 30px rgba(0,192,255,.38), 0 0 45px rgba(255,190,55,.3);
+  clip-path: polygon(7% 0, 93% 0, 100% 50%, 93% 100%, 7% 100%, 0 50%);
+  animation: egyptPrizeReveal .45s ease-out;
+}
+.egypt-inline-win span, .egypt-inline-win small { font: 800 10px Arial, sans-serif; letter-spacing: .16em; }
+.egypt-inline-win strong { font-size: 34px; line-height: 1; }
+
+.egypt-control-deck {
+  position: relative;
+  z-index: 5;
+  width: min(720px, calc(100% - 130px));
+  margin: 0 auto;
+  padding: 7px 16px;
+  border: 2px solid #7d571a;
+  border-radius: 7px;
+  background: linear-gradient(180deg, #2a2012, #090a0b);
+  box-shadow: inset 0 0 0 2px rgba(235,197,93,.24), 0 7px 14px rgba(0,0,0,.45);
+}
+.egypt-control-lights {
+  position: absolute;
+  left: 14px; right: 14px; top: 3px;
+  display: flex; justify-content: space-between;
+  pointer-events: none;
+}
+.egypt-control-lights span { width: 3px; height: 3px; border-radius: 50%; background:#00d5ff; box-shadow:0 0 7px #00bfff; }
+
+.egypt-controls { display: grid; grid-template-columns: 58px minmax(180px, 1fr) 58px; gap: 12px; align-items: center; }
+.egypt-small-button,
+.egypt-spin-button,
+.egypt-back-button,
+.egypt-logout-button {
+  border: 1px solid rgba(239,204,108,.68);
+  color: #fff7cf;
+  font-weight: 900;
+  cursor: pointer;
+  text-shadow: 0 1px 2px #000;
+}
+.egypt-small-button {
+  height: 42px;
+  border-radius: 5px;
+  font-size: 27px;
+  background: linear-gradient(180deg, #4e391a, #15100a);
+}
+.egypt-spin-button {
+  position: relative;
+  height: 48px;
+  overflow: hidden;
+  border: 2px solid #f7dc83;
+  border-radius: 24px;
+  font-size: 18px;
+  letter-spacing: .12em;
+  background: radial-gradient(circle at 50% 20%, #167aa0, #06374f 52%, #021820 100%);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.25), 0 0 20px rgba(0,198,255,.35), 0 4px 0 #020b0e;
+  animation: egyptSpinPulse 1.8s ease-in-out infinite;
+}
+.egypt-spin-button::after {
+  content: "";
+  position: absolute;
+  top: -65%; left: -35%;
+  width: 22%; height: 230%;
+  transform: rotate(25deg);
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,.52), transparent);
+  animation: egyptButtonShine 4s ease-in-out infinite;
+}
+.egypt-free-spin-button { background: radial-gradient(circle at 50% 20%, #b78d22, #63460b 58%, #1b1003); }
+button:disabled { opacity: .42; cursor: not-allowed; }
+
+.egypt-bottom-actions {
+  position: relative;
+  z-index: 7;
+  width: min(720px, calc(100% - 130px));
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+.egypt-back-button, .egypt-logout-button {
+  min-height: 32px;
+  border-radius: 5px;
+  font-family: Arial, sans-serif;
+  font-size: 11px;
+  letter-spacing: .05em;
+  background: linear-gradient(180deg, #312516, #0c0b09);
+}
+.egypt-logout-button { background: linear-gradient(180deg, #391718, #120708); }
+
+.egypt-help {
+  position: relative;
+  z-index: 5;
+  display: flex;
+  justify-content: center;
+  gap: 24px;
+  color: rgba(255,241,193,.7);
+  font: 700 10px Arial, sans-serif;
+}
+.egypt-phase-stamp {
+  position: absolute;
+  z-index: 5;
+  bottom: 4px;
+  left: 50%;
+  transform: translateX(-50%);
+  color: rgba(228,190,88,.36);
+  font: 800 8px Arial, sans-serif;
+  letter-spacing: .2em;
+  white-space: nowrap;
+}
+
+.egypt-premium-effects,
+.egypt-confetti {
+  position: fixed;
+  inset: 0;
+  z-index: 80;
+  pointer-events: none;
+  overflow: hidden;
+}
+.egypt-confetti { display: none; }
+.egypt-premium-flash { position:absolute; inset:0; background:radial-gradient(circle,rgba(255,220,104,.32),transparent 60%); animation:egyptWinFlash .8s ease-out; }
+.egypt-premium-burst { position:absolute; inset:50%; }
+.egypt-premium-burst span { position:absolute; width:3px; height:38vh; transform-origin:50% 100%; transform:translate(-50%,-100%) rotate(var(--burst-angle)); background:linear-gradient(transparent,#ffd973,transparent); animation:egyptRayBurst 1.1s ease-out var(--burst-delay) both; }
+.egypt-coin-rain span { position:absolute; left:var(--coin-left); top:-40px; font-size:var(--coin-size); color:#ffe392; text-shadow:0 0 7px #ffc400; animation:egyptGoldRain var(--coin-duration) linear var(--coin-delay) both; }
+
+.egypt-celebration {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: grid;
+  place-items: center;
+  border: 0;
+  background: rgba(0,5,9,.82);
+  cursor: pointer;
+}
+.egypt-celebration-card {
+  min-width: min(430px, 90vw);
+  padding: 32px 28px;
+  display: grid;
+  place-items: center;
+  gap: 8px;
+  border: 3px solid #e7bd56;
+  color: #fff2ad;
+  background:
+    radial-gradient(circle at 50% 15%, rgba(0,196,255,.22), transparent 38%),
+    linear-gradient(180deg,#2b200f,#050b0f 65%,#130b03);
+  box-shadow: 0 0 45px rgba(0,196,255,.35), 0 0 75px rgba(255,188,46,.28);
+  clip-path: polygon(8% 0,92% 0,100% 12%,100% 88%,92% 100%,8% 100%,0 88%,0 12%);
+  animation: egyptCelebrationReveal .55s ease-out;
+}
+.egypt-celebration-card span { font-size: 20px; font-weight: 900; letter-spacing:.09em; }
+.egypt-celebration-count { font-size: clamp(46px, 9vw, 82px); line-height:1; text-shadow:0 0 18px #ffcf54; }
+.egypt-celebration-card p { margin:0; font-weight:900; }
+.egypt-celebration-card small { margin-top:12px; opacity:.65; }
+
+@keyframes egyptStripRollPremium { from { transform: translate3d(0,-50%,0); } to { transform: translate3d(0,0,0); } }
+@keyframes egyptReelStopPremium { 0%{transform:translateY(-12px) scaleY(1.045)} 36%{transform:translateY(10px) scaleY(.96)} 58%{transform:translateY(-4px) scaleY(1.025)} 76%{transform:translateY(2px) scaleY(.99)} 100%{transform:none} }
+@keyframes egyptStripSettle { 0%{transform:translateY(-10px)} 38%{transform:translateY(7px)} 66%{transform:translateY(-2px)} 100%{transform:none} }
+@keyframes egyptWinningSymbol { to { transform:scale(1.06); filter:brightness(1.3); box-shadow:0 0 18px #ffd45d, inset 0 0 16px rgba(0,204,255,.24); } }
+@keyframes egyptScatterPulse { to { filter:brightness(1.25); box-shadow:inset 0 0 18px rgba(255,202,57,.35),0 0 12px rgba(0,196,255,.3); } }
+@keyframes egyptMachineWin { to { filter:brightness(1.12); box-shadow:inset 0 0 0 5px #4b300e,inset 0 0 65px #000,0 0 55px rgba(255,196,55,.5); } }
+@keyframes egyptWinFlash { from{opacity:.85} to{opacity:0} }
+@keyframes egyptSpinPulse { 50%{filter:brightness(1.17); box-shadow:inset 0 1px 0 rgba(255,255,255,.3),0 0 28px rgba(0,210,255,.56),0 4px 0 #020b0e} }
+@keyframes egyptButtonShine { 0%,65%{left:-35%;opacity:0} 78%{opacity:1} 100%{left:125%;opacity:0} }
+@keyframes egyptTempleLights { 50%{opacity:.35;filter:brightness(.7)} }
+@keyframes egyptDustDrift { to{background-position:92px -92px,0 0} }
+@keyframes egyptSandCloud { to{transform:translateX(12vw) scale(1.15)} }
+@keyframes egyptPrizeReveal { from{opacity:0;transform:translate(-50%,-45%) scale(.75)} }
+@keyframes egyptRayBurst { from{opacity:0;transform:translate(-50%,-100%) rotate(var(--burst-angle)) scaleY(.2)} to{opacity:0;transform:translate(-50%,-100%) rotate(var(--burst-angle)) scaleY(1.2)} }
+@keyframes egyptGoldRain { to{transform:translateY(110vh) rotate(720deg);opacity:.15} }
+@keyframes egyptCelebrationReveal { from{opacity:0;transform:scale(.7) rotateX(18deg)} }
+
+@media (max-width: 760px) {
+  .egypt-page { position:fixed; inset:0; height:100svh; min-height:100svh; }
+  .egypt-machine {
+    width:100%; height:100%; max-height:100svh;
+    grid-template-rows:auto minmax(0,1fr) 22px 73px 30px;
+    gap:3px; padding:4px 6px 5px;
+    border-width:2px; border-radius:10px;
+  }
+  .egypt-machine::before,.egypt-machine::after { width:20px; opacity:.6; }
+  .egypt-side-decor,.egypt-frame-bulbs,.egypt-sound-button { display:none; }
+  .egypt-reels { width:100%; padding:7px; gap:4px; border-width:3px; }
+  .egypt-reel-strip { gap:3px; padding:3px; }
+  .egypt-symbol { font-size:clamp(22px,10vw,42px); border-radius:5px; }
+  .egypt-message { min-height:22px; font-size:10px; }
+  .egypt-control-deck { width:100%; padding:5px 7px; }
+  .egypt-controls { grid-template-columns:42px minmax(0,1fr) 42px; gap:7px; }
+  .egypt-small-button { height:36px; font-size:22px; }
+  .egypt-spin-button { height:39px; font-size:14px; }
+  .egypt-bottom-actions { width:100%; gap:5px; }
+  .egypt-back-button,.egypt-logout-button { min-height:28px; font-size:9px; }
+  .egypt-help,.egypt-phase-stamp { display:none; }
+  .egypt-inline-win { min-width:170px; padding:9px 18px; }
+  .egypt-inline-win strong { font-size:28px; }
+}
+
+@media (max-width: 950px) and (orientation: landscape) and (max-height: 520px) {
+  .egypt-machine { grid-template-rows:auto minmax(0,1fr) 18px 45px 26px; padding:3px 7px; }
+  .egypt-reels { width:min(720px,82vw); }
+  .egypt-symbol { font-size:clamp(20px,7vh,36px); }
+  .egypt-control-deck,.egypt-bottom-actions { width:min(720px,82vw); }
+  .egypt-spin-button,.egypt-small-button { height:32px; }
+  .egypt-help,.egypt-phase-stamp { display:none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .egypt-page::before,.egypt-cloud,.egypt-frame-bulbs span,.egypt-spin-button,
+  .egypt-spin-button::after,.egypt-scatter-symbol,.egypt-winning-symbol,
+  .egypt-reel-running .egypt-reel-strip { animation:none!important; }
+}
+
+/* =========================================================
+   EGYPTIAN GOLD — TEMPLO PROPIO (NO TOCA LÓGICA)
+   ========================================================= */
+.egypt-page {
+  background:
+    radial-gradient(circle at 50% 18%, rgba(20, 113, 132, .18), transparent 30%),
+    radial-gradient(circle at 50% 82%, rgba(210, 145, 40, .12), transparent 42%),
+    linear-gradient(180deg, #02070b 0%, #09131a 48%, #110b05 100%);
+}
+
+.egypt-page::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  opacity: .34;
+  background:
+    linear-gradient(152deg, transparent 0 38%, rgba(194, 139, 47, .18) 38.2% 39.3%, transparent 39.5%),
+    linear-gradient(208deg, transparent 0 38%, rgba(194, 139, 47, .16) 38.2% 39.3%, transparent 39.5%),
+    radial-gradient(circle at 50% 18%, rgba(89, 213, 229, .12), transparent 10%),
+    repeating-linear-gradient(0deg, rgba(255,255,255,.015) 0 1px, transparent 1px 5px);
+  mix-blend-mode: screen;
+}
+
+.egypt-tent-bg {
+  opacity: .8;
+  background:
+    linear-gradient(155deg, transparent 0 38%, rgba(15, 26, 27, .92) 38.4% 39.4%, transparent 39.8%),
+    linear-gradient(205deg, transparent 0 38%, rgba(15, 26, 27, .92) 38.4% 39.4%, transparent 39.8%),
+    radial-gradient(circle at 50% 25%, rgba(72, 191, 216, .13), transparent 12%),
+    linear-gradient(180deg, rgba(3, 10, 14, .4), rgba(16, 9, 4, .9));
+}
+
+.egypt-cloud {
+  filter: blur(18px);
+  opacity: .18;
+  background: radial-gradient(ellipse, rgba(204, 151, 72, .75), transparent 68%);
+  animation: egyptSandDrift 11s ease-in-out infinite alternate;
+}
+
+.egypt-spotlight {
+  opacity: .28;
+  background: linear-gradient(180deg, rgba(73, 216, 232, .28), transparent 72%);
+  filter: blur(4px);
+}
+
+.egypt-machine {
+  border-color: #a67b2d;
+  background:
+    linear-gradient(90deg, rgba(0,0,0,.5), transparent 7% 93%, rgba(0,0,0,.5)),
+    repeating-linear-gradient(0deg, rgba(255,255,255,.018) 0 1px, transparent 1px 7px),
+    linear-gradient(180deg, #1b150c 0%, #100c07 55%, #080706 100%);
+  box-shadow:
+    0 0 0 3px #050606,
+    0 0 0 6px rgba(167, 124, 44, .45),
+    0 24px 55px rgba(0,0,0,.72),
+    inset 0 0 70px rgba(0,0,0,.68);
+}
+
+.egypt-machine::before,
+.egypt-machine::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 58px;
+  pointer-events: none;
+  z-index: 1;
+  background:
+    linear-gradient(90deg, rgba(0,0,0,.45), transparent 28%, rgba(255,218,125,.08) 50%, transparent 72%, rgba(0,0,0,.5)),
+    repeating-linear-gradient(0deg, #18120a 0 10px, #2a1d0d 10px 14px, #151008 14px 26px);
+  border-inline: 1px solid rgba(215, 172, 73, .38);
+  box-shadow: inset 0 0 18px rgba(0,0,0,.8);
+}
+
+.egypt-machine::before { left: 8px; }
+.egypt-machine::after { right: 8px; }
+
+.egypt-side-decor {
+  color: #d9b55c;
+  text-shadow: 0 0 8px rgba(77, 221, 232, .65);
+  opacity: .82;
+}
+
+.egypt-frame-bulbs span {
+  width: 4px;
+  height: 4px;
+  border-radius: 0;
+  transform: rotate(45deg);
+  background: #46c9d8;
+  box-shadow: 0 0 8px rgba(70, 201, 216, .85);
+  animation: egyptRunePulse 2.4s ease-in-out infinite alternate;
+}
+
+.egypt-reels {
+  background:
+    repeating-linear-gradient(90deg, rgba(255,255,255,.025) 0 1px, transparent 1px 11px),
+    linear-gradient(180deg, #171712, #080b0b 48%, #17120a);
+  border: 6px solid #8b6727;
+  box-shadow:
+    0 0 0 3px #050706,
+    0 0 0 6px #d5b052,
+    inset 0 0 35px rgba(0,0,0,.88),
+    0 0 28px rgba(56, 188, 207, .18);
+}
+
+.egypt-reel {
+  background:
+    linear-gradient(180deg, rgba(255,255,255,.045), transparent 18% 82%, rgba(0,0,0,.36)),
+    repeating-linear-gradient(0deg, #22231d 0 1px, #171814 1px 8px);
+  border-color: rgba(198, 154, 60, .72);
+}
+
+.egypt-symbol {
+  color: #fff0bd;
+  text-shadow:
+    0 2px 0 rgba(0,0,0,.9),
+    0 0 7px rgba(219, 172, 65, .24);
+  filter: drop-shadow(0 5px 3px rgba(0,0,0,.58));
+}
+
+.egypt-symbol:nth-child(even) {
+  background: rgba(255,255,255,.018);
+}
+
+.egypt-wild-symbol {
+  color: #5ad6e5;
+  text-shadow: 0 0 8px #2bb3c8, 0 0 18px rgba(43,179,200,.8);
+  animation: egyptSacredGlow 1.2s ease-in-out infinite alternate;
+}
+
+.egypt-scatter-symbol {
+  color: #ffd45e;
+  text-shadow: 0 0 9px #ffcc35, 0 0 22px rgba(255,146,18,.85);
+  animation: egyptEyePulse 1s ease-in-out infinite alternate;
+}
+
+.egypt-control-deck {
+  background:
+    repeating-linear-gradient(90deg, rgba(255,255,255,.02) 0 1px, transparent 1px 9px),
+    linear-gradient(180deg, #251b0c, #0d0b08);
+  border: 2px solid #8a6727;
+  box-shadow: inset 0 0 18px rgba(0,0,0,.75), 0 8px 20px rgba(0,0,0,.45);
+}
+
+.egypt-spin-button {
+  border: 2px solid #d8b04c;
+  color: #fff2b9;
+  background:
+    radial-gradient(circle at 50% 30%, rgba(87, 214, 227, .3), transparent 35%),
+    linear-gradient(180deg, #164e59 0%, #0a3037 55%, #06191d 100%);
+  box-shadow:
+    inset 0 0 0 3px rgba(3,10,12,.75),
+    inset 0 0 18px rgba(91,218,229,.2),
+    0 4px 0 #041013,
+    0 0 22px rgba(74, 205, 220, .28);
+  text-shadow: 0 1px 0 #000, 0 0 8px rgba(255,215,99,.42);
+  animation: egyptSpinBreath 1.7s ease-in-out infinite alternate;
+}
+
+.egypt-small-button,
+.egypt-back-button,
+.egypt-logout-button {
+  background: linear-gradient(180deg, #2a2114, #0e0b08);
+  border-color: rgba(208, 166, 69, .7);
+  color: #f8e3a5;
+}
+
+.egypt-message {
+  color: #ead79a;
+  text-shadow: 0 0 8px rgba(216, 169, 60, .28);
+}
+
+.egypt-phase-stamp,
+.egypt-help {
+  color: rgba(211, 180, 106, .67);
+}
+
+.egypt-premium-flash {
+  background: radial-gradient(circle, rgba(76, 225, 237, .32), rgba(255,190,63,.14) 30%, transparent 66%);
+}
+
+.egypt-coin-rain span {
+  color: #45cddd;
+  text-shadow: 0 0 10px rgba(69,205,221,.9);
+}
+
+@keyframes egyptSandDrift {
+  from { transform: translate3d(-14px, 8px, 0) scale(1); }
+  to { transform: translate3d(18px, -8px, 0) scale(1.08); }
+}
+
+@keyframes egyptRunePulse {
+  from { opacity: .32; filter: brightness(.8); }
+  to { opacity: .95; filter: brightness(1.3); }
+}
+
+@keyframes egyptSacredGlow {
+  from { filter: brightness(.92) drop-shadow(0 0 2px rgba(73,212,227,.4)); }
+  to { filter: brightness(1.18) drop-shadow(0 0 11px rgba(73,212,227,.95)); }
+}
+
+@keyframes egyptEyePulse {
+  from { transform: scale(.97); filter: brightness(.95); }
+  to { transform: scale(1.04); filter: brightness(1.22); }
+}
+
+@keyframes egyptSpinBreath {
+  from { filter: brightness(.96); transform: translateY(0); }
+  to { filter: brightness(1.13); transform: translateY(-1px); }
+}
+
+@media (max-width: 700px) {
+  .egypt-machine::before,
+  .egypt-machine::after {
+    width: 24px;
+    opacity: .65;
+  }
+
+  .egypt-page::before {
+    opacity: .18;
+  }
+
+  .egypt-cloud,
+  .egypt-spotlight {
+    opacity: .1;
+  }
+}
+
+
+/* =========================================================
+   EGYPTIAN GOLD — RELIQUIAS Y PREMIOS (acabado final)
+   Solo estética. No modifica lógica, tamaños ni responsive.
+   ========================================================= */
+
+.egypt-symbol {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.egypt-symbol::before {
+  content: "";
+  position: absolute;
+  inset: 8% 12%;
+  z-index: -1;
+  border: 1px solid rgba(225, 188, 86, .22);
+  border-radius: 48% 48% 42% 42%;
+  background:
+    radial-gradient(circle at 48% 30%, rgba(255, 244, 188, .11), transparent 42%),
+    linear-gradient(145deg, rgba(91, 68, 29, .30), rgba(9, 11, 10, .12));
+  box-shadow: inset 0 0 12px rgba(0,0,0,.42);
+  opacity: .82;
+}
+
+.egypt-symbol::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  background: linear-gradient(115deg, transparent 30%, rgba(255,248,205,.10) 48%, transparent 63%);
+  transform: translateX(-145%);
+  opacity: .65;
+}
+
+.egypt-winning-symbol::after,
+.egypt-scatter-symbol::after,
+.egypt-wild-symbol::after {
+  animation: egyptRelicSweep 1.25s ease-in-out infinite;
+}
+
+.egypt-symbol-glyph {
+  position: relative;
+  z-index: 1;
+  display: inline-grid;
+  place-items: center;
+  transform: translateZ(0);
+  filter: drop-shadow(0 5px 3px rgba(0,0,0,.62));
+}
+
+.egypt-symbol-camel .egypt-symbol-glyph { color: #d9b56b; }
+.egypt-symbol-cobra .egypt-symbol-glyph { color: #77c49b; }
+.egypt-symbol-falcon .egypt-symbol-glyph { color: #d8e0dc; }
+.egypt-symbol-vase .egypt-symbol-glyph { color: #e4b33f; }
+.egypt-symbol-papyrus .egypt-symbol-glyph { color: #e7d29a; }
+.egypt-symbol-crown .egypt-symbol-glyph { color: #f2cf63; }
+.egypt-symbol-gem .egypt-symbol-glyph { color: #56d2dc; }
+.egypt-symbol-sun .egypt-symbol-glyph { color: #ffd23c; }
+
+.egypt-symbol-wild::before {
+  border-color: rgba(75, 216, 229, .58);
+  background: radial-gradient(circle, rgba(46, 197, 215, .28), rgba(3, 21, 25, .72) 68%);
+  box-shadow: inset 0 0 18px rgba(74, 215, 229, .22), 0 0 16px rgba(55, 198, 216, .18);
+}
+
+.egypt-symbol-scatter::before {
+  border-color: rgba(255, 211, 84, .68);
+  background: radial-gradient(circle, rgba(255, 201, 61, .30), rgba(39, 20, 4, .82) 70%);
+  box-shadow: inset 0 0 18px rgba(255, 184, 36, .20), 0 0 16px rgba(255, 185, 40, .18);
+}
+
+/* Losa ceremonial: reemplaza el aspecto de popup moderno */
+.egypt-inline-win {
+  min-width: 230px;
+  padding: 15px 30px 13px;
+  border: 0;
+  border-radius: 2px;
+  color: #fff0ad;
+  background:
+    linear-gradient(90deg, transparent 0 4%, rgba(213,171,67,.94) 4% 5%, transparent 5% 95%, rgba(213,171,67,.94) 95% 96%, transparent 96%),
+    repeating-linear-gradient(0deg, rgba(255,255,255,.025) 0 1px, transparent 1px 7px),
+    linear-gradient(180deg, #463315 0%, #1a150d 48%, #080d0e 100%);
+  clip-path: polygon(7% 0, 93% 0, 100% 18%, 96% 50%, 100% 82%, 93% 100%, 7% 100%, 0 82%, 4% 50%, 0 18%);
+  box-shadow:
+    inset 0 0 0 2px rgba(245,210,113,.78),
+    inset 0 0 22px rgba(0,0,0,.78),
+    0 0 0 4px rgba(35,24,8,.82),
+    0 12px 34px rgba(0,0,0,.62),
+    0 0 24px rgba(232,183,63,.30);
+  text-shadow: 0 2px 0 #000, 0 0 11px rgba(255,210,93,.55);
+}
+
+.egypt-inline-win::before,
+.egypt-inline-win::after {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #e3bd58;
+  font-size: 22px;
+  text-shadow: 0 0 8px rgba(255,205,74,.52);
+}
+.egypt-inline-win::before { content: "𓂀"; left: 12px; }
+.egypt-inline-win::after { content: "𓆣"; right: 12px; }
+
+.egypt-inline-win span,
+.egypt-inline-win small {
+  color: #d5bc76;
+  font-family: Georgia, "Times New Roman", serif;
+  letter-spacing: .19em;
+}
+
+.egypt-inline-win strong {
+  color: #fff1a6;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 38px;
+}
+
+/* Lluvia de reliquias: elimina los signos de dinero azules */
+.egypt-coin-rain span {
+  color: #e7c25d;
+  font-family: Georgia, "Times New Roman", serif;
+  text-shadow:
+    0 2px 2px rgba(0,0,0,.75),
+    0 0 8px rgba(255,210,89,.80),
+    0 0 18px rgba(255,151,22,.38);
+  filter: drop-shadow(0 5px 4px rgba(0,0,0,.48));
+}
+
+.egypt-premium-flash {
+  background:
+    radial-gradient(circle at 50% 42%, rgba(255,227,130,.30), transparent 30%),
+    radial-gradient(circle, rgba(37,174,188,.14), rgba(255,190,63,.08) 38%, transparent 68%);
+}
+
+@keyframes egyptRelicSweep {
+  0%, 30% { transform: translateX(-145%); opacity: 0; }
+  52% { opacity: .78; }
+  75%, 100% { transform: translateX(145%); opacity: 0; }
+}
+
+@media (max-width: 760px) {
+  .egypt-inline-win {
+    min-width: 185px;
+    padding: 10px 24px 9px;
+  }
+  .egypt-inline-win::before,
+  .egypt-inline-win::after { font-size: 16px; }
+  .egypt-inline-win strong { font-size: 29px; }
+  .egypt-symbol::before { inset: 7% 9%; }
+}
+
+
+/* =========================================================
+   TABLERO DE ESTADO — CRÉDITOS / APUESTA / PREMIO / BONUS
+   ========================================================= */
+.egypt-status-board {
+  position: relative;
+  z-index: 12;
+  width: min(870px, 80vw);
+  min-height: 46px;
+  margin: -2px auto 1px;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 7px;
+}
+
+.egypt-status-card {
+  position: relative;
+  min-width: 0;
+  min-height: 46px;
+  display: grid;
+  place-content: center;
+  gap: 1px;
+  overflow: hidden;
+  text-align: center;
+  border: 1px solid rgba(218, 177, 72, .58);
+  border-radius: 8px 8px 3px 3px;
+  background:
+    linear-gradient(90deg, rgba(255,255,255,.035), transparent 24% 76%, rgba(255,255,255,.025)),
+    repeating-linear-gradient(0deg, rgba(255,255,255,.018) 0 1px, transparent 1px 6px),
+    linear-gradient(180deg, rgba(43,32,14,.98), rgba(9,10,9,.98));
+  box-shadow:
+    inset 0 0 0 2px rgba(17,11,5,.82),
+    inset 0 8px 18px rgba(255,215,102,.035),
+    0 3px 9px rgba(0,0,0,.42);
+}
+
+.egypt-status-card::before,
+.egypt-status-card::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  width: 4px;
+  height: 18px;
+  transform: translateY(-50%);
+  background: linear-gradient(#f6d46d, #6e4815);
+  box-shadow: 0 0 7px rgba(222,177,65,.35);
+}
+
+.egypt-status-card::before { left: 5px; }
+.egypt-status-card::after { right: 5px; }
+
+.egypt-status-card span {
+  color: rgba(255, 238, 188, .58);
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 8px;
+  font-weight: 900;
+  line-height: 1;
+  letter-spacing: .15em;
+  white-space: nowrap;
+}
+
+.egypt-status-card strong {
+  color: #fff0ad;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(17px, 1.6vw, 22px);
+  font-weight: 900;
+  line-height: 1;
+  text-shadow:
+    0 1px 0 #000,
+    0 0 8px rgba(224, 174, 54, .38);
+}
+
+.egypt-status-credits strong { color: #fff2bd; }
+.egypt-status-bet strong { color: #7de5ec; }
+.egypt-status-prize strong { color: #ffd45d; }
+.egypt-status-free strong { color: #a8f3ef; }
+
+.egypt-status-prize strong:not(:empty),
+.egypt-status-free strong:not(:empty) {
+  transition: color .2s ease, text-shadow .2s ease;
+}
+
+.egypt-machine-winning .egypt-status-prize {
+  animation: egyptStatusPrize 1s ease-in-out infinite alternate;
+}
+
+@keyframes egyptStatusPrize {
+  from {
+    filter: brightness(1);
+    box-shadow: inset 0 0 0 2px rgba(17,11,5,.82), 0 3px 9px rgba(0,0,0,.42);
+  }
+  to {
+    filter: brightness(1.17);
+    box-shadow:
+      inset 0 0 0 2px rgba(17,11,5,.82),
+      0 0 13px rgba(255,202,70,.42);
+  }
+}
+
+@media (max-width: 760px) {
+  .egypt-status-board {
+    width: 100%;
+    min-height: 36px;
+    margin: -1px auto 0;
+    gap: 3px;
+  }
+
+  .egypt-status-card {
+    min-height: 36px;
+    border-radius: 6px 6px 2px 2px;
+  }
+
+  .egypt-status-card::before,
+  .egypt-status-card::after {
+    width: 2px;
+    height: 13px;
+  }
+
+  .egypt-status-card::before { left: 2px; }
+  .egypt-status-card::after { right: 2px; }
+
+  .egypt-status-card span {
+    font-size: 5.4px;
+    letter-spacing: .06em;
+  }
+
+  .egypt-status-card strong {
+    font-size: clamp(12px, 4vw, 16px);
+  }
+}
+
+@media (max-width: 380px) {
+  .egypt-status-card span {
+    font-size: 4.8px;
+  }
+
+  .egypt-status-card strong {
+    font-size: 12px;
+  }
+}
+
+@media (max-width: 950px) and (orientation: landscape) and (max-height: 520px) {
+  .egypt-status-board {
+    width: min(720px, 82vw);
+    min-height: 30px;
+    gap: 4px;
+  }
+
+  .egypt-status-card {
+    min-height: 30px;
+  }
+
+  .egypt-status-card span { font-size: 5px; }
+  .egypt-status-card strong { font-size: 13px; }
 }
