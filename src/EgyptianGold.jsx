@@ -522,101 +522,78 @@ export default function EgyptianGold({
   }
 
   function playSpinSound() {
-    [350, 420, 500].forEach(
-      (frequency, index) => {
-        playTone({
-          frequency,
-          duration: 0.1,
-          volume: 0.1,
-          type: "square",
-          delay: index * 0.08,
-        });
-      }
-    );
-  }
-
-  function playReelStopSound(index) {
+  // Sonido más grave, metálico y egipcio
+  [110, 165, 220, 330].forEach((frequency, index) => {
     playTone({
-      frequency: 450 + index * 90,
-      duration: 0.12,
-      volume: 0.13,
+      frequency,
+      duration: 0.16,
+      volume: 0.065,
+      type: index % 2 === 0 ? "sine" : "triangle",
+      delay: index * 0.055,
+    });
+  });
+}
+
+function playReelStopSound(index) {
+  // Golpe corto tipo gong, distinto para cada rodillo
+  const notes = [196, 220, 247, 294, 330];
+
+  playTone({
+    frequency: notes[index] ?? 220,
+    duration: 0.22,
+    volume: 0.11,
+    type: "sine",
+  });
+
+  playTone({
+    frequency: (notes[index] ?? 220) / 2,
+    duration: 0.14,
+    volume: 0.055,
+    type: "triangle",
+    delay: 0.025,
+  });
+}
+
+function playWinSound(bigWin = false) {
+  // Escala oriental / egipcia
+  const notes = bigWin
+    ? [220, 261.63, 293.66, 349.23, 392, 523.25]
+    : [261.63, 293.66, 349.23, 392];
+
+  notes.forEach((frequency, index) => {
+    playTone({
+      frequency,
+      duration: bigWin ? 0.34 : 0.25,
+      volume: bigWin ? 0.12 : 0.095,
       type: "triangle",
+      delay: index * 0.105,
     });
-  }
+  });
+}
 
-  function playWinSound(bigWin = false) {
-    const notes = bigWin
-      ? [523, 659, 784, 1046, 1318]
-      : [523, 659, 784];
+function playBonusSound() {
+  // Entrada de bonus tipo ceremonia egipcia
+  const notes = [
+    146.83,
+    174.61,
+    220,
+    261.63,
+    293.66,
+    349.23,
+    440,
+    523.25,
+  ];
 
-    notes.forEach((frequency, index) => {
-      playTone({
-        frequency,
-        duration: 0.25,
-        volume: 0.15,
-        type: "triangle",
-        delay: index * 0.12,
-      });
-    });
-  }
-
-  function playBonusSound() {
-    [300, 400, 500, 650, 850, 1100].forEach(
-      (frequency, index) => {
-        playTone({
-          frequency,
-          duration: 0.25,
-          volume: 0.16,
-          type: "square",
-          delay: index * 0.11,
-        });
-      }
-    );
-  }
-
-  async function refreshCredits() {
-    const { data, error } = await supabase
-      .from("players")
-      .select("credits")
-      .eq("id", player.id)
-      .single();
-
-    if (!error && data) {
-      setCredits(data.credits);
-      onCreditsChange?.(data.credits);
-    }
-  }
-
-  function increaseBet() {
-    if (spinning || freeSpins > 0) return;
-
-    setBetIndex((current) =>
-      Math.min(
-        current + 1,
-        BET_OPTIONS.length - 1
-      )
-    );
-
+  notes.forEach((frequency, index) => {
     playTone({
-      frequency: 700,
-      duration: 0.07,
-      type: "square",
+      frequency,
+      duration: 0.38,
+      volume: index < 2 ? 0.08 : 0.12,
+      type: index % 3 === 0 ? "sine" : "triangle",
+      delay: index * 0.115,
     });
-  }
-
-  function decreaseBet() {
-    if (spinning || freeSpins > 0) return;
-
-    setBetIndex((current) =>
-      Math.max(current - 1, 0)
-    );
-
-    playTone({
-      frequency: 450,
-      duration: 0.07,
-      type: "square",
-    });
-  }
+  });
+}
 
   async function spin() {
     if (
