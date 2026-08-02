@@ -112,8 +112,8 @@ const games = [
     subtitle: "TESOROS DEL NILO",
     description: "Faraones, pirámides y riquezas escondidas.",
     theme: "amber",
-    badge: "PRÓXIMAMENTE",
-    available: false,
+    badge: "NUEVO",
+    available: true,
   },
   {
     id: "wild-west",

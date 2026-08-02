@@ -8,6 +8,7 @@ import Wheel from "./Wheel";
 import Lobby from "./Lobby";
 import Admin from "./Admin";
 import Cashier from "./Cashier";
+import EgyptianGold from "./EgyptianGold";
 
 export default function App() {
   const [session, setSession] = useState(null);
@@ -267,6 +268,21 @@ if (screen === "wheel") {
           credits,
         }))
       }
+      onLogout={() => supabase.auth.signOut()}
+    />
+  );
+}
+if (screen === "egyptian-gold") {
+  return (
+    <EgyptianGold
+      player={player}
+      onCreditsChange={(credits) =>
+        setPlayer((current) => ({
+          ...current,
+          credits,
+        }))
+      }
+      onBack={() => setScreen("lobby")}
       onLogout={() => supabase.auth.signOut()}
     />
   );

@@ -1111,3 +1111,15 @@ button:disabled { opacity: .42; cursor: not-allowed; }
   .egypt-status-card span { font-size: 5px; }
   .egypt-status-card strong { font-size: 13px; }
 }
+/* FORZAR TABLERO DE ESTADO DE EGYPTIAN GOLD */
+.egypt-status-board {
+  position: relative !important;
+  z-index: 50 !important;
+  display: grid !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  width: min(870px, 80vw) !important;
+  min-height: 46px !important;
+  height: auto !important;
+  overflow: visible !important;
+}
