@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { supabase } from "./supabase";
 import "./EgyptianGold.css";
-import EgyptHeader from "./egypt/EgyptHeader";
 import { EGYPT_CONFIG } from "./machines/egypt/egyptConfig";
 
 const ROWS = EGYPT_CONFIG.ROWS;
@@ -1177,38 +1176,55 @@ spinTickerRef.current = window.setInterval(() => {
 
       
 
-        <EgyptHeader
-  displayCredits={displayCredits}
-  bet={bet}
-  lastPrize={lastPrize}
-  freeSpins={freeSpins}
-  soundEnabled={soundEnabled}
-  onToggleSound={() =>
-    setSoundEnabled((current) => !current)
-  }
-/>
+        <header className="egypt-temple-header">
+          <div className="egypt-top-actions">
+            <button
+              type="button"
+              className="egypt-back-button"
+              onClick={onBack}
+              disabled={spinning}
+            >
+              ← LOBBY
+            </button>
 
-        <section className="egypt-status-board" aria-label="Estado del juego">
-          <div className="egypt-status-card egypt-status-credits">
-            <span>CRÉDITOS</span>
-            <strong>{displayCredits.toLocaleString("es-AR")}</strong>
+            <div className="egypt-title-block">
+              <span className="egypt-title-kicker">EL TEMPLO DESPIERTA</span>
+              <h1>EGYPTIAN GOLD</h1>
+              <span className="egypt-title-subtitle">TESOROS DEL FARAÓN</span>
+            </div>
+
+            <button
+              type="button"
+              className="egypt-logout-button"
+              onClick={onLogout}
+              disabled={spinning}
+            >
+              SALIR
+            </button>
           </div>
 
-          <div className="egypt-status-card egypt-status-bet">
-            <span>APUESTA</span>
-            <strong>{bet.toLocaleString("es-AR")}</strong>
-          </div>
+          <section className="egypt-status-board" aria-label="Estado del juego">
+            <div className="egypt-status-card egypt-status-credits">
+              <span>CRÉDITOS</span>
+              <strong>{displayCredits.toLocaleString("es-AR")}</strong>
+            </div>
 
-          <div className="egypt-status-card egypt-status-prize">
-            <span>ÚLTIMO PREMIO</span>
-            <strong>{lastPrize.toLocaleString("es-AR")}</strong>
-          </div>
+            <div className="egypt-status-card egypt-status-bet">
+              <span>APUESTA</span>
+              <strong>{bet.toLocaleString("es-AR")}</strong>
+            </div>
 
-          <div className="egypt-status-card egypt-status-free">
-            <span>GIROS GRATIS</span>
-            <strong>{freeSpins.toLocaleString("es-AR")}</strong>
-          </div>
-        </section>
+            <div className="egypt-status-card egypt-status-prize">
+              <span>PREMIO</span>
+              <strong>{lastPrize.toLocaleString("es-AR")}</strong>
+            </div>
+
+            <div className="egypt-status-card egypt-status-free">
+              <span>GIROS</span>
+              <strong>{freeSpins.toLocaleString("es-AR")}</strong>
+            </div>
+          </section>
+        </header>
 
         <div className="egypt-reels">
           <div className="egypt-reels-glass" aria-hidden="true" />
@@ -1304,24 +1320,21 @@ spinTickerRef.current = window.setInterval(() => {
         </div>
 
         <div className="egypt-control-deck">
-          <div className="egypt-control-lights" aria-hidden="true">
-            {Array.from({ length: 8 }).map((_, index) => (
-              <span key={index} />
-            ))}
-          </div>
+          <div className="egypt-control-ornament" aria-hidden="true">𓆣</div>
 
-          <div className="egypt-controls">
           <button
             type="button"
-            className="egypt-small-button"
+            className="egypt-small-button egypt-bet-down"
             onClick={decreaseBet}
             disabled={
               spinning ||
               freeSpins > 0 ||
               betIndex === 0
             }
+            aria-label="Bajar apuesta"
           >
-            −
+            <span>−</span>
+            <small>APUESTA</small>
           </button>
 
           <button
@@ -1337,47 +1350,32 @@ spinTickerRef.current = window.setInterval(() => {
               (!freeSpins && credits < bet)
             }
           >
-            {spinning
-              ? "GIRANDO..."
-              : freeSpins > 0
-              ? "GIRO GRATIS"
-              : "GIRAR"}
+            <span className="egypt-spin-eye">𓂀</span>
+            <span className="egypt-spin-label">
+              {spinning
+                ? "GIRANDO"
+                : freeSpins > 0
+                ? "GRATIS"
+                : "GIRAR"}
+            </span>
           </button>
 
           <button
             type="button"
-            className="egypt-small-button"
+            className="egypt-small-button egypt-bet-up"
             onClick={increaseBet}
             disabled={
               spinning ||
               freeSpins > 0 ||
-              betIndex ===
-                BET_OPTIONS.length - 1
+              betIndex === BET_OPTIONS.length - 1
             }
+            aria-label="Subir apuesta"
           >
-            +
-          </button>
-          </div>
-        </div>
-
-        <div className="egypt-bottom-actions">
-          <button
-            type="button"
-            className="egypt-back-button"
-            onClick={onBack}
-            disabled={spinning}
-          >
-            ← LOBBY
+            <span>+</span>
+            <small>APUESTA</small>
           </button>
 
-          <button
-            type="button"
-            className="egypt-logout-button"
-            onClick={onLogout}
-            disabled={spinning}
-          >
-            SALIR
-          </button>
+          <div className="egypt-control-ornament egypt-control-ornament-right" aria-hidden="true">𓋹</div>
         </div>
 
         <div className="egypt-help">
