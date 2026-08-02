@@ -600,9 +600,26 @@ export default function Wheel({
             </section>
           </aside>
 
-          <div className="fortune-wheel-main-area">
-            <div className="fortune-wheel-stage">
-              <div className="fortune-wheel-pointer" aria-hidden="true">
+          <div
+            className={`fortune-wheel-main-area${
+              result?.jackpot
+                ? " is-jackpot-result"
+                : result?.bonus
+                  ? " is-bonus-result"
+                  : result && lastPrize > 0
+                    ? " is-win-result"
+                    : result?.lossBet || result?.loss > 0
+                      ? " is-loss-result"
+                      : ""
+            }`}
+          >
+            <div
+              className={`fortune-wheel-stage${spinning ? " is-spinning" : ""}`}
+            >
+              <div
+                className={`fortune-wheel-pointer${spinning ? " is-spinning" : ""}`}
+                aria-hidden="true"
+              >
                 ▼
               </div>
 
@@ -674,7 +691,15 @@ export default function Wheel({
             </div>
 
             <div
-              className={`fortune-wheel-result${lastPrize > 0 ? " is-win" : ""}`}
+              className={`fortune-wheel-result${lastPrize > 0 ? " is-win" : ""}${
+                result?.jackpot
+                  ? " is-jackpot"
+                  : result?.bonus
+                    ? " is-bonus"
+                    : result?.lossBet || result?.loss > 0
+                      ? " is-loss"
+                      : ""
+              }`}
               aria-live="polite"
             >
               {result

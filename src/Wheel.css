@@ -2497,3 +2497,230 @@ will-change: background-position;
     animation: none !important;
   }
 }
+
+/* =========================================================
+   FORTUNE WHEEL — TERMINACIÓN VISUAL PREMIUM
+   Solo efectos estéticos. No modifica layout, apuestas ni lógica.
+   ========================================================= */
+
+/* Aguja con vibración mecánica durante el giro. */
+.fortune-wheel-pointer.is-spinning {
+  transform-origin: 50% 18%;
+  animation: wheelPointerMechanical 0.11s steps(2, end) infinite;
+}
+
+/* El escenario gana energía mientras gira, sin cambiar su tamaño real. */
+.fortune-wheel-stage.is-spinning {
+  animation: wheelStageSpinEnergy 0.72s ease-in-out infinite alternate;
+}
+
+/* Flash ambiental al resolver un premio. */
+.fortune-wheel-main-area.is-win-result::before,
+.fortune-wheel-main-area.is-bonus-result::before,
+.fortune-wheel-main-area.is-jackpot-result::before {
+  animation: wheelResultFlash 0.9s ease-out 1, wheelAmbientPulse 4.8s ease-in-out 0.9s infinite alternate;
+}
+
+.fortune-wheel-main-area.is-jackpot-result {
+  box-shadow:
+    inset 0 0 42px rgba(255, 197, 44, 0.28),
+    0 0 26px rgba(255, 194, 35, 0.32);
+  animation: wheelJackpotScene 1.15s ease-in-out 2 alternate;
+}
+
+.fortune-wheel-main-area.is-loss-result {
+  box-shadow: inset 0 0 34px rgba(208, 24, 60, 0.14);
+}
+
+/* Resultado: entrada corta y diferenciada. */
+.fortune-wheel-result.is-win {
+  animation: wheelResultPop 0.52s cubic-bezier(0.22, 1.45, 0.44, 1) 1,
+             wheelWinText 0.72s ease-in-out 0.52s infinite alternate;
+}
+
+.fortune-wheel-result.is-bonus {
+  color: #fff1a2;
+  text-shadow: 0 0 8px #ffdf66, 0 0 20px rgba(255, 116, 35, 0.72);
+}
+
+.fortune-wheel-result.is-jackpot {
+  color: #fff7c4;
+  letter-spacing: 0.05em;
+  text-shadow:
+    0 0 7px #fff,
+    0 0 16px #ffd34f,
+    0 0 30px rgba(255, 86, 31, 0.88);
+  animation: wheelJackpotText 0.42s ease-in-out 5 alternate;
+}
+
+.fortune-wheel-result.is-loss {
+  color: #ff9aa9;
+  text-shadow: 0 0 12px rgba(222, 35, 69, 0.56);
+  animation: wheelLossNudge 0.34s ease-out 1;
+}
+
+/* Brillo diagonal discreto sobre GIRAR. */
+.fortune-wheel-spin-button {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.fortune-wheel-spin-button::after {
+  content: "";
+  position: absolute;
+  top: -70%;
+  left: -42%;
+  width: 30%;
+  height: 240%;
+  z-index: -1;
+  pointer-events: none;
+  transform: rotate(22deg);
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.34),
+    rgba(237, 255, 206, 0.68),
+    transparent
+  );
+  filter: blur(2px);
+  animation: wheelSpinButtonSweep 4.8s ease-in-out infinite;
+}
+
+/* Rebote más natural de la ficha elegida. */
+.fortune-wheel-chip.is-selected {
+  animation: wheelChipCasinoBounce 0.78s ease-in-out infinite alternate;
+}
+
+/* El último movimiento entra con suavidad. */
+.fortune-wheel-history-item:first-child {
+  animation: wheelHistoryEnter 0.34s ease-out 1;
+}
+
+/* Línea LED sutil en la cabecera de la máquina. */
+.fortune-wheel-topbar::after {
+  content: "";
+  position: absolute;
+  left: 15%;
+  right: 15%;
+  bottom: -1px;
+  height: 1px;
+  pointer-events: none;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 82, 116, 0.72),
+    rgba(255, 226, 116, 0.95),
+    rgba(73, 192, 255, 0.72),
+    transparent
+  );
+  box-shadow: 0 0 8px rgba(255, 207, 92, 0.58);
+  animation: wheelHeaderLed 3.4s ease-in-out infinite alternate;
+}
+
+@keyframes wheelPointerMechanical {
+  0% { transform: translateX(-50%) rotate(-3deg); }
+  100% { transform: translateX(-50%) rotate(4deg); }
+}
+
+@keyframes wheelStageSpinEnergy {
+  from {
+    filter:
+      brightness(1)
+      drop-shadow(0 0 12px rgba(255, 239, 151, 0.54))
+      drop-shadow(0 0 26px rgba(255, 170, 25, 0.36));
+  }
+  to {
+    filter:
+      brightness(1.10)
+      drop-shadow(0 0 20px rgba(255, 246, 181, 0.82))
+      drop-shadow(0 0 42px rgba(255, 139, 20, 0.54));
+  }
+}
+
+@keyframes wheelResultFlash {
+  0% { opacity: 0.62; filter: brightness(0.94); }
+  28% { opacity: 1; filter: brightness(1.65) saturate(1.35); }
+  100% { opacity: 0.92; filter: brightness(1.08); }
+}
+
+@keyframes wheelJackpotScene {
+  from { filter: brightness(1) saturate(1); }
+  to { filter: brightness(1.16) saturate(1.28); }
+}
+
+@keyframes wheelResultPop {
+  0% { transform: scale(0.82); opacity: 0; }
+  70% { transform: scale(1.07); opacity: 1; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+@keyframes wheelJackpotText {
+  from { transform: scale(1); filter: brightness(1); }
+  to { transform: scale(1.07); filter: brightness(1.32); }
+}
+
+@keyframes wheelLossNudge {
+  0%, 100% { transform: translateX(0); }
+  30% { transform: translateX(-5px); }
+  65% { transform: translateX(5px); }
+}
+
+@keyframes wheelSpinButtonSweep {
+  0%, 66% { left: -42%; opacity: 0; }
+  72% { opacity: 1; }
+  92%, 100% { left: 122%; opacity: 0; }
+}
+
+@keyframes wheelChipCasinoBounce {
+  from { transform: translateY(-2px) scale(1.01); }
+  to { transform: translateY(-5px) scale(1.07); }
+}
+
+@keyframes wheelHistoryEnter {
+  from { transform: translateY(-7px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+@keyframes wheelHeaderLed {
+  from { opacity: 0.42; filter: saturate(0.85); }
+  to { opacity: 1; filter: saturate(1.35); }
+}
+
+/* En celular se conservan efectos cortos y livianos; sin partículas nuevas. */
+@media (max-width: 760px) {
+  .fortune-wheel-pointer.is-spinning {
+    animation-duration: 0.14s;
+  }
+
+  .fortune-wheel-main-area.is-jackpot-result {
+    box-shadow: inset 0 0 24px rgba(255, 197, 44, 0.22);
+  }
+
+  .fortune-wheel-spin-button::after {
+    animation-duration: 5.8s;
+  }
+
+  .fortune-wheel-topbar::after {
+    left: 24%;
+    right: 24%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fortune-wheel-pointer.is-spinning,
+  .fortune-wheel-stage.is-spinning,
+  .fortune-wheel-main-area.is-win-result::before,
+  .fortune-wheel-main-area.is-bonus-result::before,
+  .fortune-wheel-main-area.is-jackpot-result::before,
+  .fortune-wheel-main-area.is-jackpot-result,
+  .fortune-wheel-result.is-win,
+  .fortune-wheel-result.is-jackpot,
+  .fortune-wheel-result.is-loss,
+  .fortune-wheel-spin-button::after,
+  .fortune-wheel-chip.is-selected,
+  .fortune-wheel-history-item:first-child,
+  .fortune-wheel-topbar::after {
+    animation: none !important;
+  }
+}
