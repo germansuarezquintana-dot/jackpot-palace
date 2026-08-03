@@ -259,7 +259,17 @@ if (screen === "clown-party") {
 }
 if (screen === "wheel") {
   return (
-    <Wheel />
+    <Wheel
+      player={player}
+      onCreditsChange={(credits) =>
+        setPlayer((current) => ({
+          ...current,
+          credits,
+        }))
+      }
+      onBack={() => setScreen("lobby")}
+      onLogout={() => supabase.auth.signOut()}
+    />
   );
 }
 
