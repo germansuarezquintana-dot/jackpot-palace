@@ -862,39 +862,82 @@ spinTickerRef.current = window.setInterval(() => {
               );
             }
 
-            const {
-              data: resultData,
-              error: resultError,
-            } = await supabase.rpc(
-              "apply_game_result",
-              {
-                p_bet: bet,
-                p_win: prize.amount,
-                p_is_free_spin: isFreeSpin,
-              }
-            );
+            let resultTimeoutId;
 
-            if (resultError) {
-              console.error(resultError);
+            try {
+              const resultRequest = supabase.rpc(
+                "apply_game_result",
+                {
+                  p_bet: bet,
+                  p_win: prize.amount,
+                  p_is_free_spin: isFreeSpin,
+                }
+              );
+
+              const resultTimeout = new Promise((_, reject) => {
+                resultTimeoutId = window.setTimeout(() => {
+                  reject(
+                    new Error(
+                      "Tiempo de espera agotado al guardar la jugada"
+                    )
+                  );
+                }, 8000);
+              });
+
+              const {
+                data: resultData,
+                error: resultError,
+              } = await Promise.race([
+                resultRequest,
+                resultTimeout,
+              ]);
+
+              if (resultError) {
+                throw resultError;
+              }
+
+              if (resultData?.length) {
+                const onlineCredits =
+                  resultData[0].credits_after;
+
+                setCredits(onlineCredits);
+                onCreditsChange?.(
+                  onlineCredits
+                );
+              }
+            } catch (error) {
+              console.error(
+                "Error al finalizar la jugada:",
+                error
+              );
 
               setMessage(
-                "⚠️ No se pudo guardar la jugada. Actualizando saldo..."
+                "⚠️ La jugada terminó, pero el saldo está demorando en actualizarse"
               );
 
-              await refreshCredits();
-            } else if (resultData?.length) {
-              const onlineCredits =
-                resultData[0].credits_after;
+              refreshCredits().catch((refreshError) => {
+                console.error(
+                  "Error al actualizar créditos:",
+                  refreshError
+                );
+              });
+            } finally {
+              if (resultTimeoutId) {
+                clearTimeout(resultTimeoutId);
+              }
 
-              setCredits(onlineCredits);
-              onCreditsChange?.(
-                onlineCredits
+              setSpinning(false);
+              spinLockRef.current = false;
+              reelSpinningRef.current =
+                Array(COLUMNS).fill(false);
+              setReelSpinning(
+                Array(COLUMNS).fill(false)
               );
+              setReelStopping(
+                Array(COLUMNS).fill(false)
+              );
+              timeoutsRef.current = [];
             }
-
-            setSpinning(false);
-            spinLockRef.current = false;
-            timeoutsRef.current = [];
           }
         },
         stopTime
