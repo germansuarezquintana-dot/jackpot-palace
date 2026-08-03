@@ -635,9 +635,7 @@ export default function EgyptianGold({
     const isFreeSpin = freeSpins > 0;
 
     if (!isFreeSpin && credits < bet) {
-      setMessage(
-        "❌ No tenés créditos suficientes"
-      );
+      setMessage("❌ No tenés créditos suficientes");
 
       playTone({
         frequency: 150,
@@ -650,29 +648,6 @@ export default function EgyptianGold({
 
     spinLockRef.current = true;
     setSpinning(true);
-
-    // Respaldo global: no depende del último rodillo ni de Supabase.
-    // Si Safari pierde un temporizador, libera la máquina igualmente.
-    if (spinFailsafeRef.current) {
-      clearTimeout(spinFailsafeRef.current);
-    }
-
-    spinFailsafeRef.current = window.setTimeout(() => {
-      if (spinTickerRef.current) {
-        clearInterval(spinTickerRef.current);
-        spinTickerRef.current = null;
-      }
-
-      reelSpinningRef.current = Array(COLUMNS).fill(false);
-      setReelSpinning(Array(COLUMNS).fill(false));
-      setReelStopping(Array(COLUMNS).fill(false));
-      setSpinning(false);
-      spinLockRef.current = false;
-      spinFailsafeRef.current = null;
-      setMessage((current) =>
-        current === "Girando..." ? "¡Probá otro giro!" : current
-      );
-    }, 6500);
     setLastPrize(0);
     setWinningLines([]);
     setWinningCells([]);
@@ -682,18 +657,170 @@ export default function EgyptianGold({
     setAnimatedPrize(0);
 
     if (isFreeSpin) {
-      setFreeSpins((current) =>
-        Math.max(0, current - 1)
-      );
-
+      setFreeSpins((current) => Math.max(0, current - 1));
       setMessage("🎁 Giro gratis...");
     } else {
       setCredits((current) => current - bet);
       setMessage("Girando...");
     }
 
-    const allReelsSpinning = Array(COLUMNS).fill(true);
+    const finalGrid = createGrid();
+    const prize = calculatePrize(finalGrid, bet);
+    let spinFinalized = false;
 
+    const releaseMachine = () => {
+      if (spinTickerRef.current) {
+        clearInterval(spinTickerRef.current);
+        spinTickerRef.current = null;
+      }
+
+      if (spinFailsafeRef.current) {
+        clearTimeout(spinFailsafeRef.current);
+        spinFailsafeRef.current = null;
+      }
+
+      reelSpinningRef.current = Array(COLUMNS).fill(false);
+      setReelSpinning(Array(COLUMNS).fill(false));
+      setReelStopping(Array(COLUMNS).fill(false));
+      setSpinning(false);
+      spinLockRef.current = false;
+    };
+
+    const saveResultInBackground = () => {
+      let requestTimeoutId;
+
+      void (async () => {
+        try {
+          const resultRequest = supabase.rpc(
+            "apply_game_result",
+            {
+              p_bet: bet,
+              p_win: prize.amount,
+              p_is_free_spin: isFreeSpin,
+            }
+          );
+
+          const requestTimeout = new Promise((_, reject) => {
+            requestTimeoutId = window.setTimeout(() => {
+              reject(new Error("Tiempo de espera agotado al guardar la jugada"));
+            }, 5000);
+          });
+
+          const { data: resultData, error: resultError } =
+            await Promise.race([resultRequest, requestTimeout]);
+
+          if (resultError) throw resultError;
+
+          if (resultData?.length) {
+            const onlineCredits = resultData[0].credits_after;
+            setCredits(onlineCredits);
+            onCreditsChange?.(onlineCredits);
+          }
+        } catch (error) {
+          console.error("Error al guardar la jugada:", error);
+
+          // La máquina ya quedó liberada. Solo intentamos reconciliar
+          // el saldo sin volver a bloquear el juego.
+          refreshCredits().catch((refreshError) => {
+            console.error("Error al actualizar créditos:", refreshError);
+          });
+        } finally {
+          if (requestTimeoutId) clearTimeout(requestTimeoutId);
+        }
+      })();
+    };
+
+    const finalizeSpin = () => {
+      if (spinFinalized) return;
+      spinFinalized = true;
+
+      setGrid(finalGrid);
+      setLastPrize(prize.amount);
+      setWinningLines(prize.winningLines);
+      setWinningCells(prize.winningCells);
+      setScatterCells(prize.scatterCells);
+
+      // El crédito visual se actualiza inmediatamente. Supabase se
+      // reconcilia después, sin mantener la máquina en GIRANDO.
+      if (prize.amount > 0) {
+        setCredits((current) => current + prize.amount);
+      }
+
+      if (prize.freeSpinsWon > 0) {
+        setFreeSpins((current) => current + prize.freeSpinsWon);
+
+        setCelebration({
+          type: "bonus",
+          amount: prize.amount,
+          freeSpins: prize.freeSpinsWon,
+        });
+
+        setWinEffect({
+          level: "bonus",
+          amount: prize.amount,
+          id: Date.now(),
+        });
+
+        setMessage(`𓂀 BONUS: ${prize.freeSpinsWon} GIROS GRATIS`);
+        playBonusSound();
+      } else if (prize.amount > 0) {
+        const winLevel =
+          prize.amount >= bet * 25
+            ? "mega"
+            : prize.amount >= bet * 10
+            ? "big"
+            : prize.amount >= bet * 3
+            ? "medium"
+            : "small";
+
+        setWinEffect({
+          level: winLevel,
+          amount: prize.amount,
+          id: Date.now(),
+        });
+
+        if (prize.surpriseMultiplier > 1) {
+          setMessage(
+            `𓆣 MULTIPLICADOR ×${prize.surpriseMultiplier} — GANASTE ${prize.amount}`
+          );
+        } else {
+          setMessage(`✦ GANASTE ${prize.amount} CRÉDITOS`);
+        }
+
+        if (prize.amount >= bet * 10) {
+          setCelebration({
+            type: prize.amount >= bet * 25 ? "mega" : "big",
+            amount: prize.amount,
+            multiplier: prize.surpriseMultiplier,
+          });
+        }
+
+        playWinSound(prize.amount >= bet * 10);
+
+        const effectTimeoutId = window.setTimeout(() => {
+          setWinEffect((current) =>
+            current?.amount === prize.amount &&
+            current?.level !== "big" &&
+            current?.level !== "mega"
+              ? null
+              : current
+          );
+        }, winLevel === "small" ? 1800 : 2400);
+
+        timeoutsRef.current.push(effectTimeoutId);
+      } else {
+        setMessage(
+          isFreeSpin && freeSpins > 1
+            ? "🎁 Sigue el bonus"
+            : "¡Probá otro giro!"
+        );
+      }
+
+      releaseMachine();
+      saveResultInBackground();
+    };
+
+    const allReelsSpinning = Array(COLUMNS).fill(true);
     reelSpinningRef.current = allReelsSpinning;
     setReelSpinning(allReelsSpinning);
     setReelStopping(Array(COLUMNS).fill(false));
@@ -704,277 +831,81 @@ export default function EgyptianGold({
 
     let activeColumn = 0;
 
-spinTickerRef.current = window.setInterval(() => {
-  setGrid((currentGrid) => {
-    const updatedGrid = currentGrid.map((column) => [...column]);
+    spinTickerRef.current = window.setInterval(() => {
+      setGrid((currentGrid) => {
+        const updatedGrid = currentGrid.map((column) => [...column]);
 
-    for (let attempt = 0; attempt < COLUMNS; attempt += 1) {
-      const columnIndex = (activeColumn + attempt) % COLUMNS;
+        for (let attempt = 0; attempt < COLUMNS; attempt += 1) {
+          const columnIndex = (activeColumn + attempt) % COLUMNS;
 
-      if (reelSpinningRef.current[columnIndex]) {
-        const currentColumn = updatedGrid[columnIndex];
+          if (reelSpinningRef.current[columnIndex]) {
+            const currentColumn = updatedGrid[columnIndex];
 
-        updatedGrid[columnIndex] = [
-          randomSymbol(),
-          ...currentColumn.slice(0, ROWS - 1),
-        ];
+            updatedGrid[columnIndex] = [
+              randomSymbol(),
+              ...currentColumn.slice(0, ROWS - 1),
+            ];
 
-        activeColumn = (columnIndex + 1) % COLUMNS;
-        break;
-      }
-    }
+            activeColumn = (columnIndex + 1) % COLUMNS;
+            break;
+          }
+        }
 
-    return updatedGrid;
-  });
-}, 52);
+        return updatedGrid;
+      });
+    }, 52);
+
     playSpinSound();
 
-    const finalGrid = createGrid();
+    // Este respaldo llama a la MISMA finalización normal. No agrega
+    // segundos extra: solo actúa si Safari pierde uno de los timers.
+    spinFailsafeRef.current = window.setTimeout(finalizeSpin, 3200);
 
     for (
       let columnIndex = 0;
       columnIndex < COLUMNS;
       columnIndex += 1
     ) {
-      const stopTime =
-  950 + columnIndex * 260;
+      const stopTime = 950 + columnIndex * 260;
 
-      const timeoutId = window.setTimeout(
-        async () => {
-          setGrid((currentGrid) => {
-            const updatedGrid =
-              currentGrid.map((column) => [
-                ...column,
-              ]);
+      const timeoutId = window.setTimeout(() => {
+        if (spinFinalized) return;
 
-            updatedGrid[columnIndex] =
-              finalGrid[columnIndex];
+        setGrid((currentGrid) => {
+          const updatedGrid = currentGrid.map((column) => [...column]);
+          updatedGrid[columnIndex] = finalGrid[columnIndex];
+          return updatedGrid;
+        });
 
-            return updatedGrid;
-          });
+        reelSpinningRef.current[columnIndex] = false;
 
-          reelSpinningRef.current[columnIndex] = false;
+        setReelSpinning((current) => {
+          const updated = [...current];
+          updated[columnIndex] = false;
+          return updated;
+        });
 
-          setReelSpinning((current) => {
+        setReelStopping((current) => {
+          const updated = [...current];
+          updated[columnIndex] = true;
+          return updated;
+        });
+
+        const settleTimeoutId = window.setTimeout(() => {
+          setReelStopping((current) => {
             const updated = [...current];
             updated[columnIndex] = false;
             return updated;
           });
+        }, 520);
 
-          setReelStopping((current) => {
-            const updated = [...current];
-            updated[columnIndex] = true;
-            return updated;
-          });
+        timeoutsRef.current.push(settleTimeoutId);
+        playReelStopSound(columnIndex);
 
-          const settleTimeoutId = window.setTimeout(() => {
-            setReelStopping((current) => {
-              const updated = [...current];
-              updated[columnIndex] = false;
-              return updated;
-            });
-          }, 520);
-
-          timeoutsRef.current.push(settleTimeoutId);
-
-          playReelStopSound(columnIndex);
-
-          if (columnIndex === COLUMNS - 1) {
-            if (spinTickerRef.current) {
-              clearInterval(spinTickerRef.current);
-              spinTickerRef.current = null;
-            }
-
-            const prize = calculatePrize(
-              finalGrid,
-              bet
-            );
-
-            setGrid(finalGrid);
-            setLastPrize(prize.amount);
-            setWinningLines(
-              prize.winningLines
-            );
-            setWinningCells(
-              prize.winningCells
-            );
-            setScatterCells(
-              prize.scatterCells
-            );
-
-            if (prize.freeSpinsWon > 0) {
-              setFreeSpins(
-                (current) =>
-                  current +
-                  prize.freeSpinsWon
-              );
-
-              setCelebration({
-                type: "bonus",
-                amount: prize.amount,
-                freeSpins:
-                  prize.freeSpinsWon,
-              });
-
-              setWinEffect({
-                level: "bonus",
-                amount: prize.amount,
-                id: Date.now(),
-              });
-
-              setMessage(
-                `𓂀 BONUS: ${prize.freeSpinsWon} GIROS GRATIS`
-              );
-
-              playBonusSound();
-            } else if (prize.amount > 0) {
-              const winLevel =
-                prize.amount >= bet * 25
-                  ? "mega"
-                  : prize.amount >= bet * 10
-                  ? "big"
-                  : prize.amount >= bet * 3
-                  ? "medium"
-                  : "small";
-
-              setWinEffect({
-                level: winLevel,
-                amount: prize.amount,
-                id: Date.now(),
-              });
-
-              if (
-                prize.surpriseMultiplier > 1
-              ) {
-                setMessage(
-                  `𓆣 MULTIPLICADOR ×${prize.surpriseMultiplier} — GANASTE ${prize.amount}`
-                );
-              } else {
-                setMessage(
-                  `✦ GANASTE ${prize.amount} CRÉDITOS`
-                );
-              }
-
-              if (prize.amount >= bet * 10) {
-                setCelebration({
-                  type:
-                    prize.amount >= bet * 25
-                      ? "mega"
-                      : "big",
-                  amount: prize.amount,
-                  multiplier:
-                    prize.surpriseMultiplier,
-                });
-              }
-
-              playWinSound(
-                prize.amount >= bet * 10
-              );
-
-              const effectTimeoutId = window.setTimeout(() => {
-                setWinEffect((current) =>
-                  current?.amount === prize.amount &&
-                  current?.level !== "big" &&
-                  current?.level !== "mega"
-                    ? null
-                    : current
-                );
-              }, winLevel === "small" ? 1800 : 2400);
-
-              timeoutsRef.current.push(effectTimeoutId);
-            } else {
-              setMessage(
-                freeSpins > 1
-                  ? "🎁 Sigue el bonus"
-                  : "¡Probá otro giro!"
-              );
-            }
-
-            let resultTimeoutId;
-
-            try {
-              const resultRequest = supabase.rpc(
-                "apply_game_result",
-                {
-                  p_bet: bet,
-                  p_win: prize.amount,
-                  p_is_free_spin: isFreeSpin,
-                }
-              );
-
-              const resultTimeout = new Promise((_, reject) => {
-                resultTimeoutId = window.setTimeout(() => {
-                  reject(
-                    new Error(
-                      "Tiempo de espera agotado al guardar la jugada"
-                    )
-                  );
-                }, 8000);
-              });
-
-              const {
-                data: resultData,
-                error: resultError,
-              } = await Promise.race([
-                resultRequest,
-                resultTimeout,
-              ]);
-
-              if (resultError) {
-                throw resultError;
-              }
-
-              if (resultData?.length) {
-                const onlineCredits =
-                  resultData[0].credits_after;
-
-                setCredits(onlineCredits);
-                onCreditsChange?.(
-                  onlineCredits
-                );
-              }
-            } catch (error) {
-              console.error(
-                "Error al finalizar la jugada:",
-                error
-              );
-
-              setMessage(
-                "⚠️ La jugada terminó, pero el saldo está demorando en actualizarse"
-              );
-
-              refreshCredits().catch((refreshError) => {
-                console.error(
-                  "Error al actualizar créditos:",
-                  refreshError
-                );
-              });
-            } finally {
-              if (resultTimeoutId) {
-                clearTimeout(resultTimeoutId);
-              }
-
-              if (spinFailsafeRef.current) {
-                clearTimeout(spinFailsafeRef.current);
-                spinFailsafeRef.current = null;
-              }
-
-              setSpinning(false);
-              spinLockRef.current = false;
-              reelSpinningRef.current =
-                Array(COLUMNS).fill(false);
-              setReelSpinning(
-                Array(COLUMNS).fill(false)
-              );
-              setReelStopping(
-                Array(COLUMNS).fill(false)
-              );
-              timeoutsRef.current = [];
-            }
-          }
-        },
-        stopTime
-      );
+        if (columnIndex === COLUMNS - 1) {
+          finalizeSpin();
+        }
+      }, stopTime);
 
       timeoutsRef.current.push(timeoutId);
     }
