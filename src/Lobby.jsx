@@ -1,6 +1,7 @@
+import { useEffect, useRef } from "react";
 import logoJackpotPalace from "./assets/logo-jackpot-palace.png";
 import "./Lobby.css";
-
+import lobbyMusic from "./assets/audio/lobby.mp3";
 function playClickSound() {
   try {
     const Ctx = window.AudioContext || window.webkitAudioContext;
@@ -148,7 +149,30 @@ export default function Lobby({
   const isAndroid =
     typeof navigator !== "undefined" &&
     /Android/i.test(navigator.userAgent);
+const lobbyAudioRef = useRef(null);
 
+useEffect(() => {
+  const audio = new Audio(lobbyMusic);
+
+  audio.loop = true;
+  audio.volume = 0.15;
+  lobbyAudioRef.current = audio;
+
+  const startMusic = () => {
+    audio.play().catch(() => {});
+  };
+
+  startMusic();
+
+  window.addEventListener("pointerdown", startMusic, { once: true });
+
+  return () => {
+    window.removeEventListener("pointerdown", startMusic);
+    audio.pause();
+    audio.currentTime = 0;
+    lobbyAudioRef.current = null;
+  };
+}, []);
   return (
     <main
       className={
