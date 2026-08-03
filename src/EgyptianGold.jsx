@@ -825,48 +825,28 @@ export default function EgyptianGold({
     setReelSpinning(allReelsSpinning);
     setReelStopping(Array(COLUMNS).fill(false));
 
+    // IMPORTANTE PARA iPHONE:
+    // No actualizamos el grid cada 52 ms. Ese intervalo obligaba a React
+    // a renderizar toda la máquina unas 20 veces por segundo y podía
+    // saturar Safari, atrasando los timers y desincronizando el sonido.
+    // El movimiento visual queda completamente a cargo de CSS.
     if (spinTickerRef.current) {
       clearInterval(spinTickerRef.current);
+      spinTickerRef.current = null;
     }
-
-    let activeColumn = 0;
-
-    spinTickerRef.current = window.setInterval(() => {
-      setGrid((currentGrid) => {
-        const updatedGrid = currentGrid.map((column) => [...column]);
-
-        for (let attempt = 0; attempt < COLUMNS; attempt += 1) {
-          const columnIndex = (activeColumn + attempt) % COLUMNS;
-
-          if (reelSpinningRef.current[columnIndex]) {
-            const currentColumn = updatedGrid[columnIndex];
-
-            updatedGrid[columnIndex] = [
-              randomSymbol(),
-              ...currentColumn.slice(0, ROWS - 1),
-            ];
-
-            activeColumn = (columnIndex + 1) % COLUMNS;
-            break;
-          }
-        }
-
-        return updatedGrid;
-      });
-    }, 52);
 
     playSpinSound();
 
-    // Este respaldo llama a la MISMA finalización normal. No agrega
-    // segundos extra: solo actúa si Safari pierde uno de los timers.
-    spinFailsafeRef.current = window.setTimeout(finalizeSpin, 3200);
+    // Respaldo corto: el último rodillo termina cerca de 1,8 segundos.
+    // Solo interviene si Safari pierde alguno de los timers de parada.
+    spinFailsafeRef.current = window.setTimeout(finalizeSpin, 2600);
 
     for (
       let columnIndex = 0;
       columnIndex < COLUMNS;
       columnIndex += 1
     ) {
-      const stopTime = 950 + columnIndex * 260;
+      const stopTime = 850 + columnIndex * 220;
 
       const timeoutId = window.setTimeout(() => {
         if (spinFinalized) return;
