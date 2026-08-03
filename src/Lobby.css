@@ -2391,3 +2391,34 @@ body,
       rotate(calc(var(--wheel-label-angle) * -1)) !important;
   }
 }
+
+/* =========================================================
+   ANDROID: SCROLL INTERNO DEL LOBBY
+   No cambia columnas, tarjetas, tamaños ni otros dispositivos.
+   ========================================================= */
+.grand-lobby-v2.grand-lobby-v2--android {
+  height: 100dvh !important;
+  min-height: 100dvh !important;
+  overflow-x: hidden !important;
+  overflow-y: auto !important;
+  overscroll-behavior-y: contain;
+  touch-action: pan-y;
+  -webkit-overflow-scrolling: touch;
+}
+
+.grand-lobby-v2.grand-lobby-v2--android .grand-shell-v2 {
+  height: auto !important;
+  min-height: calc(100dvh - 10px) !important;
+}
+
+@supports not (height: 100dvh) {
+  .grand-lobby-v2.grand-lobby-v2--android {
+    height: 100vh !important;
+    min-height: 100vh !important;
+  }
+
+  .grand-lobby-v2.grand-lobby-v2--android .grand-shell-v2 {
+    min-height: calc(100vh - 10px) !important;
+  }
+}
+

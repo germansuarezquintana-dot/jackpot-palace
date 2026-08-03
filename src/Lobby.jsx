@@ -145,8 +145,18 @@ export default function Lobby({
 
   const isAdmin = ["super_admin", "admin"].includes(player?.role);
 
+  const isAndroid =
+    typeof navigator !== "undefined" &&
+    /Android/i.test(navigator.userAgent);
+
   return (
-    <main className="grand-lobby-v2">
+    <main
+      className={
+        isAndroid
+          ? "grand-lobby-v2 grand-lobby-v2--android"
+          : "grand-lobby-v2"
+      }
+    >
       <div className="grand-lobby-v2__spot grand-lobby-v2__spot--left" />
       <div className="grand-lobby-v2__spot grand-lobby-v2__spot--right" />
       <div className="grand-lobby-v2__mist grand-lobby-v2__mist--left" />
