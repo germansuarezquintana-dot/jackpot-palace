@@ -296,13 +296,10 @@ if (screen === "clown-party") {
   return (
     <main
       style={{
-        minHeight: "100dvh",
-        height: "auto",
+        height: "100dvh",
+        minHeight: 0,
         padding: "8px 14px",
-        overflowX: "hidden",
-        overflowY: "auto",
-        WebkitOverflowScrolling: "touch",
-        touchAction: "pan-y",
+        overflow: "hidden",
         color: "#fff",
         background:
           "radial-gradient(circle at top, #35105a 0%, #100218 45%, #020104 100%)",
@@ -312,8 +309,7 @@ if (screen === "clown-party") {
       <section
         style={{
           width: "min(1100px, 100%)",
-          minHeight: "calc(100dvh - 16px)",
-          height: "auto",
+          height: "100%",
           margin: "0 auto",
           display: "flex",
           flexDirection: "column",
