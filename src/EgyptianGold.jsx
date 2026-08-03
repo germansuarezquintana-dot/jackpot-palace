@@ -336,6 +336,7 @@ export default function EgyptianGold({
   const spinLockRef = useRef(false);
   const timeoutsRef = useRef([]);
   const spinTickerRef = useRef(null);
+  const spinFailsafeRef = useRef(null);
   const reelSpinningRef = useRef(Array(COLUMNS).fill(false));
   const displayCreditsRef = useRef(player?.credits ?? 0);
 
@@ -442,6 +443,10 @@ export default function EgyptianGold({
 
       if (spinTickerRef.current) {
         clearInterval(spinTickerRef.current);
+      }
+
+      if (spinFailsafeRef.current) {
+        clearTimeout(spinFailsafeRef.current);
       }
 
       if (audioContextRef.current) {
@@ -645,6 +650,29 @@ export default function EgyptianGold({
 
     spinLockRef.current = true;
     setSpinning(true);
+
+    // Respaldo global: no depende del último rodillo ni de Supabase.
+    // Si Safari pierde un temporizador, libera la máquina igualmente.
+    if (spinFailsafeRef.current) {
+      clearTimeout(spinFailsafeRef.current);
+    }
+
+    spinFailsafeRef.current = window.setTimeout(() => {
+      if (spinTickerRef.current) {
+        clearInterval(spinTickerRef.current);
+        spinTickerRef.current = null;
+      }
+
+      reelSpinningRef.current = Array(COLUMNS).fill(false);
+      setReelSpinning(Array(COLUMNS).fill(false));
+      setReelStopping(Array(COLUMNS).fill(false));
+      setSpinning(false);
+      spinLockRef.current = false;
+      spinFailsafeRef.current = null;
+      setMessage((current) =>
+        current === "Girando..." ? "¡Probá otro giro!" : current
+      );
+    }, 6500);
     setLastPrize(0);
     setWinningLines([]);
     setWinningCells([]);
@@ -924,6 +952,11 @@ spinTickerRef.current = window.setInterval(() => {
             } finally {
               if (resultTimeoutId) {
                 clearTimeout(resultTimeoutId);
+              }
+
+              if (spinFailsafeRef.current) {
+                clearTimeout(spinFailsafeRef.current);
+                spinFailsafeRef.current = null;
               }
 
               setSpinning(false);
