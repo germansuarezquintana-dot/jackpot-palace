@@ -803,13 +803,7 @@ const totalPrize =
       setFreeSpins((current) => current - 1);
       setMessage("🎁 Giro gratis...");
     } else {
-    setCredits((current) => {
-  const newCredits = current - bet;
-
-  onCreditsChange?.(newCredits);
-
-  return newCredits;
-});
+   
       setJackpot((current) =>
         current + Math.max(1, Math.round(bet * 0.05))
       );
@@ -831,7 +825,7 @@ const totalPrize =
     ) {
       const stopTime = 1150 + index * 380;
 
-      const timeoutId = setTimeout(() => {
+    const timeoutId = setTimeout(async () => {
         setGrid((currentGrid) => {
           const updatedGrid =
             currentGrid.map((column) => [
@@ -873,7 +867,12 @@ const totalPrize =
 
           const prize =
             calculatePrize(finalResult);
-
+const { data: resultData, error: resultError } =
+  await supabase.rpc("apply_game_result", {
+    p_bet: bet,
+    p_win: prize.amount,
+    p_is_free_spin: isFreeSpin,
+  });
           setGrid(finalResult);
           setMessage(prize.message);
           setLastPrize(prize.amount);
@@ -882,16 +881,15 @@ const totalPrize =
           setScatterCells(
             prize.scatterCells
           );
-if (prize.amount > 0) {
-  setCredits((current) => {
-    const newCredits = current + prize.amount;
+if (resultError) {
+  console.error(resultError);
+  setMessage("⚠️ No se pudo guardar la jugada.");
+} else if (resultData?.length) {
+  const onlineCredits = resultData[0].credits_after;
 
-    onCreditsChange?.(newCredits);
-
-    return newCredits;
-  });
+  setCredits(onlineCredits);
+  onCreditsChange?.(onlineCredits);
 }
-
           if (prize.jackpotWon) {
             setCelebration({
               type: "jackpot",

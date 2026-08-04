@@ -122,15 +122,34 @@ if (user) {
   }
 
   useEffect(() => {
-    const initialTimer = window.setTimeout(loadAdminData, 0);
+  const initialTimer = window.setTimeout(loadAdminData, 0);
 
-  
+  const playersChannel = supabase
+    .channel("admin-players-live")
+    .on(
+      "postgres_changes",
+      {
+        event: "UPDATE",
+        schema: "public",
+        table: "players",
+      },
+      (payload) => {
+        setPlayers((currentPlayers) =>
+          currentPlayers.map((player) =>
+            player.id === payload.new.id
+              ? { ...player, ...payload.new }
+              : player
+          )
+        );
+      }
+    )
+    .subscribe();
 
-    return () => {
-      window.clearTimeout(initialTimer);
-  
-    };
-  }, []);
+  return () => {
+    window.clearTimeout(initialTimer);
+    supabase.removeChannel(playersChannel);
+  };
+}, []);
 
   const dashboard = useMemo(() => {
     const totalBet = players.reduce(
