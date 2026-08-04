@@ -941,7 +941,7 @@ export default function EgyptianGold({
           grid-template-rows: repeat(5, minmax(0, 1fr));
           gap: 7px;
           transform: translate3d(0, 0, 0);
-          will-change: transform, filter;
+          will-change: transform;
           backface-visibility: hidden;
         }
 
@@ -959,7 +959,6 @@ export default function EgyptianGold({
           animation: egyptStripRollPremium .34s linear infinite;
           animation-delay:
             calc(var(--egypt-reel-index) * -68ms);
-          filter: blur(.28px);
         }
 
         .egypt-reel-running::after {
@@ -1046,7 +1045,6 @@ export default function EgyptianGold({
 
           .egypt-reel-running .egypt-reel-strip {
             animation-duration: .31s;
-            filter: blur(.18px);
           }
         }
 
@@ -1269,7 +1267,9 @@ export default function EgyptianGold({
                 ref={(element) => {
                   reelElementsRef.current[columnIndex] = element;
                 }}
-                key={columnIndex}
+                key={`${columnIndex}-${
+                  reelSpinning[columnIndex] ? "running" : "stopped"
+                }`}
               >
                 <div className="egypt-reel-strip">
                   {(reelSpinning[columnIndex]
