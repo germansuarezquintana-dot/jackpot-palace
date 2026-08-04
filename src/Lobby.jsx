@@ -340,28 +340,26 @@ useEffect(() => {
                 <button
                   type="button"
                   disabled={!game.available}
-                  onClick={() => {
-                    if (!game.available) return;
+        onClick={() => {
+  if (!game.available) return;
 
-                    playClickSound();
+  onOpenGame(game.id);
 
-                    if (lobbyAudioRef.current) {
-                      try {
-                        lobbyAudioRef.current.pause();
-                        lobbyAudioRef.current.currentTime = 0;
-                        lobbyAudioRef.current.loop = false;
-                        lobbyAudioRef.current.removeAttribute("src");
-                        lobbyAudioRef.current.load();
-                        lobbyAudioRef.current = null;
-                      } catch (e) {
-                        console.error(e);
-                      }
-                    }
+  window.setTimeout(() => {
+    playClickSound();
 
-                    setTimeout(() => {
-                      onOpenGame(game.id);
-                    }, 180);
-                  }}
+    if (lobbyAudioRef.current) {
+      try {
+        lobbyAudioRef.current.pause();
+        lobbyAudioRef.current.currentTime = 0;
+        lobbyAudioRef.current.loop = false;
+        lobbyAudioRef.current = null;
+      } catch (error) {
+        console.error(error);
+      }
+    }
+  }, 0);
+}}
                 >
                   <span>
                     {game.available ? "JUGAR AHORA" : "PRÓXIMAMENTE"}
