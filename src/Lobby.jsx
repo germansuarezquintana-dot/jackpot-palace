@@ -340,29 +340,9 @@ useEffect(() => {
                 <button
                   type="button"
                   disabled={!game.available}
-     onClick={() => {
-  if (!game.available) return;
-
-  if (lobbyAudioRef.current) {
-    try {
-      lobbyAudioRef.current.pause();
-      lobbyAudioRef.current.currentTime = 0;
-    } catch (error) {
-      console.error(error);
-    }
-  }
-
-  onOpenGame(game.id);
-
-  requestAnimationFrame(() => {
-    requestAnimationFrame(() => {
-      const body = document.body;
-
-      body.style.transform = "translateZ(0)";
-      void body.offsetHeight;
-      body.style.transform = "";
-    });
-  });
+    onClick={() => {
+    if (!game.available) return;
+    onOpenGame(game.id);
 }}
                 >
                   <span>
