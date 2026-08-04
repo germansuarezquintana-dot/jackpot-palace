@@ -10,6 +10,7 @@ import NeonCity from "./neon/NeonCity";
 import Lobby from "./Lobby";
 import Admin from "./Admin";
 import Cashier from "./Cashier";
+import GameLoader from "./GameLoader";
 
 export default function App() {
   const [session, setSession] = useState(null);
@@ -17,9 +18,31 @@ export default function App() {
   const [loading, setLoading] = useState(true);
   const [showAdmin, setShowAdmin] = useState(false);
   const [screen, setScreen] = useState("lobby");
+  const [pendingGame, setPendingGame] = useState(null);
   const [error, setError] = useState("");
 
   const forceLogoutVersionRef = useRef(null);
+
+  function openGame(gameId) {
+    if (["neon-city", "wheel"].includes(gameId)) {
+      setPendingGame(gameId);
+      setScreen("game-loader");
+      return;
+    }
+
+    setScreen(gameId);
+  }
+
+  function finishGameLoading() {
+    if (!pendingGame) {
+      setScreen("lobby");
+      return;
+    }
+
+    const nextGame = pendingGame;
+    setPendingGame(null);
+    setScreen(nextGame);
+  }
 
   async function loadPlayer(userId) {
     setLoading(true);
@@ -235,6 +258,15 @@ export default function App() {
   );
 }
 
+  if (screen === "game-loader" && pendingGame) {
+    return (
+      <GameLoader
+        gameId={pendingGame}
+        onReady={finishGameLoading}
+      />
+    );
+  }
+
   if (player?.role === "cashier") {
     return (
       <Cashier
@@ -359,7 +391,7 @@ if (screen === "wheel") {
   return (
     <Lobby
       player={player}
-      onOpenGame={(gameId) => setScreen(gameId)}
+      onOpenGame={openGame}
       onOpenAdmin={() => setShowAdmin(true)}
       onLogout={() => supabase.auth.signOut()}
     />

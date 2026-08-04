@@ -340,25 +340,29 @@ useEffect(() => {
                 <button
                   type="button"
                   disabled={!game.available}
-        onClick={() => {
+     onClick={() => {
   if (!game.available) return;
+
+  if (lobbyAudioRef.current) {
+    try {
+      lobbyAudioRef.current.pause();
+      lobbyAudioRef.current.currentTime = 0;
+    } catch (error) {
+      console.error(error);
+    }
+  }
 
   onOpenGame(game.id);
 
-  window.setTimeout(() => {
-    playClickSound();
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => {
+      const body = document.body;
 
-    if (lobbyAudioRef.current) {
-      try {
-        lobbyAudioRef.current.pause();
-        lobbyAudioRef.current.currentTime = 0;
-        lobbyAudioRef.current.loop = false;
-        lobbyAudioRef.current = null;
-      } catch (error) {
-        console.error(error);
-      }
-    }
-  }, 0);
+      body.style.transform = "translateZ(0)";
+      void body.offsetHeight;
+      body.style.transform = "";
+    });
+  });
 }}
                 >
                   <span>
