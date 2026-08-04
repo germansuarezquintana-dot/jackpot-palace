@@ -187,7 +187,7 @@ export default function NeonCity({
   player,
   onCreditsChange,
 }) {
-  const [grid, setGrid] = useState(createGrid());
+const [grid, setGrid] = useState(() => createGrid());
 
   const [reelSpinning, setReelSpinning] = useState(
     Array(COLUMNS).fill(false)
@@ -229,23 +229,28 @@ export default function NeonCity({
   const audioContextRef = useRef(null);
   const spinSoundRef = useRef(null);
   const reelTimeoutsRef = useRef([]);
-
+const firstSaveRef = useRef(true);
   const bet = BET_OPTIONS[betIndex];
 
   useEffect(() => {
-    const gameToSave = {
-      credits,
-      betIndex,
-      freeSpins,
-      soundEnabled,
-      jackpot,
-    };
+  if (firstSaveRef.current) {
+    firstSaveRef.current = false;
+    return;
+  }
 
-    localStorage.setItem(
-      STORAGE_KEY,
-      JSON.stringify(gameToSave)
-    );
-  }, [credits, betIndex, freeSpins, soundEnabled, jackpot]);
+  const gameToSave = {
+    credits,
+    betIndex,
+    freeSpins,
+    soundEnabled,
+    jackpot,
+  };
+
+  localStorage.setItem(
+    STORAGE_KEY,
+    JSON.stringify(gameToSave)
+  );
+}, [credits, betIndex, freeSpins, soundEnabled, jackpot]);
 
   useEffect(() => {
     return () => {
