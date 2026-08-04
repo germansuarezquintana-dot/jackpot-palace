@@ -925,6 +925,27 @@ if (prize.amount > 0) {
           }
 
           setSpinning(false);
+          void (async () => {
+  try {
+    const { data: resultData, error: resultError } =
+      await supabase.rpc("apply_game_result", {
+        p_bet: bet,
+        p_win: prize.amount,
+        p_is_free_spin: isFreeSpin,
+      });
+
+    if (resultError) throw resultError;
+
+    if (resultData?.length) {
+      const onlineCredits = resultData[0].credits_after;
+
+      setCredits(onlineCredits);
+      onCreditsChange?.(onlineCredits);
+    }
+  } catch (error) {
+    console.error("Error al guardar la jugada de Neon City:", error);
+  }
+})();
         }
       }, stopTime);
 
