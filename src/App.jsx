@@ -6,6 +6,7 @@ import Game from "./Game";
 import ClownParty from "./ClownParty";
 import Wheel from "./Wheel";
 import EgyptianGold from "./EgyptianGold";
+import NeonCity from "./neon/NeonCity";
 import Lobby from "./Lobby";
 import Admin from "./Admin";
 import Cashier from "./Cashier";
@@ -289,6 +290,38 @@ if (screen === "egyptian-gold") {
   );
 }
 
+  if (screen === "neon-city") {
+    return (
+      <>
+        <button
+          type="button"
+          onClick={() => setScreen("lobby")}
+          disabled={false}
+          style={{
+            position: "fixed",
+            top: 20,
+            left: 10,
+            zIndex: 9999,
+            padding: "2px 1px",
+            border: "1px solid #00f5ff",
+            borderRadius: 12,
+            color: "#fff",
+            background:
+              "linear-gradient(180deg, #6b20aa, #10105c)",
+            fontWeight: 900,
+            cursor: "pointer",
+            boxShadow:
+              "0 0 15px rgba(0, 245, 255, 0.65)",
+          }}
+        >
+          ← CASINO
+        </button>
+
+        <NeonCity />
+      </>
+    );
+  }
+
   if (screen === "jackpot-palace") {
     return (
       <>
@@ -299,7 +332,7 @@ if (screen === "egyptian-gold") {
           style={{
             position: "fixed",
             top: 12,
-            left: 12,
+            left: 2,
             zIndex: 9999,
             padding: "10px 15px",
             border: "2px solid #ffd45c",

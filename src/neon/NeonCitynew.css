@@ -1,0 +1,46 @@
+/* ==========================================================
+   NEON CITY
+   ========================================================== */
+
+*{
+    box-sizing:border-box;
+}
+
+.neon-city-page{
+
+    min-height:100vh;
+
+    display:flex;
+    justify-content:center;
+    align-items:center;
+
+    padding:20px;
+
+    background:
+    radial-gradient(circle at top,
+    #700092 0%,
+    #270034 40%,
+    #050007 100%);
+}
+
+.neon-city-page .machine{
+
+    width:100%;
+    max-width:900px;
+
+    padding:40px 24px;
+
+    border:8px solid #f5c542;
+    border-radius:30px;
+
+    background:
+    linear-gradient(
+        145deg,
+        #981717,
+        #4a0505,
+        #210000
+    );
+
+    overflow:hidden;
+
+}

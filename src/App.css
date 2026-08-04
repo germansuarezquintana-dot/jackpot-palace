@@ -602,10 +602,11 @@ button {
 }
 
 .reel-window {
-  position: relative;
-  flex: 1;
-  min-width: 0;
-  height: 285px;
+    position: relative;
+    flex: 1;
+    min-width: 0;
+    height: 100px;
+    background: red !important;
   overflow: hidden;
   border: 4px solid #303030;
   border-radius: 12px;
@@ -640,16 +641,12 @@ button {
 
 .reel-symbol,
 .stopped-symbol {
-  height: 95px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  font-size: clamp(
-    38px,
-    6vw,
-    68px
-  );
-  user-select: none;
+    height: 85px;
+    border: 3px solid red;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  
 }
 
 .stopped-reel {

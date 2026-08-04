@@ -39,6 +39,12 @@ const GAME_PREVIEWS = {
     ["🏺", "𓂀", "💎"],
   ],
 
+  "neon-city": [
+    ["🌆", "🤖", "⚡"],
+    ["💎", "🚘", "💿"],
+    ["🎧", "👑", "🛸"],
+  ],
+
   "wild-west": [
     ["🤠", "⭐", "🐎"],
     ["💰", "🧲", "🤠"],
@@ -113,6 +119,17 @@ const games = [
     subtitle: "TESOROS DEL NILO",
     description: "Faraones, pirámides y riquezas escondidas.",
     theme: "amber",
+    badge: "NUEVO",
+    available: true,
+  },
+
+  {
+    id: "neon-city",
+    name: "Neon City",
+    icon: "🌆",
+    subtitle: "CYBER JACKPOT",
+    description: "Ciudad futurista, neón y premios progresivos.",
+    theme: "pink",
     badge: "NUEVO",
     available: true,
   },
