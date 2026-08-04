@@ -344,14 +344,11 @@ export default function EgyptianGold({
   const audioContextRef = useRef(null);
   const spinLockRef = useRef(false);
   const timeoutsRef = useRef([]);
-  const spinTickerRef = useRef(null);
   const spinFailsafeRef = useRef(null);
-  const reelSpinningRef = useRef(Array(COLUMNS).fill(false));
   const displayCreditsRef = useRef(player?.credits ?? 0);
   const mountedRef = useRef(true);
   const isIOSRef = useRef(detectIOS());
   const isIOS = isIOSRef.current;
-  const reelElementsRef = useRef([]);
 
   const bet = BET_OPTIONS[betIndex];
 
@@ -464,10 +461,6 @@ export default function EgyptianGold({
       timeoutsRef.current.forEach((timeoutId) =>
         clearTimeout(timeoutId)
       );
-
-      if (spinTickerRef.current) {
-        clearInterval(spinTickerRef.current);
-      }
 
       if (spinFailsafeRef.current) {
         clearTimeout(spinFailsafeRef.current);
@@ -648,29 +641,20 @@ export default function EgyptianGold({
   }
 
   async function spin() {
-    // Limpia temporizadores viejos antes de comenzar un nuevo giro.
     timeoutsRef.current.forEach((timeoutId) => clearTimeout(timeoutId));
     timeoutsRef.current = [];
 
-    if (
-      spinLockRef.current ||
-      spinning ||
-      celebration
-    ) {
-      return;
-    }
+    if (spinLockRef.current || spinning || celebration) return;
 
     const isFreeSpin = freeSpins > 0;
 
     if (!isFreeSpin && credits < bet) {
       setMessage("❌ No tenés créditos suficientes");
-
       playTone({
         frequency: 150,
         duration: 0.3,
         type: "sawtooth",
       });
-
       return;
     }
 
@@ -683,12 +667,18 @@ export default function EgyptianGold({
     setCelebration(null);
     setWinEffect(null);
     setAnimatedPrize(0);
+    setReelStopping(Array(COLUMNS).fill(false));
+    setReelSpinning(Array(COLUMNS).fill(true));
 
     if (isFreeSpin) {
       setFreeSpins((current) => Math.max(0, current - 1));
       setMessage("🎁 Giro gratis...");
     } else {
-      setCredits((current) => current - bet);
+      setCredits((current) => {
+        const newCredits = current - bet;
+        onCreditsChange?.(newCredits);
+        return newCredits;
+      });
       setMessage("Girando...");
     }
 
@@ -696,62 +686,15 @@ export default function EgyptianGold({
     const prize = calculatePrize(finalGrid, bet);
     let spinFinalized = false;
 
-    const releaseMachine = () => {
-      if (spinTickerRef.current) {
-        clearInterval(spinTickerRef.current);
-        spinTickerRef.current = null;
-      }
-
-      if (spinFailsafeRef.current) {
-        clearTimeout(spinFailsafeRef.current);
-        spinFailsafeRef.current = null;
-      }
-
-      reelSpinningRef.current = Array(COLUMNS).fill(false);
-
-      // Safari/iPhone puede conservar visualmente una animación CSS infinita
-      // aunque React ya haya quitado el estado. La removemos también del DOM.
-      reelElementsRef.current.forEach((element) => {
-        if (!element) return;
-        element.classList.remove(
-          "egypt-spinning",
-          "egypt-reel-running",
-          "egypt-reel-stopping"
-        );
-        void element.offsetWidth;
-      });
-
-      if (mountedRef.current) {
-        setReelSpinning(Array(COLUMNS).fill(false));
-        setReelStopping(Array(COLUMNS).fill(false));
-        setSpinning(false);
-      }
-      spinLockRef.current = false;
-      timeoutsRef.current = [];
-    };
-
     const saveResultInBackground = () => {
-      let requestTimeoutId;
-
       void (async () => {
         try {
-          const resultRequest = supabase.rpc(
-            "apply_game_result",
-            {
+          const { data: resultData, error: resultError } =
+            await supabase.rpc("apply_game_result", {
               p_bet: bet,
               p_win: prize.amount,
               p_is_free_spin: isFreeSpin,
-            }
-          );
-
-          const requestTimeout = new Promise((_, reject) => {
-            requestTimeoutId = window.setTimeout(() => {
-              reject(new Error("Tiempo de espera agotado al guardar la jugada"));
-            }, 5000);
-          });
-
-          const { data: resultData, error: resultError } =
-            await Promise.race([resultRequest, requestTimeout]);
+            });
 
           if (resultError) throw resultError;
 
@@ -761,15 +704,10 @@ export default function EgyptianGold({
             onCreditsChange?.(onlineCredits);
           }
         } catch (error) {
-          console.error("Error al guardar la jugada:", error);
-
-          // La máquina ya quedó liberada. Solo intentamos reconciliar
-          // el saldo sin volver a bloquear el juego.
+          console.error("Error al guardar la jugada de Egyptian Gold:", error);
           refreshCredits().catch((refreshError) => {
             console.error("Error al actualizar créditos:", refreshError);
           });
-        } finally {
-          if (requestTimeoutId) clearTimeout(requestTimeoutId);
         }
       })();
     };
@@ -778,33 +716,39 @@ export default function EgyptianGold({
       if (spinFinalized) return;
       spinFinalized = true;
 
+      if (spinFailsafeRef.current) {
+        clearTimeout(spinFailsafeRef.current);
+        spinFailsafeRef.current = null;
+      }
+
       setGrid(finalGrid);
+      setReelSpinning(Array(COLUMNS).fill(false));
+      setReelStopping(Array(COLUMNS).fill(false));
       setLastPrize(prize.amount);
       setWinningLines(prize.winningLines);
       setWinningCells(prize.winningCells);
       setScatterCells(prize.scatterCells);
 
-      // El crédito visual se actualiza inmediatamente. Supabase se
-      // reconcilia después, sin mantener la máquina en GIRANDO.
       if (prize.amount > 0) {
-        setCredits((current) => current + prize.amount);
+        setCredits((current) => {
+          const newCredits = current + prize.amount;
+          onCreditsChange?.(newCredits);
+          return newCredits;
+        });
       }
 
       if (prize.freeSpinsWon > 0) {
         setFreeSpins((current) => current + prize.freeSpinsWon);
-
         setCelebration({
           type: "bonus",
           amount: prize.amount,
           freeSpins: prize.freeSpinsWon,
         });
-
         setWinEffect({
           level: "bonus",
           amount: prize.amount,
           id: Date.now(),
         });
-
         setMessage(`𓂀 BONUS: ${prize.freeSpinsWon} GIROS GRATIS`);
         playBonusSound();
       } else if (prize.amount > 0) {
@@ -823,13 +767,11 @@ export default function EgyptianGold({
           id: Date.now(),
         });
 
-        if (prize.surpriseMultiplier > 1) {
-          setMessage(
-            `𓆣 MULTIPLICADOR ×${prize.surpriseMultiplier} — GANASTE ${prize.amount}`
-          );
-        } else {
-          setMessage(`✦ GANASTE ${prize.amount} CRÉDITOS`);
-        }
+        setMessage(
+          prize.surpriseMultiplier > 1
+            ? `𓆣 MULTIPLICADOR ×${prize.surpriseMultiplier} — GANASTE ${prize.amount}`
+            : `✦ GANASTE ${prize.amount} CRÉDITOS`
+        );
 
         if (prize.amount >= bet * 10) {
           setCelebration({
@@ -860,37 +802,16 @@ export default function EgyptianGold({
         );
       }
 
-      releaseMachine();
+      setSpinning(false);
+      spinLockRef.current = false;
+      timeoutsRef.current = [];
       saveResultInBackground();
     };
 
-    const allReelsSpinning = Array(COLUMNS).fill(true);
-    reelSpinningRef.current = allReelsSpinning;
-    setReelSpinning(allReelsSpinning);
-    setReelStopping(Array(COLUMNS).fill(false));
-
-    // IMPORTANTE PARA iPHONE:
-    // No actualizamos el grid cada 52 ms. Ese intervalo obligaba a React
-    // a renderizar toda la máquina unas 20 veces por segundo y podía
-    // saturar Safari, atrasando los timers y desincronizando el sonido.
-    // El movimiento visual queda completamente a cargo de CSS.
-    if (spinTickerRef.current) {
-      clearInterval(spinTickerRef.current);
-      spinTickerRef.current = null;
-    }
-
     playSpinSound();
 
-    // Respaldo corto: el último rodillo termina cerca de 1,8 segundos.
-    // Solo interviene si Safari pierde alguno de los timers de parada.
-    spinFailsafeRef.current = window.setTimeout(finalizeSpin, 2600);
-
-    for (
-      let columnIndex = 0;
-      columnIndex < COLUMNS;
-      columnIndex += 1
-    ) {
-      const stopTime = 850 + columnIndex * 220;
+    for (let columnIndex = 0; columnIndex < COLUMNS; columnIndex += 1) {
+      const stopTime = 700 + columnIndex * 180;
 
       const timeoutId = window.setTimeout(() => {
         if (!mountedRef.current || spinFinalized) return;
@@ -900,18 +821,6 @@ export default function EgyptianGold({
           updatedGrid[columnIndex] = finalGrid[columnIndex];
           return updatedGrid;
         });
-
-        reelSpinningRef.current[columnIndex] = false;
-
-        const reelElement = reelElementsRef.current[columnIndex];
-        if (reelElement) {
-          reelElement.classList.remove(
-            "egypt-spinning",
-            "egypt-reel-running"
-          );
-          void reelElement.offsetWidth;
-          reelElement.classList.add("egypt-reel-stopping");
-        }
 
         setReelSpinning((current) => {
           const updated = [...current];
@@ -925,19 +834,18 @@ export default function EgyptianGold({
           return updated;
         });
 
+        playReelStopSound(columnIndex);
+
         const settleTimeoutId = window.setTimeout(() => {
+          if (!mountedRef.current) return;
           setReelStopping((current) => {
             const updated = [...current];
             updated[columnIndex] = false;
             return updated;
           });
-
-          const settledReel = reelElementsRef.current[columnIndex];
-          settledReel?.classList.remove("egypt-reel-stopping");
-        }, 520);
+        }, 260);
 
         timeoutsRef.current.push(settleTimeoutId);
-        playReelStopSound(columnIndex);
 
         if (columnIndex === COLUMNS - 1) {
           finalizeSpin();
@@ -946,6 +854,8 @@ export default function EgyptianGold({
 
       timeoutsRef.current.push(timeoutId);
     }
+
+    spinFailsafeRef.current = window.setTimeout(finalizeSpin, 2200);
   }
 
   return (
@@ -1323,9 +1233,6 @@ export default function EgyptianGold({
                 ].join(" ")}
                 style={{
                   "--egypt-reel-index": columnIndex,
-                }}
-                ref={(element) => {
-                  reelElementsRef.current[columnIndex] = element;
                 }}
                 key={`${columnIndex}-${
                   reelSpinning[columnIndex] ? "running" : "stopped"
