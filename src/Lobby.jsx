@@ -158,8 +158,11 @@ useEffect(() => {
   audio.volume = 0.15;
   lobbyAudioRef.current = audio;
 
-  const startMusic = () => {
-    audio.play().catch(() => {});
+  const startMusic = async () => {
+    try {
+      if (!audio.paused) return;
+      await audio.play();
+    } catch {}
   };
 
   startMusic();
@@ -170,6 +173,9 @@ useEffect(() => {
     window.removeEventListener("pointerdown", startMusic);
     audio.pause();
     audio.currentTime = 0;
+    audio.loop = false;
+    audio.removeAttribute("src");
+    audio.load();
     lobbyAudioRef.current = null;
   };
 }, []);
@@ -331,9 +337,28 @@ useEffect(() => {
                 <button
                   type="button"
                   disabled={!game.available}
-                  onClick={() =>
-                    game.available && (playClickSound(), onOpenGame(game.id))
-                  }
+                  onClick={() => {
+                    if (!game.available) return;
+
+                    playClickSound();
+
+                    if (lobbyAudioRef.current) {
+                      try {
+                        lobbyAudioRef.current.pause();
+                        lobbyAudioRef.current.currentTime = 0;
+                        lobbyAudioRef.current.loop = false;
+                        lobbyAudioRef.current.removeAttribute("src");
+                        lobbyAudioRef.current.load();
+                        lobbyAudioRef.current = null;
+                      } catch (e) {
+                        console.error(e);
+                      }
+                    }
+
+                    setTimeout(() => {
+                      onOpenGame(game.id);
+                    }, 180);
+                  }}
                 >
                   <span>
                     {game.available ? "JUGAR AHORA" : "PRÓXIMAMENTE"}
