@@ -339,6 +339,7 @@ export default function EgyptianGold({
   const spinFailsafeRef = useRef(null);
   const reelSpinningRef = useRef(Array(COLUMNS).fill(false));
   const displayCreditsRef = useRef(player?.credits ?? 0);
+  const reelElementsRef = useRef([]);
 
   const bet = BET_OPTIONS[betIndex];
 
@@ -624,6 +625,10 @@ export default function EgyptianGold({
   }
 
   async function spin() {
+    // Limpia temporizadores viejos antes de comenzar un nuevo giro.
+    timeoutsRef.current.forEach((timeoutId) => clearTimeout(timeoutId));
+    timeoutsRef.current = [];
+
     if (
       spinLockRef.current ||
       spinning ||
@@ -680,10 +685,24 @@ export default function EgyptianGold({
       }
 
       reelSpinningRef.current = Array(COLUMNS).fill(false);
+
+      // Safari/iPhone puede conservar visualmente una animación CSS infinita
+      // aunque React ya haya quitado el estado. La removemos también del DOM.
+      reelElementsRef.current.forEach((element) => {
+        if (!element) return;
+        element.classList.remove(
+          "egypt-spinning",
+          "egypt-reel-running",
+          "egypt-reel-stopping"
+        );
+        void element.offsetWidth;
+      });
+
       setReelSpinning(Array(COLUMNS).fill(false));
       setReelStopping(Array(COLUMNS).fill(false));
       setSpinning(false);
       spinLockRef.current = false;
+      timeoutsRef.current = [];
     };
 
     const saveResultInBackground = () => {
@@ -859,6 +878,16 @@ export default function EgyptianGold({
 
         reelSpinningRef.current[columnIndex] = false;
 
+        const reelElement = reelElementsRef.current[columnIndex];
+        if (reelElement) {
+          reelElement.classList.remove(
+            "egypt-spinning",
+            "egypt-reel-running"
+          );
+          void reelElement.offsetWidth;
+          reelElement.classList.add("egypt-reel-stopping");
+        }
+
         setReelSpinning((current) => {
           const updated = [...current];
           updated[columnIndex] = false;
@@ -877,6 +906,9 @@ export default function EgyptianGold({
             updated[columnIndex] = false;
             return updated;
           });
+
+          const settledReel = reelElementsRef.current[columnIndex];
+          settledReel?.classList.remove("egypt-reel-stopping");
         }, 520);
 
         timeoutsRef.current.push(settleTimeoutId);
@@ -1233,6 +1265,9 @@ export default function EgyptianGold({
                 ].join(" ")}
                 style={{
                   "--egypt-reel-index": columnIndex,
+                }}
+                ref={(element) => {
+                  reelElementsRef.current[columnIndex] = element;
                 }}
                 key={columnIndex}
               >
