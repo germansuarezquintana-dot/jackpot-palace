@@ -5,7 +5,7 @@ import Login from "./Login";
 import Game from "./Game";
 import ClownParty from "./ClownParty";
 import Wheel from "./Wheel";
-import EgyptianGold from "./EgyptianGold";
+
 import NeonCity from "./neon/NeonCity";
 import Lobby from "./Lobby";
 import Admin from "./Admin";
@@ -274,21 +274,6 @@ if (screen === "wheel") {
   );
 }
 
-if (screen === "egyptian-gold") {
-  return (
-    <EgyptianGold
-      player={player}
-      onCreditsChange={(credits) =>
-        setPlayer((current) => ({
-          ...current,
-          credits,
-        }))
-      }
-      onBack={() => setScreen("lobby")}
-      onLogout={() => supabase.auth.signOut()}
-    />
-  );
-}
 
   if (screen === "neon-city") {
     return (

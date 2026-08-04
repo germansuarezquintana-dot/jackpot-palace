@@ -33,12 +33,7 @@ const GAME_PREVIEWS = {
     ["⭐", "🎁", "🤡"],
   ],
 
-  "egyptian-gold": [
-    ["𓂀", "🐍", "💎"],
-    ["👑", "☀️", "🦅"],
-    ["🏺", "𓂀", "💎"],
-  ],
-
+ 
   "neon-city": [
     ["🌆", "🤖", "⚡"],
     ["💎", "🚘", "💿"],
@@ -112,17 +107,8 @@ const games = [
   badge: "NUEVO",
   available: true,
 },
-  {
-    id: "egyptian-gold",
-    name: "Egyptian Gold",
-    icon: "𓂀",
-    subtitle: "TESOROS DEL NILO",
-    description: "Faraones, pirámides y riquezas escondidas.",
-    theme: "amber",
-    badge: "NUEVO",
-    available: true,
-  },
-
+  
+  
   {
     id: "neon-city",
     name: "Neon City",
