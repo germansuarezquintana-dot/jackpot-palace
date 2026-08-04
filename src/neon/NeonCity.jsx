@@ -46,15 +46,15 @@ function randomSymbol() {
   }
 
   const regularSymbols = [
-    "🌆", "🌆", "🌆", "🌆",
-    "🚘", "🚘", "🚘",
-    "🤖", "🤖", "🤖",
-    "🔋", "🔋", "🔋",
-    "🎧", "🎧",
-    "🛸", "🛸",
-    "💎",
-    "👑",
-  ];
+  "🌆", "🌆", "🌆", "🌆", "🌆",
+  "🚘", "🚘", "🚘", "🚘",
+  "🤖", "🤖", "🤖", "🤖",
+  "🔋", "🔋", "🔋", "🔋",
+  "🎧", "🎧", "🎧",
+  "🛸", "🛸", "🛸",
+  "💎", "💎",
+  "👑",
+];
 
   return regularSymbols[
     Math.floor(Math.random() * regularSymbols.length)
@@ -456,68 +456,76 @@ export default function NeonCity({
   }
 
   function evaluateLine(result, payline, lineIndex) {
-    const lineSymbols = payline.map(
-      (rowIndex, columnIndex) =>
-        result[columnIndex][rowIndex]
-    );
+  const lineSymbols = payline.map(
+    (rowIndex, columnIndex) => result[columnIndex][rowIndex]
+  );
 
-    if (lineSymbols[0] === SCATTER) {
-      return null;
-    }
+  // El scatter no paga por línea
+  if (lineSymbols[0] === SCATTER) {
+    return null;
+  }
 
-    const baseSymbol = lineSymbols.find(
-      (symbol) => symbol !== WILD && symbol !== SCATTER
-    );
+  // El símbolo que manda es el primero; si es WILD,
+  // toma el primer símbolo normal que encuentre.
+  const paySymbol =
+    lineSymbols[0] === WILD
+      ? lineSymbols.find(
+          (symbol) => symbol !== WILD && symbol !== SCATTER
+        ) ?? WILD
+      : lineSymbols[0];
 
-    if (!baseSymbol) {
-      return null;
-    }
+  let consecutive = 0;
 
-    let consecutive = 0;
-
-    for (
-      let index = 0;
-      index < lineSymbols.length;
-      index += 1
+  for (const symbol of lineSymbols) {
+    if (
+      symbol === paySymbol ||
+      symbol === WILD
     ) {
-      const currentSymbol = lineSymbols[index];
-
-      if (
-        currentSymbol === baseSymbol ||
-        currentSymbol === WILD
-      ) {
-        consecutive += 1;
-      } else {
-        break;
-      }
+      consecutive += 1;
+    } else {
+      break;
     }
+  }
 
-    let multiplier = 0;
+  // Solo paga desde 3 símbolos consecutivos
+  if (consecutive < 3) {
+    return null;
+  }
 
-    if (consecutive === 5) {
-  multiplier = 15;
-} else if (consecutive === 4) {
-  multiplier = 6;
-} else if (consecutive === 3) {
-  multiplier = 2;
+  let multiplier = 0;
+
+  if (consecutive === 5) {
+    multiplier = 15;
+  } else if (consecutive === 4) {
+    multiplier = 6;
+  } else if (consecutive === 3) {
+    multiplier = 2;
+  }
+
+  const amount = Math.round(bet * multiplier);
+
+  // Seguridad: nunca registrar una línea con premio cero
+  if (amount <= 0) {
+    return null;
+  }
+
+  return {
+    lineIndex,
+    consecutive,
+    symbol: paySymbol,
+    amount,
+    cells: Array.from(
+      { length: consecutive },
+      (_, column) => ({
+        column,
+        row: payline[column],
+      })
+    ),
+  };
 }
 
-    const cells = Array.from(
-      { length: consecutive },
-      (_, columnIndex) => ({
-        column: columnIndex,
-        row: payline[columnIndex],
-      })
-    );
-
-    return {
-      lineIndex,
-      consecutive,
-      symbol: baseSymbol,
-      amount: bet * multiplier,
-      cells,
-    };
-  }
+  
+ 
 
   function evaluateScatters(result) {
     const cells = [];
@@ -584,13 +592,14 @@ export default function NeonCity({
 
     const jackpotPrize = jackpotLine ? jackpot : 0;
 
-    const linePrize = lineWins.reduce(
-      (total, win) => total + win.amount,
-      0
-    );
+  const linePrize = lineWins.reduce(
+  (total, win) => total + win.amount,
+  0
+);
 
-    const totalPrize =
-      linePrize + scatterWin.amount + jackpotPrize;
+
+const totalPrize =
+  linePrize + scatterWin.amount + jackpotPrize;
 
     const cells = lineWins.flatMap(
       (win) => win.cells
