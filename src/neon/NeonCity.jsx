@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import "./NeonCity.css";
+import { supabase } from "../supabase";
 const WILD = "⚡";
 const SCATTER = "💿";
 
@@ -182,7 +183,10 @@ function Reel({
   );
 }
 
-export default function NeonCity() {
+export default function NeonCity({
+  player,
+  onCreditsChange,
+}) {
   const [grid, setGrid] = useState(createGrid());
 
   const [reelSpinning, setReelSpinning] = useState(
@@ -197,8 +201,8 @@ export default function NeonCity() {
   const [message, setMessage] = useState("Presioná GIRAR");
 
   const [credits, setCredits] = useState(
-    savedGame?.credits ?? 1000
-  );
+  player?.credits ?? 0
+);
 
   const [betIndex, setBetIndex] = useState(
     savedGame?.betIndex ?? 1
@@ -790,7 +794,13 @@ export default function NeonCity() {
       setFreeSpins((current) => current - 1);
       setMessage("🎁 Giro gratis...");
     } else {
-      setCredits((current) => current - bet);
+    setCredits((current) => {
+  const newCredits = current - bet;
+
+  onCreditsChange?.(newCredits);
+
+  return newCredits;
+});
       setJackpot((current) =>
         current + Math.max(1, Math.round(bet * 0.05))
       );
@@ -863,13 +873,15 @@ export default function NeonCity() {
           setScatterCells(
             prize.scatterCells
           );
+if (prize.amount > 0) {
+  setCredits((current) => {
+    const newCredits = current + prize.amount;
 
-          if (prize.amount > 0) {
-            setCredits(
-              (current) =>
-                current + prize.amount
-            );
-          }
+    onCreditsChange?.(newCredits);
+
+    return newCredits;
+  });
+}
 
           if (prize.jackpotWon) {
             setCelebration({

@@ -317,7 +317,15 @@ if (screen === "egyptian-gold") {
           ← CASINO
         </button>
 
-        <NeonCity />
+        <NeonCity
+  player={player}
+  onCreditsChange={(credits) =>
+    setPlayer((current) => ({
+      ...current,
+      credits,
+    }))
+  }
+/>
       </>
     );
   }
