@@ -47,6 +47,15 @@ function randomSymbol() {
 const NORMAL_WIN_CHANCE = 0.13;
 const BONUS_CHANCE = 0.01;
 
+function detectIOS() {
+  if (typeof navigator === "undefined") return false;
+
+  return (
+    /iPad|iPhone|iPod/.test(navigator.userAgent) ||
+    (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1)
+  );
+}
+
 function hasPayingLine(grid) {
   return PAYLINES.some((payline) => {
     const result = evaluateLine(grid, payline, 1);
@@ -339,6 +348,9 @@ export default function EgyptianGold({
   const spinFailsafeRef = useRef(null);
   const reelSpinningRef = useRef(Array(COLUMNS).fill(false));
   const displayCreditsRef = useRef(player?.credits ?? 0);
+  const mountedRef = useRef(true);
+  const isIOSRef = useRef(detectIOS());
+  const isIOS = isIOSRef.current;
   const reelElementsRef = useRef([]);
 
   const bet = BET_OPTIONS[betIndex];
@@ -408,6 +420,14 @@ export default function EgyptianGold({
     }
 
     const target = winEffect.amount;
+
+    // Igual que ClownParty: en iPhone evitamos otro bucle de
+    // requestAnimationFrame mientras coinciden giro y efectos visuales.
+    if (isIOS) {
+      setAnimatedPrize(target);
+      return undefined;
+    }
+
     const duration =
       winEffect.level === "mega"
         ? 2600
@@ -434,10 +454,13 @@ export default function EgyptianGold({
     frameId = requestAnimationFrame(animatePrize);
 
     return () => cancelAnimationFrame(frameId);
-  }, [winEffect]);
+  }, [winEffect, isIOS]);
 
   useEffect(() => {
+    mountedRef.current = true;
+
     return () => {
+      mountedRef.current = false;
       timeoutsRef.current.forEach((timeoutId) =>
         clearTimeout(timeoutId)
       );
@@ -698,9 +721,11 @@ export default function EgyptianGold({
         void element.offsetWidth;
       });
 
-      setReelSpinning(Array(COLUMNS).fill(false));
-      setReelStopping(Array(COLUMNS).fill(false));
-      setSpinning(false);
+      if (mountedRef.current) {
+        setReelSpinning(Array(COLUMNS).fill(false));
+        setReelStopping(Array(COLUMNS).fill(false));
+        setSpinning(false);
+      }
       spinLockRef.current = false;
       timeoutsRef.current = [];
     };
@@ -868,7 +893,7 @@ export default function EgyptianGold({
       const stopTime = 850 + columnIndex * 220;
 
       const timeoutId = window.setTimeout(() => {
-        if (spinFinalized) return;
+        if (!mountedRef.current || spinFinalized) return;
 
         setGrid((currentGrid) => {
           const updatedGrid = currentGrid.map((column) => [...column]);
@@ -924,7 +949,7 @@ export default function EgyptianGold({
   }
 
   return (
-    <main className="egypt-page">
+    <main className={`egypt-page ${isIOS ? "egypt-ios-mode" : ""}`}>
       <style>{`
         .egypt-reel {
           position: relative;
@@ -1048,6 +1073,36 @@ export default function EgyptianGold({
           }
         }
 
+        .egypt-ios-mode .egypt-reel-running .egypt-reel-strip {
+          filter: none !important;
+          animation-duration: .42s;
+          will-change: transform;
+        }
+
+        .egypt-ios-mode .egypt-reel-running,
+        .egypt-ios-mode .egypt-reel-stopping,
+        .egypt-ios-mode .egypt-reel-stopping .egypt-reel-strip {
+          filter: none !important;
+        }
+
+        .egypt-ios-mode .egypt-premium-effects *,
+        .egypt-ios-mode .egypt-celebration *,
+        .egypt-ios-mode .egypt-frame-bulbs span,
+        .egypt-ios-mode .egypt-side-decor span,
+        .egypt-ios-mode .egypt-spotlight,
+        .egypt-ios-mode .egypt-cloud {
+          filter: none !important;
+          box-shadow: none !important;
+          animation-iteration-count: 1 !important;
+        }
+
+        .egypt-ios-mode .egypt-machine-neon,
+        .egypt-ios-mode .egypt-win-flash,
+        .egypt-ios-mode .egypt-premium-flash {
+          filter: none !important;
+          box-shadow: none !important;
+        }
+
         @media (prefers-reduced-motion: reduce) {
           .egypt-reel-running .egypt-reel-strip,
           .egypt-reel-stopping,
@@ -1070,7 +1125,7 @@ export default function EgyptianGold({
         >
           <div className="egypt-premium-flash" />
           <div className="egypt-premium-burst">
-            {Array.from({ length: 18 }).map((_, index) => (
+            {Array.from({ length: isIOS ? 6 : 18 }).map((_, index) => (
               <span
                 key={`burst-${winEffect.id}-${index}`}
                 style={{
@@ -1083,15 +1138,20 @@ export default function EgyptianGold({
 
           <div className="egypt-coin-rain">
             {Array.from({
-              length:
-                winEffect.level === "mega"
-                  ? 56
-                  : winEffect.level === "big" ||
-                    winEffect.level === "bonus"
-                  ? 40
-                  : winEffect.level === "medium"
-                  ? 24
-                  : 12,
+              length: isIOS
+                ? winEffect.level === "mega" ||
+                  winEffect.level === "big" ||
+                  winEffect.level === "bonus"
+                  ? 8
+                  : 6
+                : winEffect.level === "mega"
+                ? 56
+                : winEffect.level === "big" ||
+                  winEffect.level === "bonus"
+                ? 40
+                : winEffect.level === "medium"
+                ? 24
+                : 12,
             }).map((_, index) => (
               <span
                 key={`coin-${winEffect.id}-${index}`}
