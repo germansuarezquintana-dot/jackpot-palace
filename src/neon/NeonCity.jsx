@@ -19,7 +19,7 @@ const symbols = [
 
 const ROWS = 3;
 const COLUMNS = 5;
-const BET_OPTIONS = [10, 20, 50, 100];
+const BET_OPTIONS = [100, 250, 500, 1000, 5000];
 
 const PAYLINES = [
   [0, 0, 0, 0, 0],
