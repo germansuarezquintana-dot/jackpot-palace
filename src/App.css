@@ -635,7 +635,8 @@ button {
 .reel-strip.spinning {
   animation:
     reelRoll 0.38s linear infinite;
-  filter: blur(2.4px);
+  /* Safari/iPhone: evitar blur animado que puede bloquear el repintado */
+  filter: none;
   will-change: transform;
 }
 
@@ -1075,14 +1076,14 @@ animation: celebrationZoom 0.45s ease-out;
     transform:
       translateY(-34px)
       scaleY(1.05);
-    filter: blur(4px);
+    filter: none;
   }
 
   55% {
     transform:
       translateY(10px)
       scaleY(0.98);
-    filter: blur(1px);
+    filter: none;
   }
 
   78% {
