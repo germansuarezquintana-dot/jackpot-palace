@@ -755,8 +755,23 @@ flex-direction: column;
 /* =========================
    RESPONSIVE
    ========================= */
+.diamond-fortune-page {
+    width: 100vw;
+    height: 100dvh;
+    min-height: 100dvh;
 
-@media (max-width: 768px) {
+    padding:
+      env(safe-area-inset-top)
+      env(safe-area-inset-right)
+      env(safe-area-inset-bottom)
+      env(safe-area-inset-left);
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    overflow: hidden;
+}
      .diamond-fortune-page {
     min-height: 100dvh;
     padding:
@@ -772,20 +787,23 @@ flex-direction: column;
 justify-content: space-between;
   }
 
-  .diamond-fortune-page .machine {
+ .diamond-fortune-page .machine {
     width: 100%;
-    max-width: 100%;
+    height: 100%;
 
-    min-height: 100%;
-    height: auto;
+    max-width: 100%;
+    max-height: 100%;
 
     display: flex;
     flex-direction: column;
+    justify-content: space-between;
 
-    padding: 34px 12px 12px;
+    padding: 8px;
+
     border-width: 3px;
-    border-radius: 14px;
-    overflow: visible;
+    border-radius: 0;
+
+    overflow: hidden;
 }
 
   .diamond-fortune-page .lights {
@@ -907,14 +925,14 @@ justify-content: space-between;
   }
 
   .diamond-fortune-page .reel-window {
-    height: clamp(210px, 34vh, 255px);
+    height: 32vh;
     border-width: 1px;
     border-radius: 5px;
   }
 
   .diamond-fortune-page .reel-symbol,
   .diamond-fortune-page .stopped-symbol {
-    height: calc(clamp(210px, 34vh, 255px) / 3);
+  
     font-size: clamp(26px, 7.8vw, 38px);
   }
 
@@ -933,14 +951,19 @@ justify-content: space-between;
     display: none;
   }
 
-  .diamond-fortune-page .controls {
-  width: 100%;
-  padding: 0 6px 8px;
-  grid-template-columns: 44px minmax(0, 1fr) 44px 52px;
-  gap: 6px;
-  align-items: center;
-}
+ .diamond-fortune-page .controls {
+    width: 100%;
+    padding:
+        0
+        6px
+        max(8px, env(safe-area-inset-bottom));
 
+    grid-template-columns: 37px minmax(0, 1fr) 37px 45px;
+
+    gap: 3px;
+
+    align-items: center;
+}
   .diamond-fortune-page .spin-button {
     padding: 8px 3px;
     border-width: 2px;
@@ -974,7 +997,7 @@ justify-content: space-between;
   .diamond-fortune-page .saved-message {
     font-size: 6px;
   }
-}
+
 
 @media (max-width: 768px) and (max-height: 700px) {
   .diamond-fortune-page .special-symbols {
@@ -1094,4 +1117,11 @@ justify-content: space-between;
     width: 100%;
     max-width: 320px;
   }
+}
+html,
+body,
+#root {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
 }
