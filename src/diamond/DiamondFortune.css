@@ -1411,3 +1411,144 @@ body,
     transform: none !important;
   }
 }
+/* ==================================================
+   AJUSTE FINAL ANDROID / CELULARES
+   EVITA QUE LOS CONTROLES QUEDEN TAPADOS
+   ================================================== */
+
+@media screen and (max-width: 768px) {
+
+  .diamond-fortune-page {
+    width: 100% !important;
+    height: 100dvh !important;
+    min-height: 100dvh !important;
+
+    padding:
+      max(4px, env(safe-area-inset-top))
+      4px
+      max(6px, env(safe-area-inset-bottom))
+      4px !important;
+
+    align-items: flex-start !important;
+    overflow: hidden !important;
+  }
+
+  .diamond-fortune-page .machine {
+    width: 100% !important;
+    height: calc(
+      100dvh
+      - max(4px, env(safe-area-inset-top))
+      - max(6px, env(safe-area-inset-bottom))
+      - 4px
+    ) !important;
+
+    max-height: none !important;
+    padding: 7px 6px 6px !important;
+    gap: 2px !important;
+    overflow: hidden !important;
+  }
+
+  .diamond-fortune-page .diamond-heading {
+    margin: 8px auto 0 !important;
+  }
+
+  .diamond-fortune-page .title {
+    font-size: clamp(25px, 8vw, 34px) !important;
+  }
+
+  .diamond-fortune-page .subtitle {
+    margin: 1px 0 4px !important;
+    font-size: 8px !important;
+  }
+
+  .diamond-fortune-page .jackpot-panel {
+    width: calc(100% - 20px) !important;
+    min-height: 0 !important;
+    margin: 0 auto 4px !important;
+    padding: 5px !important;
+  }
+
+  .diamond-fortune-page .jackpot-panel strong {
+    font-size: 28px !important;
+  }
+
+  .diamond-fortune-page .information-panel {
+    grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+    gap: 3px !important;
+    margin-bottom: 3px !important;
+  }
+
+  .diamond-fortune-page .information-box {
+    min-height: 0 !important;
+    padding: 4px 1px !important;
+  }
+
+  .diamond-fortune-page .information-label {
+    font-size: 5px !important;
+  }
+
+  .diamond-fortune-page .information-value {
+    font-size: 15px !important;
+  }
+
+  .diamond-fortune-page .special-symbols {
+    margin-bottom: 2px !important;
+    font-size: 6px !important;
+  }
+
+  .diamond-fortune-page .line-indicators {
+    margin-bottom: 2px !important;
+  }
+
+  .diamond-fortune-page .reels-frame {
+    margin-bottom: 2px !important;
+    padding: 4px !important;
+  }
+
+  .diamond-fortune-page .reels-container {
+    padding: 2px !important;
+  }
+
+  .diamond-fortune-page .reel-window {
+    height: clamp(165px, 28dvh, 205px) !important;
+  }
+
+  .diamond-fortune-page .reel-symbol,
+  .diamond-fortune-page .stopped-symbol {
+    height: calc(clamp(165px, 28dvh, 205px) / 3) !important;
+    font-size: clamp(27px, 8vw, 38px) !important;
+  }
+
+  .diamond-fortune-page .message {
+    min-height: 10px !important;
+    margin: 0 !important;
+    font-size: 7px !important;
+  }
+
+  .diamond-fortune-page .controls {
+    flex-shrink: 0 !important;
+    padding: 0 3px max(3px, env(safe-area-inset-bottom)) !important;
+    gap: 4px !important;
+  }
+
+  .diamond-fortune-page .small-button {
+    width: 38px !important;
+    min-width: 38px !important;
+    height: 38px !important;
+  }
+
+  .diamond-fortune-page .spin-button {
+    height: 40px !important;
+    min-height: 40px !important;
+  }
+
+  .diamond-fortune-page .max-bet-button {
+    width: 45px !important;
+    min-width: 45px !important;
+    height: 38px !important;
+  }
+
+  .diamond-fortune-page .bottom-buttons {
+    display: none !important;
+  }
+}
