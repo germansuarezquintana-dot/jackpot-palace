@@ -388,55 +388,54 @@ const firstSaveRef = useRef(true);
   }
 
   function startSpinSound() {
-    if (!soundEnabled) {
-      return;
-    }
+  if (!soundEnabled) return;
 
-    stopSpinSound();
+  stopSpinSound();
 
-    let frequency = 130;
+  let frequency = 520;
 
-    spinSoundRef.current = setInterval(() => {
-      playTone({
-        frequency,
-        duration: 0.06,
-        volume: 0.07,
-        type: "square",
-      });
-
-      frequency += 18;
-
-      if (frequency > 330) {
-        frequency = 130;
-      }
-    }, 85);
-  }
-
-  function playReelStopSound(reelIndex) {
+  spinSoundRef.current = setInterval(() => {
     playTone({
-      frequency: 260 + reelIndex * 90,
-      duration: 0.16,
-      volume: 0.22,
+      frequency,
+      duration: 0.035,
+      volume: 0.045,
       type: "triangle",
     });
-  }
 
-  function playWinSound(bigWin = false) {
-    const notes = bigWin
-      ? [440, 550, 660, 880, 1100, 1320]
-      : [440, 550, 660, 880];
+    frequency += 42;
 
-    notes.forEach((frequency, index) => {
+    if (frequency > 1200) {
+      frequency = 520;
+    }
+  }, 85);
+}
+
+  function playReelStopSound(reelIndex) {
+  const diamondNotes = [740, 830, 930, 1046, 1174];
+
+  playTone({
+    frequency: diamondNotes[reelIndex] || 880,
+    duration: 0.1,
+    volume: 0.15,
+    type: "sine",
+  });
+}
+function playWinSound(bigWin = false) {
+  const notes = bigWin
+    ? [523, 659, 784, 1046, 1318, 1568]
+    : [659, 784, 988, 1318];
+
+  notes.forEach((frequency, index) => {
+    window.setTimeout(() => {
       playTone({
         frequency,
-        duration: 0.28,
-        volume: 0.2,
+        duration: bigWin ? 0.32 : 0.2,
+        volume: bigWin ? 0.19 : 0.14,
         type: "sine",
-        delay: index * 0.13,
       });
-    });
-  }
-
+    }, index * (bigWin ? 115 : 90));
+  });
+}
   function playScatterSound() {
     const notes = [330, 440, 550, 660, 880, 1100];
 
@@ -499,14 +498,13 @@ const firstSaveRef = useRef(true);
 
   let multiplier = 0;
 
-  if (consecutive === 5) {
-    multiplier = 15;
-  } else if (consecutive === 4) {
-    multiplier = 6;
-  } else if (consecutive === 3) {
-    multiplier = 2;
-  }
-
+if (consecutive === 5) {
+  multiplier = 25;
+} else if (consecutive === 4) {
+  multiplier = 10;
+} else if (consecutive === 3) {
+  multiplier = 4;
+}
   const amount = Math.round(bet * multiplier);
 
   // Seguridad: nunca registrar una línea con premio cero
