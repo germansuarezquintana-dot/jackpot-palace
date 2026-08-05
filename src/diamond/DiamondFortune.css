@@ -1,0 +1,1097 @@
+/* ==========================================================
+   DIAMOND FORTUNE — CSS AISLADO Y RESPONSIVE
+   ========================================================== */
+
+.diamond-fortune-page,
+.diamond-fortune-page * {
+  box-sizing: border-box;
+}
+
+.diamond-fortune-page {
+  width: 100%;
+  min-width: 320px;
+  min-height: 100dvh;
+  margin: 0;
+  padding: 12px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow-x: hidden;
+  font-family: Arial, Helvetica, sans-serif;
+  background:
+    linear-gradient(rgba(0, 245, 255, 0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 0, 230, 0.035) 1px, transparent 1px),
+    radial-gradient(circle at 50% 0%, #17206f 0%, #150a27 38%, #06030b 100%);
+  background-size: 38px 38px, 38px 38px, auto;
+}
+
+.diamond-fortune-page button {
+  font-family: inherit;
+}
+
+/* =========================
+   GABINETE
+   ========================= */
+
+.diamond-fortune-page .machine {
+  position: relative;
+  width: min(900px, 100%);
+max-height: calc(100vh - 36px);
+display: flex;
+flex-direction: column;
+  margin: 0 auto;
+  padding: 22px 22px 18px;
+  gap: 8px;
+  overflow: visible;
+  text-align: center;
+  border: 7px solid #f6d365;
+  border-radius: 28px;
+  background: linear-gradient(145deg, #32194f 0%, #160b29 48%, #07030d 100%);
+  box-shadow:
+    0 0 18px #f6d365,
+    0 0 55px rgba(255, 0, 230, 0.62),
+    inset 0 0 35px rgba(0, 0, 0, 0.92);
+}
+
+.diamond-fortune-page .machine-winning {
+  animation: neonCabinetWin 0.55s ease-in-out infinite alternate;
+}
+
+/* =========================
+   LUCES Y ACCIONES SUPERIORES
+   ========================= */
+
+.diamond-fortune-page .lights {
+  position: absolute;
+  top: 10px;
+  left: 18px;
+  right: 18px;
+  display: flex;
+  justify-content: space-around;
+  pointer-events: none;
+}
+
+.diamond-fortune-page .light {
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  background: #dfffff;
+  box-shadow: 0 0 8px #fff, 0 0 15px #f6d365, 0 0 24px #9b5de5;
+  animation: neonBlink 0.7s alternate infinite;
+}
+
+.diamond-fortune-page .light:nth-child(even) {
+  animation-delay: 0.35s;
+}
+
+.diamond-fortune-page .machine-spinning .light {
+  animation-duration: 0.18s;
+}
+
+.diamond-fortune-page .machine-winning .light {
+  animation-duration: 0.12s;
+  background: #fff;
+}
+
+.diamond-fortune-page .top-actions {
+  position: absolute;
+  z-index: 20;
+  top: 30px;
+  right: 18px;
+  display: flex;
+  gap: 8px;
+}
+
+.diamond-fortune-page .round-action-button {
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border: 2px solid #f6d365;
+  border-radius: 50%;
+  color: #fff;
+  font-size: 20px;
+  line-height: 1;
+  cursor: pointer;
+  background: #160b29;
+  box-shadow: 0 0 12px rgba(0, 245, 255, 0.75);
+}
+
+.diamond-fortune-page .round-action-button:hover {
+  transform: translateY(-2px) scale(1.04);
+}
+
+/* =========================
+   ENCABEZADO
+   ========================= */
+
+.diamond-fortune-page .diamond-heading {
+  width: calc(100% - 150px);
+  margin: 0 auto 2px;
+}
+
+.diamond-fortune-page .neon-city-kicker,
+.diamond-fortune-page .diamond-kicker {
+  display: block;
+  color: #fff0b8;
+  font-size: clamp(9px, 1.8vw, 13px);
+  font-weight: 900;
+  letter-spacing: 7px;
+  text-shadow: 0 0 8px #f6d365;
+}
+
+.diamond-fortune-page .title {
+  margin: 0;
+  color: #fff;
+  font-size: clamp(42px, 8vw, 76px);
+  font-style: italic;
+  line-height: 0.92;
+  letter-spacing: 2px;
+  white-space: nowrap;
+  text-shadow:
+    -3px 3px 0 #4b19ff,
+    3px -2px 0 #9b5de5,
+    0 0 10px #fff,
+    0 0 24px #f6d365,
+    0 0 42px #9b5de5;
+}
+
+.diamond-fortune-page .diamond-stars {
+  display: block;
+  height: 17px;
+  overflow: hidden;
+  color: #f6d365;
+  font-size: 21px;
+  line-height: 16px;
+  letter-spacing: 4px;
+  text-shadow: 0 0 8px #f6d365, 0 0 18px #9b5de5;
+}
+
+.diamond-fortune-page .subtitle {
+  margin: 7px 0 12px;
+  color: #fff;
+  font-size: clamp(11px, 2.3vw, 17px);
+  font-weight: 800;
+  letter-spacing: 3px;
+  text-shadow: 0 0 9px #f6d365, 0 0 16px #9b5de5;
+}
+
+/* =========================
+   JACKPOT E INFORMACIÓN
+   ========================= */
+
+.diamond-fortune-page .jackpot-panel {
+  width: min(440px, 88%);
+  margin: 0 auto 12px;
+  padding: 7px 16px 9px;
+  border: 2px solid #9b5de5;
+  border-radius: 16px;
+  background: linear-gradient(180deg, #3a1f5f, #0d0717);
+  box-shadow:
+    inset 0 0 16px #000,
+    0 0 18px rgba(0, 245, 255, 0.62),
+    0 0 28px rgba(255, 0, 230, 0.42);
+}
+
+.diamond-fortune-page .jackpot-panel span,
+.diamond-fortune-page .jackpot-panel small {
+  display: block;
+  color: #fff0b8;
+  font-size: 10px;
+  font-weight: 900;
+  letter-spacing: 2px;
+}
+
+.diamond-fortune-page .jackpot-panel strong {
+  display: block;
+  margin: 2px 0;
+  color: #fff;
+  font-size: clamp(27px, 5vw, 44px);
+  line-height: 1;
+  text-shadow: 0 0 8px #f6d365, 0 0 18px #9b5de5;
+  animation: neonJackpotGlow 1.2s ease-in-out infinite alternate;
+}
+
+.diamond-fortune-page .information-panel {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 7px;
+  margin-bottom: 8px;
+}
+
+.diamond-fortune-page .information-box {
+  min-width: 0;
+  padding: 8px 4px;
+  border: 2px solid #c084fc;
+  border-radius: 10px;
+  background: #11081f;
+  box-shadow: inset 0 0 10px #000;
+}
+
+.diamond-fortune-page .information-box:nth-child(odd) {
+  border-color: #f6d365;
+}
+
+.diamond-fortune-page .free-spin-box {
+  border-color: #9b5de5;
+}
+
+.diamond-fortune-page .information-label {
+  display: block;
+  margin-bottom: 4px;
+  color: #f6e8ff;
+  font-size: 10px;
+  font-weight: 800;
+}
+
+.diamond-fortune-page .information-value {
+  color: #fff;
+  font-size: clamp(19px, 4vw, 29px);
+  line-height: 1;
+  text-shadow: 0 0 8px #f6d365, 0 0 14px #9b5de5;
+}
+
+.diamond-fortune-page .special-symbols {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 6px 16px;
+  margin-bottom: 7px;
+  color: #fff;
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.diamond-fortune-page .line-indicators {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin-bottom: 9px;
+}
+
+.diamond-fortune-page .line-indicator {
+  padding: 4px 8px;
+  border: 1px solid #c084fc;
+  border-radius: 12px;
+  color: #ddd;
+  font-size: 10px;
+  font-weight: 800;
+  background: #150a27;
+}
+
+.diamond-fortune-page .active-line {
+  color: #030313;
+  background: #f6d365;
+  box-shadow: 0 0 8px #fff, 0 0 18px #f6d365, 0 0 28px #9b5de5;
+  animation: neonWinningFlash 0.45s alternate infinite;
+}
+
+/* =========================
+   RODILLOS
+   ========================= */
+
+.diamond-fortune-page .reels-frame {
+  width: 100%;
+  margin: 0 0 9px;
+  padding: 8px;
+  border: 4px solid #f6d365;
+  border-radius: 18px;
+  background: linear-gradient(145deg, #5a2c83, #090522);
+  box-shadow:
+    inset 0 0 15px #000,
+    0 0 16px rgba(0, 245, 255, 0.72),
+    0 0 28px rgba(255, 0, 230, 0.34);
+}
+
+.diamond-fortune-page .reels-container {
+  display: flex;
+  justify-content: center;
+  gap: 6px;
+  width: 100%;
+  padding: 7px;
+  overflow: hidden;
+  border-radius: 12px;
+  background:
+    linear-gradient(180deg, rgba(255, 0, 230, 0.12), transparent 24%),
+    #0b0614;
+}
+
+.diamond-fortune-page .reel-window {
+  position: relative;
+  flex: 1 1 0;
+  min-width: 0;
+  height: clamp(190px, 28vh, 250px);
+  overflow: hidden;
+  border: 3px solid #b88cff;
+  border-radius: 10px;
+  background: linear-gradient(to bottom, #bdbdbd 0%, #fff 28%, #fff 72%, #bdbdbd 100%);
+  box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.65), 0 4px 7px rgba(0, 0, 0, 0.8);
+}
+
+.diamond-fortune-page .reel-strip {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+}
+
+.diamond-fortune-page .reel-strip.spinning {
+  animation: neonReelRoll 0.38s linear infinite;
+  filter: none;
+  will-change: transform;
+}
+
+.diamond-fortune-page .reel-symbol,
+.diamond-fortune-page .stopped-symbol {
+  height: 85px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: clamp(34px, 6vw, 62px);
+  line-height: 1;
+  user-select: none;
+}
+
+.diamond-fortune-page .stopped-reel {
+  position: absolute;
+  inset: 0;
+  animation: neonStopBounce 0.24s ease-out;
+}
+
+.diamond-fortune-page .reel-window-stopping {
+  animation: neonReelStopBounce 0.28s ease-out;
+}
+
+.diamond-fortune-page .wild-symbol {
+  text-shadow: 0 0 8px #00ffff, 0 0 18px #006eff;
+}
+
+.diamond-fortune-page .scatter-symbol {
+  text-shadow: 0 0 8px #9b5de5, 0 0 18px #9b5de5;
+}
+
+.diamond-fortune-page .winning-symbol {
+  position: relative;
+  z-index: 5;
+  border-radius: 13px;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.95), rgba(255, 215, 0, 0.65) 40%, rgba(255, 120, 0, 0.28) 75%, transparent 100%);
+  box-shadow: inset 0 0 18px #fff, 0 0 14px #fff3a0, 0 0 28px #ffcc00;
+  animation: neonWinnerPulse 0.45s ease-in-out infinite alternate;
+}
+
+.diamond-fortune-page .scatter-winner {
+  position: relative;
+  z-index: 6;
+  border-radius: 13px;
+  background: rgba(255, 0, 230, 0.35);
+  box-shadow: inset 0 0 18px #fff, 0 0 22px #9b5de5;
+  animation: neonScatterPulse 0.35s alternate infinite;
+}
+
+.diamond-fortune-page .reel-shadow {
+  position: absolute;
+  z-index: 8;
+  left: 0;
+  width: 100%;
+  height: 42px;
+  pointer-events: none;
+}
+
+.diamond-fortune-page .reel-shadow-top {
+  top: 0;
+  background: linear-gradient(to bottom, rgba(0, 0, 0, 0.58), transparent);
+}
+
+.diamond-fortune-page .reel-shadow-bottom {
+  bottom: 0;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.58), transparent);
+}
+
+/* =========================
+   MENSAJE Y CONTROLES
+   ========================= */
+
+.diamond-fortune-page .message {
+  min-height: 24px;
+  margin: 0 0 8px;
+  color: #fff;
+  font-size: clamp(13px, 2.5vw, 20px);
+  font-weight: 800;
+  line-height: 1.1;
+  text-shadow: 0 0 9px #f6d365, 0 0 16px #9b5de5;
+}
+
+.diamond-fortune-page .controls {
+  width: 100%;
+  display: grid;
+  grid-template-columns: minmax(90px, 130px) 58px minmax(220px, 1fr) 58px 70px;
+  gap: 10px;
+  align-items: center;
+}
+
+.diamond-fortune-page .bet-display {
+  min-width: 0;
+  height: 54px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 5px 10px;
+  border: 2px solid #c084fc;
+  border-radius: 14px;
+  color: #fff;
+  background: #150a27;
+}
+
+.diamond-fortune-page .bet-display span {
+  font-size: 9px;
+  font-weight: 800;
+}
+
+.diamond-fortune-page .bet-display strong {
+  font-size: 21px;
+}
+
+.diamond-fortune-page .small-button {
+  width: 58px;
+  height: 58px;
+  padding: 0;
+  border: 3px solid #f6d365;
+  border-radius: 50%;
+  color: #fff;
+  font-size: 32px;
+  font-weight: 800;
+  cursor: pointer;
+  background: linear-gradient(#444, #111);
+  box-shadow: 0 5px 0 #000;
+}
+
+.diamond-fortune-page .spin-button {
+  width: 100%;
+  min-width: 0;
+  padding: 15px 16px;
+  border: 4px solid #ffe9a6;
+  border-radius: 40px;
+  color: #fff;
+  font-size: clamp(20px, 4vw, 28px);
+  font-weight: 900;
+  letter-spacing: 1px;
+  cursor: pointer;
+  background: linear-gradient(to bottom, #b35cff, #6f2dbd 55%, #2b104d);
+  box-shadow: 0 8px 0 #210b3b, 0 0 22px rgba(255, 0, 230, 0.92), 0 0 34px rgba(0, 245, 255, 0.42);
+}
+
+.diamond-fortune-page .free-spin-button {
+  background: linear-gradient(to bottom, #f4d06f, #8d651f 55%, #3d2a10);
+  box-shadow: 0 8px 0 #2d1b0a, 0 0 25px rgba(0, 245, 255, 0.9);
+}
+
+.diamond-fortune-page .max-bet-button {
+  width: 70px;
+  min-width: 70px;
+  height: 54px;
+  padding: 0 6px;
+  border: 3px solid #f6d365;
+  border-radius: 16px;
+  color: #0b0614;
+  font-weight: 900;
+  cursor: pointer;
+  background: linear-gradient(#fff2bd, #d9ad4a);
+  box-shadow: 0 5px 0 #7b541f, 0 0 15px rgba(0, 245, 255, 0.8);
+}
+
+.diamond-fortune-page .spin-button:not(:disabled):active,
+.diamond-fortune-page .small-button:not(:disabled):active,
+.diamond-fortune-page .max-bet-button:not(:disabled):active {
+  transform: translateY(4px);
+}
+
+.diamond-fortune-page button:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
+.diamond-fortune-page .bottom-buttons {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.diamond-fortune-page .reset-button {
+  padding: 8px 16px;
+  border: 2px solid #f6d365;
+  border-radius: 20px;
+  color: #fff;
+  font-size: 12px;
+  font-weight: 800;
+  cursor: pointer;
+  background: #150a27;
+}
+
+.diamond-fortune-page .saved-message {
+  color: #c7ffc7;
+  font-size: 11px;
+  font-weight: 800;
+}
+
+/* =========================
+   TABLA DE PAGOS
+   ========================= */
+
+.diamond-fortune-page .paytable-overlay {
+  position: fixed;
+  z-index: 120;
+  inset: 0;
+  width: 100%;
+  border: 0;
+  padding: 20px;
+  cursor: pointer;
+  background: rgba(5, 0, 8, 0.88);
+  backdrop-filter: blur(6px);
+}
+
+.diamond-fortune-page .paytable-card {
+  position: relative;
+  width: min(720px, 96vw);
+  max-height: 90vh;
+  margin: auto;
+  padding: 24px;
+  overflow-y: auto;
+  cursor: default;
+  border: 4px solid #f6d365;
+  border-radius: 24px;
+  color: #fff;
+  background: radial-gradient(circle at top, #3a1f5f, #150a27 58%, #06030b);
+  box-shadow: 0 0 35px #f6d365, 0 0 80px rgba(255, 0, 210, 0.65);
+}
+
+.diamond-fortune-page .paytable-card h2 {
+  margin: 0 0 6px;
+  color: #fff0b8;
+  font-size: clamp(28px, 6vw, 48px);
+  text-shadow: 0 0 14px #9b5de5;
+}
+
+.diamond-fortune-page .paytable-close {
+  position: absolute;
+  top: 10px;
+  right: 12px;
+  width: 42px;
+  height: 42px;
+  border: 2px solid #f6d365;
+  border-radius: 50%;
+  color: #fff;
+  font-size: 28px;
+  cursor: pointer;
+  background: #150a27;
+}
+
+.diamond-fortune-page .paytable-grid {
+  display: grid;
+  gap: 8px;
+  margin: 18px 0;
+}
+
+.diamond-fortune-page .paytable-row {
+  display: grid;
+  grid-template-columns: 70px repeat(3, 1fr);
+  align-items: center;
+  gap: 8px;
+  padding: 10px;
+  border: 1px solid rgba(0, 245, 255, 0.65);
+  border-radius: 12px;
+  background: rgba(0, 0, 0, 0.38);
+}
+
+.diamond-fortune-page .paytable-row strong {
+  font-size: 34px;
+}
+
+.diamond-fortune-page .paytable-row span {
+  font-weight: 900;
+}
+
+.diamond-fortune-page .scatter-pay {
+  border-color: #9b5de5;
+}
+
+/* =========================
+   CELEBRACIONES
+   ========================= */
+
+.diamond-fortune-page .celebration {
+  position: fixed;
+  z-index: 100;
+  inset: 0;
+  width: 100%;
+  border: 0;
+  overflow: hidden;
+  cursor: pointer;
+  background: rgba(5, 0, 8, 0.82);
+  backdrop-filter: blur(5px);
+}
+
+.diamond-fortune-page .celebration-card {
+  position: absolute;
+  z-index: 2;
+  top: 50%;
+  left: 50%;
+  width: min(620px, 90vw);
+  padding: 36px 20px;
+  transform: translate(-50%, -50%);
+  border: 5px solid #f6d365;
+  border-radius: 28px;
+  background: radial-gradient(circle, #a60066, #350025 58%, #080008);
+  box-shadow: 0 0 35px #f6d365, 0 0 90px #ff00c8;
+  animation: neonCelebrationPop 0.55s cubic-bezier(0.2, 1.6, 0.4, 1);
+}
+
+.diamond-fortune-page .celebration-kicker {
+  display: block;
+  color: #fff5a8;
+  font-size: clamp(23px, 6vw, 58px);
+  font-weight: 1000;
+  letter-spacing: 2px;
+  text-shadow: 0 4px 0 #7a002e, 0 0 22px #ffcc00;
+}
+
+.diamond-fortune-page .celebration-card strong {
+  display: block;
+  margin: 12px 0;
+  color: #fff;
+  font-size: clamp(52px, 14vw, 118px);
+  line-height: 0.95;
+  text-shadow: 0 0 12px #fff, 0 0 32px #ff00d4;
+}
+
+.diamond-fortune-page .celebration-card small {
+  color: #fff;
+  font-size: 12px;
+  font-weight: 900;
+  letter-spacing: 2px;
+}
+
+.diamond-fortune-page .celebration-jackpot .celebration-card {
+  border-color: gold;
+  background: radial-gradient(circle, #7a4a00, #3a1200 58%, #080300);
+  box-shadow: 0 0 40px #fff, 0 0 110px #ffd000;
+}
+
+.diamond-fortune-page .coin-rain span {
+  position: absolute;
+  z-index: 1;
+  top: -15%;
+  left: var(--coin-left);
+  font-size: 24px;
+  animation: neonCoinFall 2.4s linear infinite;
+  animation-delay: var(--coin-delay);
+}
+
+/* =========================
+   ANIMACIONES
+   ========================= */
+
+@keyframes neonReelRoll {
+  from { transform: translateY(-5100px) scaleY(1.03); }
+  to { transform: translateY(0) scaleY(1); }
+}
+
+@keyframes neonStopBounce {
+  0% { transform: translateY(-28px) scaleY(1.04); filter: none; }
+  55% { transform: translateY(8px) scaleY(0.98); filter: none; }
+  100% { transform: translateY(0) scaleY(1); filter: blur(0); }
+}
+
+@keyframes neonReelStopBounce {
+  0% { transform: translateY(-8px); }
+  55% { transform: translateY(4px); }
+  100% { transform: translateY(0); }
+}
+
+@keyframes neonBlink {
+  from { opacity: 0.35; transform: scale(0.85); }
+  to { opacity: 1; transform: scale(1.15); }
+}
+
+@keyframes neonWinnerPulse {
+  from { transform: scale(0.94); }
+  to { transform: scale(1.06); }
+}
+
+@keyframes neonScatterPulse {
+  from { transform: scale(0.9) rotate(-3deg); }
+  to { transform: scale(1.08) rotate(3deg); }
+}
+
+@keyframes neonWinningFlash {
+  from { opacity: 0.65; }
+  to { opacity: 1; }
+}
+
+@keyframes neonJackpotGlow {
+  from { transform: scale(0.98); opacity: 0.82; }
+  to { transform: scale(1.03); opacity: 1; }
+}
+
+@keyframes neonCabinetWin {
+  from { filter: brightness(1); }
+  to { filter: brightness(1.18) saturate(1.2); }
+}
+
+@keyframes neonCelebrationPop {
+  0% { transform: translate(-50%, -50%) scale(0.35) rotate(-7deg); opacity: 0; }
+  75% { transform: translate(-50%, -50%) scale(1.06) rotate(1deg); opacity: 1; }
+  100% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+}
+
+@keyframes neonCoinFall {
+  0% { transform: translateY(-10vh) rotate(0deg); opacity: 0; }
+  12% { opacity: 1; }
+  100% { transform: translateY(125vh) rotate(720deg); opacity: 1; }
+}
+
+/* =========================
+   RESPONSIVE
+   ========================= */
+
+@media (max-width: 768px) {
+     .diamond-fortune-page {
+    min-height: 100dvh;
+    padding:
+      max(4px, env(safe-area-inset-top))
+      max(4px, env(safe-area-inset-right))
+      max(4px, env(safe-area-inset-bottom))
+      max(4px, env(safe-area-inset-left));
+    align-items: flex-start;
+    padding-top: 22px;
+
+display: flex;
+flex-direction: column;
+justify-content: space-between;
+  }
+
+  .diamond-fortune-page .machine {
+    width: 100%;
+    max-width: 100%;
+
+    min-height: 100%;
+    height: auto;
+
+    display: flex;
+    flex-direction: column;
+
+    padding: 34px 12px 12px;
+    border-width: 3px;
+    border-radius: 14px;
+    overflow: visible;
+}
+
+  .diamond-fortune-page .lights {
+    top: 5px;
+    left: 6px;
+    right: 6px;
+  }
+
+  .diamond-fortune-page .light {
+    width: 6px;
+    height: 6px;
+  }
+
+  .diamond-fortune-page .top-actions {
+    top: 7px;
+    right: 5px;
+    gap: 3px;
+  }
+
+  .diamond-fortune-page .round-action-button {
+    width: 28px;
+    height: 28px;
+    font-size: 12px;
+  }
+
+  .diamond-fortune-page .diamond-heading {
+    width: calc(100% - 92px);
+  }
+
+  .diamond-fortune-page .neon-city-kicker,
+.diamond-fortune-page .diamond-kicker {
+    font-size: 6px;
+    letter-spacing: 2px;
+  }
+
+  .diamond-fortune-page .title {
+    font-size: clamp(54px, 6vw, 78px);
+  }
+
+  .diamond-fortune-page .diamond-stars {
+    height: 8px;
+    font-size: 10px;
+    line-height: 8px;
+    letter-spacing: 1px;
+  }
+
+  .diamond-fortune-page .subtitle {
+    margin: 2px 0 4px;
+    font-size: 7px;
+    letter-spacing: 1px;
+    white-space: nowrap;
+  }
+
+  .diamond-fortune-page .jackpot-panel {
+  width: min(390px, 88%);
+  margin-bottom: 10px;
+  padding: 10px 14px;
+  border-width: 2px;
+  border-radius: 16px;
+}
+
+  .diamond-fortune-page .jackpot-panel span,
+.diamond-fortune-page .jackpot-panel small {
+  font-size: 10px;
+  letter-spacing: 1px;
+}
+
+.diamond-fortune-page .jackpot-panel strong {
+  font-size: clamp(42px, 6vw, 60px);
+  line-height: 1;
+}
+
+  .diamond-fortune-page .information-panel {
+    gap: 2px;
+    margin-bottom: 3px;
+  }
+
+  .diamond-fortune-page .information-box {
+    padding: 3px 1px;
+    border-width: 1px;
+    border-radius: 6px;
+  }
+
+  .diamond-fortune-page .information-label {
+    margin-bottom: 1px;
+    font-size: 5px;
+  }
+
+  .diamond-fortune-page .information-value {
+    font-size: clamp(13px, 4.1vw, 17px);
+  }
+
+  .diamond-fortune-page .special-symbols {
+    gap: 2px 5px;
+    margin-bottom: 3px;
+    font-size: 6px;
+  }
+
+  .diamond-fortune-page .line-indicators {
+    gap: 2px;
+    margin-bottom: 3px;
+  }
+
+  .diamond-fortune-page .line-indicator {
+    padding: 2px 3px;
+    font-size: 5px;
+  }
+
+  .diamond-fortune-page .reels-frame {
+    margin-bottom: 4px;
+    padding: 4px;
+    border-width: 2px;
+    border-radius: 9px;
+  }
+
+  .diamond-fortune-page .reels-container {
+    gap: 2px;
+    padding: 2px;
+  }
+
+  .diamond-fortune-page .reel-window {
+    height: clamp(210px, 34vh, 255px);
+    border-width: 1px;
+    border-radius: 5px;
+  }
+
+  .diamond-fortune-page .reel-symbol,
+  .diamond-fortune-page .stopped-symbol {
+    height: calc(clamp(210px, 34vh, 255px) / 3);
+    font-size: clamp(26px, 7.8vw, 38px);
+  }
+
+  .diamond-fortune-page .message {
+    min-height: 14px;
+    margin-bottom: 3px;
+    font-size: 9px;
+  }
+
+  .diamond-fortune-page .controls {
+    grid-template-columns: 37px minmax(0, 1fr) 37px 45px;
+    gap: 3px;
+  }
+
+  .diamond-fortune-page .bet-display {
+    display: none;
+  }
+
+  .diamond-fortune-page .controls {
+  width: 100%;
+  padding: 0 6px 8px;
+  grid-template-columns: 44px minmax(0, 1fr) 44px 52px;
+  gap: 6px;
+  align-items: center;
+}
+
+  .diamond-fortune-page .spin-button {
+    padding: 8px 3px;
+    border-width: 2px;
+    border-radius: 21px;
+    font-size: 15px;
+    line-height: 1;
+    letter-spacing: 0;
+  }
+
+  .diamond-fortune-page .max-bet-button {
+    width: 45px;
+    min-width: 45px;
+    height: 36px;
+    padding: 0 2px;
+    border-width: 2px;
+    border-radius: 10px;
+    font-size: 9px;
+  }
+
+  .diamond-fortune-page .bottom-buttons {
+    margin-top: 3px;
+    gap: 4px;
+  }
+
+  .diamond-fortune-page .reset-button {
+    padding: 4px 7px;
+    border-width: 1px;
+    font-size: 7px;
+  }
+
+  .diamond-fortune-page .saved-message {
+    font-size: 6px;
+  }
+}
+
+@media (max-width: 768px) and (max-height: 700px) {
+  .diamond-fortune-page .special-symbols {
+    display: none;
+  }
+
+  .diamond-fortune-page .reel-window {
+    height: 195px;
+  }
+
+  .diamond-fortune-page .reel-symbol,
+  .diamond-fortune-page .stopped-symbol {
+    height: 65px;
+  }
+}
+@media (min-width: 769px) and (max-height: 900px) {
+  .diamond-fortune-page {
+    padding: 8px;
+  }
+
+  .diamond-fortune-page .machine {
+    transform: scale(0.88);
+    transform-origin: top center;
+    margin-bottom: -110px;
+  }
+}
+
+/* Ajustes exclusivos Diamond Fortune */
+.diamond-fortune-page .diamond-heading {
+  width: calc(100% - 150px);
+  margin: 0 auto 2px;
+}
+
+.diamond-fortune-page .diamond-stars {
+  display: block;
+  height: 20px;
+  overflow: hidden;
+  color: #f6d365;
+  font-size: 18px;
+  line-height: 18px;
+  letter-spacing: 5px;
+  text-shadow: 0 0 8px #fff0b8, 0 0 18px #9b5de5;
+}
+
+@media (max-width: 768px) {
+  .diamond-fortune-page .diamond-heading {
+    width: calc(100% - 92px);
+  }
+
+  .diamond-fortune-page .title {
+    font-size: clamp(23px, 7.5vw, 36px);
+    letter-spacing: 0;
+    white-space: nowrap;
+  }
+
+  .diamond-fortune-page .diamond-stars {
+    height: 10px;
+    font-size: 10px;
+    line-height: 9px;
+    letter-spacing: 1px;
+  }
+}
+/* ===========================
+   CELULARES
+=========================== */
+
+@media (max-width: 768px) {
+
+  .diamond-fortune-page {
+    padding: 10px;
+    align-items: flex-start;
+  }
+
+  .diamond-fortune-page .machine {
+    width: 100%;
+    max-width: 100%;
+    padding: 14px;
+    border-width: 4px;
+    border-radius: 22px;
+  }
+
+  .diamond-fortune-page .title {
+    font-size: clamp(36px, 10vw, 52px);
+    margin-bottom: 6px;
+  }
+
+  .diamond-fortune-page .subtitle {
+    font-size: 15px;
+    margin-bottom: 10px;
+  }
+
+  .diamond-fortune-page .jackpot-panel {
+    width: 100%;
+    padding: 12px;
+  }
+
+  .diamond-fortune-page .information-panel {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+  }
+
+  .diamond-fortune-page .information-box {
+    min-height: 62px;
+  }
+
+  .diamond-fortune-page .reels-frame {
+    padding: 8px;
+  }
+
+  .diamond-fortune-page .spin-controls {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+  }
+
+  .diamond-fortune-page .spin-button {
+    width: 100%;
+    max-width: 320px;
+  }
+}

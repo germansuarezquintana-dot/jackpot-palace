@@ -1,4 +1,3 @@
-import logoJackpotPalace from "./assets/logo-jackpot-palace.png";
 import { useEffect, useRef, useState } from "react";
 import { flushSync } from "react-dom";
 import { supabase } from "./supabase";
@@ -8,6 +7,7 @@ import ClownParty from "./ClownParty";
 import Wheel from "./Wheel";
 
 import NeonCity from "./neon/NeonCity";
+import DiamondFortune from "./diamond/DiamondFortune";
 import Lobby from "./Lobby";
 import Admin from "./Admin";
 import Cashier from "./Cashier";
@@ -229,15 +229,31 @@ export default function App() {
 
   if (loading) {
     return (
-      <main className="login-page">
-        <section className="login-card">
-          <img
-            src={logoJackpotPalace}
-            alt="Jackpot Palace"
-            className="main-logo"
-          />
-
-          <p>Cargando...</p>
+      <main
+        style={{
+          minHeight: "100dvh",
+          display: "grid",
+          placeItems: "center",
+          padding: 20,
+          color: "#fff",
+          background: "linear-gradient(180deg, #120018, #050007)",
+        }}
+      >
+        <section
+          style={{
+            width: "min(360px, 90vw)",
+            padding: "28px 22px",
+            textAlign: "center",
+            border: "2px solid #ffd45c",
+            borderRadius: 22,
+            background: "rgba(24, 4, 31, 0.96)",
+            boxShadow: "0 0 28px rgba(255, 212, 92, 0.28)",
+          }}
+        >
+          <div style={{ fontSize: 64, lineHeight: 1 }}>👑</div>
+          <p style={{ margin: "16px 0 0", fontWeight: 900 }}>
+            Cargando...
+          </p>
         </section>
       </main>
     );
@@ -365,7 +381,42 @@ if (screen === "wheel") {
       </>
     );
   }
+if (screen === "diamond-fortune") {
+  return (
+    <>
+      <button
+        type="button"
+        onClick={() => setScreen("lobby")}
+        style={{
+          position: "fixed",
+          top: 20,
+          left: 10,
+          zIndex: 9999,
+          padding: "6px 10px",
+          border: "1px solid #ffd86a",
+          borderRadius: 12,
+          color: "#fff",
+          background: "linear-gradient(180deg, #6d2b8f, #24103f)",
+          fontWeight: 900,
+          cursor: "pointer",
+          boxShadow: "0 0 15px rgba(255, 216, 106, 0.65)",
+        }}
+      >
+        ← CASINO
+      </button>
 
+      <DiamondFortune
+        player={player}
+        onCreditsChange={(credits) =>
+          setPlayer((current) => ({
+            ...current,
+            credits,
+          }))
+        }
+      />
+    </>
+  );
+}
   if (screen === "jackpot-palace") {
     return (
       <>

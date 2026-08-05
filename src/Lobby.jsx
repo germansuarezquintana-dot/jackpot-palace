@@ -39,6 +39,11 @@ const GAME_PREVIEWS = {
     ["💎", "🚘", "💿"],
     ["🎧", "👑", "🛸"],
   ],
+"diamond-fortune": [
+  ["💎", "👑", "💰"],
+  ["💍", "⭐", "💎"],
+  ["🏆", "💜", "💰"],
+],
 
   "wild-west": [
     ["🤠", "⭐", "🐎"],
@@ -87,6 +92,16 @@ const games = [
     badge: "POPULAR",
     available: true,
   },
+  {
+  id: "diamond-fortune",
+  name: "Diamond Fortune",
+  icon: "💎",
+  subtitle: "FORTUNA DE DIAMANTES",
+  description: "Diamantes, coronas, bonus y jackpot progresivo.",
+  theme: "purple",
+  badge: "NUEVO",
+  available: true,
+},
   {
     id: "clown-party",
     name: "Clown Party",
