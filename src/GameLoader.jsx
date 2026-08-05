@@ -26,9 +26,28 @@ const GAME_INFO = {
     icon: "🤡",
     theme: "clown",
   },
+  "diamond-fortune": {
+    title: "DIAMOND FORTUNE",
+    subtitle: "Cargando diamantes...",
+    icon: "💎",
+    theme: "diamond",
+  },
 };
 
 export default function GameLoader({ gameId, onReady }) {
+ useEffect(() => {
+  console.log("GAME LOADER");
+  console.log(gameId);
+  console.log(onReady);
+
+  const timer = setTimeout(() => {
+    console.log("EJECUTANDO onReady");
+    onReady?.();
+  }, 1200);
+
+  return () => clearTimeout(timer);
+}, []);
+
   const game = GAME_INFO[gameId] ?? {
     title: "CASINO",
     subtitle: "Cargando juego...",
@@ -36,36 +55,17 @@ export default function GameLoader({ gameId, onReady }) {
     theme: "default",
   };
 
-  useEffect(() => {
-    const firstFrame = window.requestAnimationFrame(() => {
-      const timerId = window.setTimeout(() => {
-        onReady?.();
-      }, 650);
-
-      window.__gameLoaderTimer = timerId;
-    });
-
-    return () => {
-      window.cancelAnimationFrame(firstFrame);
-
-      if (window.__gameLoaderTimer) {
-        window.clearTimeout(window.__gameLoaderTimer);
-        window.__gameLoaderTimer = null;
-      }
-    };
-  }, [onReady]);
-
   return (
     <main className={`game-loader game-loader-${game.theme}`}>
       <section className="game-loader-card" aria-live="polite">
-        <div className="game-loader-icon" aria-hidden="true">
+        <div className="game-loader-icon">
           {game.icon}
         </div>
 
         <h1>{game.title}</h1>
         <p>{game.subtitle}</p>
 
-        <div className="game-loader-dots" aria-hidden="true">
+        <div className="game-loader-dots">
           <span />
           <span />
           <span />

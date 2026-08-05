@@ -355,10 +355,18 @@ useEffect(() => {
                 <button
                   type="button"
                   disabled={!game.available}
-    onClick={() => {
-    if (!game.available) return;
-    onOpenGame(game.id);
-}}
+                  onClick={() => {
+                    if (!game.available) return;
+
+                    playClickSound();
+
+                    const selectedGameId =
+                      game.id === "jackpot-palace"
+                        ? "jackpot-palace"
+                        : game.id;
+
+                    onOpenGame(selectedGameId);
+                  }}
                 >
                   <span>
                     {game.available ? "JUGAR AHORA" : "PRÓXIMAMENTE"}

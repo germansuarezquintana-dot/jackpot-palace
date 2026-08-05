@@ -11,7 +11,7 @@ import DiamondFortune from "./diamond/DiamondFortune";
 import Lobby from "./Lobby";
 import Admin from "./Admin";
 import Cashier from "./Cashier";
-import GameLoader from "./GameLoader";
+
 
 export default function App() {
   const [session, setSession] = useState(null);
@@ -35,34 +35,24 @@ export default function App() {
     gameTransitionRef.current = { frame1: null, frame2: null, timer: null };
   }
 
-  function openGame(gameId) {
-    if (!["neon-city", "wheel"].includes(gameId)) {
-      setScreen(gameId);
-      return;
-    }
+ function openGame(gameId) {
+  const validGames = [
+    "jackpot-palace",
+    "diamond-fortune",
+    "clown-party",
+    "neon-city",
+    "wheel",
+  ];
 
-    clearGameTransition();
-
-    // Fuerza a React a desmontar el lobby y montar el cargador
-    // antes de iniciar la carga de la máquina pesada.
-    flushSync(() => {
-      setPendingGame(gameId);
-      setScreen("game-loader");
-    });
-
-    window.scrollTo(0, 0);
-    void document.documentElement.offsetHeight;
-
-    gameTransitionRef.current.frame1 = window.requestAnimationFrame(() => {
-      gameTransitionRef.current.frame2 = window.requestAnimationFrame(() => {
-        gameTransitionRef.current.timer = window.setTimeout(() => {
-          setScreen(gameId);
-          setPendingGame(null);
-          clearGameTransition();
-        }, 450);
-      });
-    });
+  if (!validGames.includes(gameId)) {
+    console.error("Juego inválido:", gameId);
+    return;
   }
+
+  setPendingGame(null);
+  setScreen(gameId);
+  window.scrollTo(0, 0);
+}
 
   async function loadPlayer(userId) {
     setLoading(true);
@@ -298,10 +288,7 @@ export default function App() {
   );
 }
 
-  if (screen === "game-loader" && pendingGame) {
-    return <GameLoader gameId={pendingGame} />;
-  }
-
+ 
   if (player?.role === "cashier") {
     return (
       <Cashier
