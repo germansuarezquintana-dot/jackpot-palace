@@ -1,5 +1,6 @@
 import logoJackpotPalace from "./assets/logo-jackpot-palace.png";
 import { useEffect, useRef, useState } from "react";
+import { flushSync } from "react-dom";
 import { supabase } from "./supabase";
 import Login from "./Login";
 import Game from "./Game";
@@ -22,26 +23,45 @@ export default function App() {
   const [error, setError] = useState("");
 
   const forceLogoutVersionRef = useRef(null);
+  const gameTransitionRef = useRef({ frame1: null, frame2: null, timer: null });
 
-  function openGame(gameId) {
-    if (["neon-city", "wheel"].includes(gameId)) {
-      setPendingGame(gameId);
-      setScreen("game-loader");
-      return;
-    }
+  function clearGameTransition() {
+    const transition = gameTransitionRef.current;
 
-    setScreen(gameId);
+    if (transition.frame1) window.cancelAnimationFrame(transition.frame1);
+    if (transition.frame2) window.cancelAnimationFrame(transition.frame2);
+    if (transition.timer) window.clearTimeout(transition.timer);
+
+    gameTransitionRef.current = { frame1: null, frame2: null, timer: null };
   }
 
-  function finishGameLoading() {
-    if (!pendingGame) {
-      setScreen("lobby");
+  function openGame(gameId) {
+    if (!["neon-city", "wheel"].includes(gameId)) {
+      setScreen(gameId);
       return;
     }
 
-    const nextGame = pendingGame;
-    setPendingGame(null);
-    setScreen(nextGame);
+    clearGameTransition();
+
+    // Fuerza a React a desmontar el lobby y montar el cargador
+    // antes de iniciar la carga de la máquina pesada.
+    flushSync(() => {
+      setPendingGame(gameId);
+      setScreen("game-loader");
+    });
+
+    window.scrollTo(0, 0);
+    void document.documentElement.offsetHeight;
+
+    gameTransitionRef.current.frame1 = window.requestAnimationFrame(() => {
+      gameTransitionRef.current.frame2 = window.requestAnimationFrame(() => {
+        gameTransitionRef.current.timer = window.setTimeout(() => {
+          setScreen(gameId);
+          setPendingGame(null);
+          clearGameTransition();
+        }, 450);
+      });
+    });
   }
 
   async function loadPlayer(userId) {
@@ -203,6 +223,10 @@ export default function App() {
     player?.force_logout_version,
   ]);
 
+  useEffect(() => {
+    return () => clearGameTransition();
+  }, []);
+
   if (loading) {
     return (
       <main className="login-page">
@@ -259,12 +283,7 @@ export default function App() {
 }
 
   if (screen === "game-loader" && pendingGame) {
-    return (
-      <GameLoader
-        gameId={pendingGame}
-        onReady={finishGameLoading}
-      />
-    );
+    return <GameLoader gameId={pendingGame} />;
   }
 
   if (player?.role === "cashier") {
