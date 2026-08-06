@@ -8,6 +8,7 @@ import Wheel from "./Wheel";
 
 import NeonCity from "./neon/NeonCity";
 import DiamondFortune from "./diamond/DiamondFortune";
+import WildWest from "./wildwest/WildWest";
 import Lobby from "./Lobby";
 import Admin from "./Admin";
 import Cashier from "./Cashier";
@@ -35,24 +36,25 @@ export default function App() {
     gameTransitionRef.current = { frame1: null, frame2: null, timer: null };
   }
 
- function openGame(gameId) {
-  const validGames = [
-    "jackpot-palace",
-    "diamond-fortune",
-    "clown-party",
-    "neon-city",
-    "wheel",
-  ];
+  function openGame(gameId) {
+    const validGames = [
+      "jackpot-palace",
+      "diamond-fortune",
+      "wild-west",
+      "clown-party",
+      "neon-city",
+      "wheel",
+    ];
 
-  if (!validGames.includes(gameId)) {
-    console.error("Juego inválido:", gameId);
-    return;
+    if (!validGames.includes(gameId)) {
+      console.error("Juego inválido:", gameId);
+      return;
+    }
+
+    setPendingGame(null);
+    setScreen(gameId);
+    window.scrollTo(0, 0);
   }
-
-  setPendingGame(null);
-  setScreen(gameId);
-  window.scrollTo(0, 0);
-}
 
   async function loadPlayer(userId) {
     setLoading(true);
@@ -124,95 +126,94 @@ export default function App() {
     };
   }, []);
 
-  useEffect(() => {
-   if (
-  !session?.user?.id ||
-  !player?.id ||
-  player.role === "super_admin"
-) {
-  return;
-}
+useEffect(() => {
+  if (
+    !session?.user?.id ||
+    !player?.id ||
+    player.role === "super_admin"
+  ) {
+    return;
+  }
 
-    let active = true;
+  let active = true;
 
-    forceLogoutVersionRef.current =
-      player.force_logout_version ?? null;
+  forceLogoutVersionRef.current =
+    player.force_logout_version ?? null;
 
-    const checkForceLogout = async () => {
-      const { data, error: checkError } = await supabase
-        .from("players")
-        .select("force_logout_version")
-        .eq("id", player.id)
-        .single();
+  const checkForceLogout = async () => {
+    const { data, error: checkError } = await supabase
+      .from("players")
+      .select("force_logout_version")
+      .eq("id", player.id)
+      .single();
 
-      if (!active) {
-        return;
-      }
+    if (!active) {
+      return;
+    }
 
-      if (checkError) {
-        console.error(
-          "Error comprobando cierre forzado:",
-          checkError
-        );
-        return;
-      }
+    if (checkError) {
+      console.error(
+        "Error comprobando cierre forzado:",
+        checkError
+      );
+      return;
+    }
 
-      if (!data) {
-        return;
-      }
+    if (!data) {
+      return;
+    }
 
-      const nextVersion =
-        data.force_logout_version ?? null;
+    const nextVersion =
+      data.force_logout_version ?? null;
 
-      if (
-        nextVersion !== forceLogoutVersionRef.current
-      ) {
-        forceLogoutVersionRef.current = nextVersion;
-        await supabase.auth.signOut();
-      }
-    };
+    if (
+      nextVersion !== forceLogoutVersionRef.current
+    ) {
+      forceLogoutVersionRef.current = nextVersion;
+      await supabase.auth.signOut();
+    }
+  };
 
-    const channel = supabase
-      .channel(`force-logout-${player.id}`)
-      .on(
-        "postgres_changes",
-        {
-          event: "UPDATE",
-          schema: "public",
-          table: "players",
-          filter: `id=eq.${player.id}`,
-        },
-        async (payload) => {
-          const nextVersion =
-            payload.new?.force_logout_version ?? null;
+  const channel = supabase
+    .channel(`force-logout-${player.id}`)
+    .on(
+      "postgres_changes",
+      {
+        event: "UPDATE",
+        schema: "public",
+        table: "players",
+        filter: `id=eq.${player.id}`,
+      },
+      async (payload) => {
+        const nextVersion =
+          payload.new?.force_logout_version ?? null;
 
-          if (
-            nextVersion !== forceLogoutVersionRef.current
-          ) {
-            forceLogoutVersionRef.current = nextVersion;
-            await supabase.auth.signOut();
-          }
+        if (
+          nextVersion !== forceLogoutVersionRef.current
+        ) {
+          forceLogoutVersionRef.current = nextVersion;
+          await supabase.auth.signOut();
         }
-      )
-      .subscribe();
+      }
+    )
+    .subscribe();
 
-    const interval = setInterval(
-      checkForceLogout,
-      3000
-    );
+  const interval = setInterval(
+    checkForceLogout,
+    3000
+  );
 
-    return () => {
-      active = false;
-      clearInterval(interval);
-      supabase.removeChannel(channel);
-    };
-  }, [
-    session?.user?.id,
-    player?.id,
-    player?.role,
-    player?.force_logout_version,
-  ]);
-
+  return () => {
+    active = false;
+    clearInterval(interval);
+    supabase.removeChannel(channel);
+  };
+}, [
+  session?.user?.id,
+  player?.id,
+  player?.role,
+  player?.force_logout_version,
+]);
   useEffect(() => {
     return () => clearGameTransition();
   }, []);
@@ -393,6 +394,42 @@ if (screen === "diamond-fortune") {
       </button>
 
       <DiamondFortune
+        player={player}
+        onCreditsChange={(credits) =>
+          setPlayer((current) => ({
+            ...current,
+            credits,
+          }))
+        }
+      />
+    </>
+  );
+}
+if (screen === "wild-west") {
+  return (
+    <>
+      <button
+        type="button"
+        onClick={() => setScreen("lobby")}
+        style={{
+          position: "fixed",
+          top: 20,
+          left: 10,
+          zIndex: 9999,
+          padding: "6px 10px",
+          border: "1px solid #d4a017",
+          borderRadius: 12,
+          color: "#fff",
+          background: "linear-gradient(180deg, #6b3d14, #2a1608)",
+          fontWeight: 900,
+          cursor: "pointer",
+          boxShadow: "0 0 15px rgba(212,160,23,.6)",
+        }}
+      >
+        ← CASINO
+      </button>
+
+      <WildWest
         player={player}
         onCreditsChange={(credits) =>
           setPlayer((current) => ({

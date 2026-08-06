@@ -32,6 +32,12 @@ const GAME_INFO = {
     icon: "💎",
     theme: "diamond",
   },
+    "wild-west": {
+    title: "WILD WEST",
+    subtitle: "Cabalgando hacia el Viejo Oeste...",
+    icon: "🤠",
+    theme: "wildwest",
+  },
 };
 
 export default function GameLoader({ gameId, onReady }) {

@@ -996,3 +996,30 @@ justify-content: space-between;
     margin-bottom: -110px;
   }
 }
+
+/* SOLO CAMBIO DE COLOR DE RODILLOS - AMARILLO/DORADO */
+.neon-city-page .reel-window{
+  background:
+    radial-gradient(circle at 50% 45%, rgba(255,240,120,.45), transparent 46%),
+    linear-gradient(
+      to bottom,
+      #7a5b00 0%,
+      #d9b300 22%,
+      #ffe86a 50%,
+      #d9b300 78%,
+      #6b5000 100%
+    ) !important;
+  border-color:#ffd84a !important;
+  box-shadow:
+    inset 0 0 20px rgba(0,0,0,.65),
+    inset 0 0 18px rgba(255,234,120,.28),
+    0 0 12px rgba(255,216,74,.55),
+    0 4px 7px rgba(0,0,0,.8) !important;
+}
+
+.neon-city-page .reel-strip,
+.neon-city-page .stopped-reel,
+.neon-city-page .reel-symbol,
+.neon-city-page .stopped-symbol{
+  background-color:transparent !important;
+}

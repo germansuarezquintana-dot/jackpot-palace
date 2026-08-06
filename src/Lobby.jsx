@@ -134,18 +134,17 @@ const games = [
     badge: "NUEVO",
     available: true,
   },
-  {
-    id: "wild-west",
-    name: "Wild West",
-    icon: "★",
-    subtitle: "RECOMPENSAS DEL OESTE",
-    description: "Forajidos, duelos y grandes recompensas.",
-    theme: "orange",
-    badge: "PRÓXIMAMENTE",
-    available: false,
-  },
+ {
+  id: "wild-west",
+  name: "Wild West",
+  icon: "🤠",
+  subtitle: "EL VIEJO OESTE",
+  description: "Sheriff, dinamita, caballos y grandes premios.",
+  theme: "orange",
+  badge: "NUEVO",
+  available: true,
+},
 ];
-
 export default function Lobby({
   player,
   onOpenGame,
