@@ -1,0 +1,2112 @@
+/* ==========================================================
+   WILD WEST — CSS AISLADO Y RESPONSIVE
+   ========================================================== */
+
+.wild-west-page,
+.wild-west-page * {
+  box-sizing: border-box;
+}
+
+.wild-west-page {
+  width: 100%;
+  min-width: 320px;
+  min-height: 100dvh;
+  margin: 0;
+  padding: 12px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow-x: hidden;
+  font-family: Arial, Helvetica, sans-serif;
+  background:
+    linear-gradient(rgba(255, 184, 72, 0.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 96, 24, 0.025) 1px, transparent 1px),
+    radial-gradient(circle at 50% 0%, #4a2410 0%, #241208 38%, #090503 100%);
+  background-size: 38px 38px, 38px 38px, auto;
+}
+
+.wild-west-page button {
+  font-family: inherit;
+}
+
+/* =========================
+   GABINETE
+   ========================= */
+
+.wild-west-page .machine {
+  position: relative;
+  width: min(900px, 100%);
+max-height: calc(100vh - 36px);
+display: flex;
+flex-direction: column;
+  margin: 0 auto;
+  padding: 22px 22px 18px;
+  gap: 8px;
+  overflow: visible;
+  text-align: center;
+  border: 7px solid #e7b85b;
+  border-radius: 28px;
+  background: linear-gradient(145deg, #5a2d16 0%, #2a1409 48%, #0c0603 100%);
+  box-shadow:
+    0 0 18px #e7b85b,
+    0 0 55px rgba(255, 96, 24, 0.62),
+    inset 0 0 35px rgba(0, 0, 0, 0.92);
+}
+
+.wild-west-page .machine-winning {
+  animation: neonCabinetWin 0.55s ease-in-out infinite alternate;
+}
+
+/* =========================
+   LUCES Y ACCIONES SUPERIORES
+   ========================= */
+
+.wild-west-page .lights {
+  position: absolute;
+  top: 10px;
+  left: 18px;
+  right: 18px;
+  display: flex;
+  justify-content: space-around;
+  pointer-events: none;
+}
+
+.wild-west-page .light {
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  background: #dfffff;
+  box-shadow: 0 0 8px #fff, 0 0 15px #e7b85b, 0 0 24px #d47a2c;
+  animation: neonBlink 0.7s alternate infinite;
+}
+
+.wild-west-page .light:nth-child(even) {
+  animation-delay: 0.35s;
+}
+
+.wild-west-page .machine-spinning .light {
+  animation-duration: 0.18s;
+}
+
+.wild-west-page .machine-winning .light {
+  animation-duration: 0.12s;
+  background: #fff;
+}
+
+.wild-west-page .top-actions {
+  position: absolute;
+  z-index: 20;
+  top: 30px;
+  right: 18px;
+  display: flex;
+  gap: 8px;
+}
+
+.wild-west-page .round-action-button {
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border: 2px solid #e7b85b;
+  border-radius: 50%;
+  color: #fff;
+  font-size: 20px;
+  line-height: 1;
+  cursor: pointer;
+  background: #2a1409;
+  box-shadow: 0 0 12px rgba(255, 184, 72, 0.75);
+}
+
+.wild-west-page .round-action-button:hover {
+  transform: translateY(-2px) scale(1.04);
+}
+
+/* =========================
+   ENCABEZADO
+   ========================= */
+
+.wild-west-page .western-heading {
+.western-heading{
+    width:100%;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    margin:14px auto 0;
+}
+  margin: 0 auto 2px;
+}
+
+.wild-west-page .neon-city-kicker,
+.wild-west-page .western-kicker {
+  display: block;
+  color: #fff0b8;
+  font-size: clamp(9px, 1.8vw, 13px);
+  font-weight: 900;
+  letter-spacing: 7px;
+  text-shadow: 0 0 8px #e7b85b;
+}
+
+.wild-west-page .title {
+  margin: 0;
+  color: #fff;
+  font-size: clamp(42px, 8vw, 76px);
+  font-style: italic;
+  line-height: 0.92;
+  letter-spacing: 2px;
+  white-space: nowrap;
+  text-shadow:
+    -3px 3px 0 #7a2d16,
+    3px -2px 0 #d47a2c,
+    0 0 10px #fff,
+    0 0 24px #e7b85b,
+    0 0 42px #d47a2c;
+}
+
+.wild-west-page .western-stars {
+  display: block;
+  height: 17px;
+  overflow: hidden;
+  color: #e7b85b;
+  font-size: 21px;
+  line-height: 16px;
+  letter-spacing: 4px;
+  text-shadow: 0 0 8px #e7b85b, 0 0 18px #d47a2c;
+}
+
+.wild-west-page .subtitle {
+  margin: 7px 0 12px;
+  color: #fff;
+  font-size: clamp(11px, 2.3vw, 17px);
+  font-weight: 800;
+  letter-spacing: 3px;
+  text-shadow: 0 0 9px #e7b85b, 0 0 16px #d47a2c;
+}
+
+/* =========================
+   JACKPOT E INFORMACIÓN
+   ========================= */
+
+.wild-west-page .jackpot-panel {
+  width: min(440px, 88%);
+  margin: 0 auto 12px;
+  padding: 7px 16px 9px;
+  border: 2px solid #d47a2c;
+  border-radius: 16px;
+  background: linear-gradient(180deg, #5d2d13, #170b05);
+  box-shadow:
+    inset 0 0 16px #000,
+    0 0 18px rgba(255, 184, 72, 0.62),
+    0 0 28px rgba(255, 96, 24, 0.42);
+}
+
+.wild-west-page .jackpot-panel span,
+.wild-west-page .jackpot-panel small {
+  display: block;
+  color: #fff0b8;
+  font-size: 10px;
+  font-weight: 900;
+  letter-spacing: 2px;
+}
+
+.wild-west-page .jackpot-panel strong {
+  display: block;
+  margin: 2px 0;
+  color: #fff;
+  font-size: clamp(27px, 5vw, 44px);
+  line-height: 1;
+  text-shadow: 0 0 8px #e7b85b, 0 0 18px #d47a2c;
+  animation: neonJackpotGlow 1.2s ease-in-out infinite alternate;
+}
+
+.wild-west-page .information-panel {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 7px;
+  margin-bottom: 8px;
+}
+
+.wild-west-page .information-box {
+  min-width: 0;
+  padding: 8px 4px;
+  border: 2px solid #c58a45;
+  border-radius: 10px;
+  background: #211006;
+  box-shadow: inset 0 0 10px #000;
+}
+
+.wild-west-page .information-box:nth-child(odd) {
+  border-color: #e7b85b;
+}
+
+.wild-west-page .free-spin-box {
+  border-color: #d47a2c;
+}
+
+.wild-west-page .information-label {
+  display: block;
+  margin-bottom: 4px;
+  color: #fff0d0;
+  font-size: 10px;
+  font-weight: 800;
+}
+
+.wild-west-page .information-value {
+  color: #fff;
+  font-size: clamp(19px, 4vw, 29px);
+  line-height: 1;
+  text-shadow: 0 0 8px #e7b85b, 0 0 14px #d47a2c;
+}
+
+.wild-west-page .special-symbols {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 6px 16px;
+  margin-bottom: 7px;
+  color: #fff;
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.wild-west-page .line-indicators {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin-bottom: 9px;
+}
+
+.wild-west-page .line-indicator {
+  padding: 4px 8px;
+  border: 1px solid #c58a45;
+  border-radius: 12px;
+  color: #ddd;
+  font-size: 10px;
+  font-weight: 800;
+  background: #241208;
+}
+
+.wild-west-page .active-line {
+  color: #1a0b03;
+  background: #e7b85b;
+  box-shadow: 0 0 8px #fff, 0 0 18px #e7b85b, 0 0 28px #d47a2c;
+  animation: neonWinningFlash 0.45s alternate infinite;
+}
+
+/* =========================
+   RODILLOS
+   ========================= */
+
+.wild-west-page .reels-frame {
+  width: 100%;
+  margin: 0 0 9px;
+  padding: 8px;
+  border: 4px solid #e7b85b;
+  border-radius: 18px;
+  background: linear-gradient(145deg, #6b3518, #160b05);
+  box-shadow:
+    inset 0 0 15px #000,
+    0 0 16px rgba(255, 184, 72, 0.72),
+    0 0 28px rgba(255, 96, 24, 0.34);
+}
+
+.wild-west-page .reels-container {
+  display: flex;
+  justify-content: center;
+  gap: 6px;
+  width: 100%;
+  padding: 7px;
+  overflow: hidden;
+  border-radius: 12px;
+  background:
+    linear-gradient(180deg, rgba(255, 96, 24, 0.12), transparent 24%),
+    #160b08;
+}
+
+.wild-west-page .reel-window {
+  position: relative;
+  flex: 1 1 0;
+  min-width: 0;
+  height: clamp(190px, 28vh, 250px);
+  overflow: hidden;
+  border: 3px solid #b46b32;
+  border-radius: 10px;
+  background: linear-gradient(to bottom, #bdbdbd 0%, #fff 28%, #fff 72%, #bdbdbd 100%);
+  box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.65), 0 4px 7px rgba(0, 0, 0, 0.8);
+}
+
+.wild-west-page .reel-strip {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+}
+
+.wild-west-page .reel-strip.spinning {
+  animation: neonReelRoll 0.38s linear infinite;
+  filter: none;
+  will-change: transform;
+}
+
+.wild-west-page .reel-symbol,
+.wild-west-page .stopped-symbol {
+  height: 85px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: clamp(34px, 6vw, 62px);
+  line-height: 1;
+  user-select: none;
+}
+
+.wild-west-page .stopped-reel {
+  position: absolute;
+  inset: 0;
+  animation: neonStopBounce 0.24s ease-out;
+}
+
+.wild-west-page .reel-window-stopping {
+  animation: neonReelStopBounce 0.28s ease-out;
+}
+
+.wild-west-page .wild-symbol {
+  text-shadow: 0 0 8px #ffd36a, 0 0 18px #a84412;
+}
+
+.wild-west-page .scatter-symbol {
+  text-shadow: 0 0 8px #d47a2c, 0 0 18px #d47a2c;
+}
+
+.wild-west-page .winning-symbol {
+  position: relative;
+  z-index: 5;
+  border-radius: 13px;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.95), rgba(255, 215, 0, 0.65) 40%, rgba(255, 120, 0, 0.28) 75%, transparent 100%);
+  box-shadow: inset 0 0 18px #fff, 0 0 14px #fff3a0, 0 0 28px #ffcc00;
+  animation: neonWinnerPulse 0.45s ease-in-out infinite alternate;
+}
+
+.wild-west-page .scatter-winner {
+  position: relative;
+  z-index: 6;
+  border-radius: 13px;
+  background: rgba(255, 96, 24, 0.35);
+  box-shadow: inset 0 0 18px #fff, 0 0 22px #d47a2c;
+  animation: neonScatterPulse 0.35s alternate infinite;
+}
+
+.wild-west-page .reel-shadow {
+  position: absolute;
+  z-index: 8;
+  left: 0;
+  width: 100%;
+  height: 42px;
+  pointer-events: none;
+}
+
+.wild-west-page .reel-shadow-top {
+  top: 0;
+  background: linear-gradient(to bottom, rgba(0, 0, 0, 0.58), transparent);
+}
+
+.wild-west-page .reel-shadow-bottom {
+  bottom: 0;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.58), transparent);
+}
+
+/* =========================
+   MENSAJE Y CONTROLES
+   ========================= */
+
+.wild-west-page .message {
+  min-height: 24px;
+  margin: 0 0 8px;
+  color: #fff;
+  font-size: clamp(13px, 2.5vw, 20px);
+  font-weight: 800;
+  line-height: 1.1;
+  text-shadow: 0 0 9px #e7b85b, 0 0 16px #d47a2c;
+}
+
+.wild-west-page .controls {
+  width: 100%;
+  display: grid;
+  grid-template-columns: minmax(90px, 130px) 58px minmax(220px, 1fr) 58px 70px;
+  gap: 10px;
+  align-items: center;
+}
+
+.wild-west-page .bet-display {
+  min-width: 0;
+  height: 54px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 5px 10px;
+  border: 2px solid #c58a45;
+  border-radius: 14px;
+  color: #fff;
+  background: #241208;
+}
+
+.wild-west-page .bet-display span {
+  font-size: 9px;
+  font-weight: 800;
+}
+
+.wild-west-page .bet-display strong {
+  font-size: 21px;
+}
+
+.wild-west-page .small-button {
+  width: 58px;
+  height: 58px;
+  padding: 0;
+  border: 3px solid #e7b85b;
+  border-radius: 50%;
+  color: #fff;
+  font-size: 32px;
+  font-weight: 800;
+  cursor: pointer;
+  background: linear-gradient(#444, #111);
+  box-shadow: 0 5px 0 #000;
+}
+
+.wild-west-page .spin-button {
+  width: 100%;
+  min-width: 0;
+  padding: 15px 16px;
+  border: 4px solid #ffe9a6;
+  border-radius: 40px;
+  color: #fff;
+  font-size: clamp(20px, 4vw, 28px);
+  font-weight: 900;
+  letter-spacing: 1px;
+  cursor: pointer;
+  background: linear-gradient(to bottom, #c85c22, #81330f 55%, #3b1608);
+  box-shadow: 0 8px 0 #2a0f05, 0 0 22px rgba(255, 96, 24, 0.92), 0 0 34px rgba(255, 184, 72, 0.42);
+}
+
+.wild-west-page .free-spin-button {
+  background: linear-gradient(to bottom, #e0a642, #8a4b16 55%, #3c1d08);
+  box-shadow: 0 8px 0 #291205, 0 0 25px rgba(255, 184, 72, 0.9);
+}
+
+.wild-west-page .max-bet-button {
+  width: 70px;
+  min-width: 70px;
+  height: 54px;
+  padding: 0 6px;
+  border: 3px solid #e7b85b;
+  border-radius: 16px;
+  color: #160b08;
+  font-weight: 900;
+  cursor: pointer;
+  background: linear-gradient(#f5d790, #c8872e);
+  box-shadow: 0 5px 0 #704018, 0 0 15px rgba(255, 184, 72, 0.8);
+}
+
+.wild-west-page .spin-button:not(:disabled):active,
+.wild-west-page .small-button:not(:disabled):active,
+.wild-west-page .max-bet-button:not(:disabled):active {
+  transform: translateY(4px);
+}
+
+.wild-west-page button:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
+.wild-west-page .bottom-buttons {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.wild-west-page .reset-button {
+  padding: 8px 16px;
+  border: 2px solid #e7b85b;
+  border-radius: 20px;
+  color: #fff;
+  font-size: 12px;
+  font-weight: 800;
+  cursor: pointer;
+  background: #241208;
+}
+
+.wild-west-page .saved-message {
+  color: #ffe2a6;
+  font-size: 11px;
+  font-weight: 800;
+}
+
+/* =========================
+   TABLA DE PAGOS
+   ========================= */
+
+.wild-west-page .paytable-overlay {
+  position: fixed;
+  z-index: 120;
+  inset: 0;
+  width: 100%;
+  border: 0;
+  padding: 20px;
+  cursor: pointer;
+  background: rgba(5, 0, 8, 0.88);
+  backdrop-filter: blur(6px);
+}
+
+.wild-west-page .paytable-card {
+  position: relative;
+  width: min(720px, 96vw);
+  max-height: 90vh;
+  margin: auto;
+  padding: 24px;
+  overflow-y: auto;
+  cursor: default;
+  border: 4px solid #e7b85b;
+  border-radius: 24px;
+  color: #fff;
+  background: radial-gradient(circle at top, #5d2d13, #241208 58%, #090503);
+  box-shadow: 0 0 35px #e7b85b, 0 0 80px rgba(255, 0, 210, 0.65);
+}
+
+.wild-west-page .paytable-card h2 {
+  margin: 0 0 6px;
+  color: #fff0b8;
+  font-size: clamp(28px, 6vw, 48px);
+  text-shadow: 0 0 14px #d47a2c;
+}
+
+.wild-west-page .paytable-close {
+  position: absolute;
+  top: 10px;
+  right: 12px;
+  width: 42px;
+  height: 42px;
+  border: 2px solid #e7b85b;
+  border-radius: 50%;
+  color: #fff;
+  font-size: 28px;
+  cursor: pointer;
+  background: #241208;
+}
+
+.wild-west-page .paytable-grid {
+  display: grid;
+  gap: 8px;
+  margin: 18px 0;
+}
+
+.wild-west-page .paytable-row {
+  display: grid;
+  grid-template-columns: 70px repeat(3, 1fr);
+  align-items: center;
+  gap: 8px;
+  padding: 10px;
+  border: 1px solid rgba(255, 184, 72, 0.65);
+  border-radius: 12px;
+  background: rgba(0, 0, 0, 0.38);
+}
+
+.wild-west-page .paytable-row strong {
+  font-size: 34px;
+}
+
+.wild-west-page .paytable-row span {
+  font-weight: 900;
+}
+
+.wild-west-page .scatter-pay {
+  border-color: #d47a2c;
+}
+
+/* =========================
+   CELEBRACIONES
+   ========================= */
+
+.wild-west-page .celebration {
+  position: fixed;
+  z-index: 100;
+  inset: 0;
+  width: 100%;
+  border: 0;
+  overflow: hidden;
+  cursor: pointer;
+  background: rgba(5, 0, 8, 0.82);
+  backdrop-filter: blur(5px);
+}
+
+.wild-west-page .celebration-card {
+  position: absolute;
+  z-index: 2;
+  top: 50%;
+  left: 50%;
+  width: min(620px, 90vw);
+  padding: 36px 20px;
+  transform: translate(-50%, -50%);
+  border: 5px solid #e7b85b;
+  border-radius: 28px;
+  background: radial-gradient(circle, #8f250f, #3a0d05 58%, #0b0301);
+  box-shadow: 0 0 35px #e7b85b, 0 0 90px #ff6a1a;
+  animation: neonCelebrationPop 0.55s cubic-bezier(0.2, 1.6, 0.4, 1);
+}
+
+.wild-west-page .celebration-kicker {
+  display: block;
+  color: #ffe0a3;
+  font-size: clamp(23px, 6vw, 58px);
+  font-weight: 1000;
+  letter-spacing: 2px;
+  text-shadow: 0 4px 0 #5a1708, 0 0 22px #ffcc00;
+}
+
+.wild-west-page .celebration-card strong {
+  display: block;
+  margin: 12px 0;
+  color: #fff;
+  font-size: clamp(52px, 14vw, 118px);
+  line-height: 0.95;
+  text-shadow: 0 0 12px #fff, 0 0 32px #ff8a24;
+}
+
+.wild-west-page .celebration-card small {
+  color: #fff;
+  font-size: 12px;
+  font-weight: 900;
+  letter-spacing: 2px;
+}
+
+.wild-west-page .celebration-jackpot .celebration-card {
+  border-color: gold;
+  background: radial-gradient(circle, #7a4a00, #3a1200 58%, #080300);
+  box-shadow: 0 0 40px #fff, 0 0 110px #ffd000;
+}
+
+.wild-west-page .coin-rain span {
+  position: absolute;
+  z-index: 1;
+  top: -15%;
+  left: var(--coin-left);
+  font-size: 24px;
+  animation: neonCoinFall 2.4s linear infinite;
+  animation-delay: var(--coin-delay);
+}
+
+/* =========================
+   ANIMACIONES
+   ========================= */
+
+@keyframes neonReelRoll {
+  from { transform: translateY(-5100px) scaleY(1.03); }
+  to { transform: translateY(0) scaleY(1); }
+}
+
+@keyframes neonStopBounce {
+  0% { transform: translateY(-28px) scaleY(1.04); filter: none; }
+  55% { transform: translateY(8px) scaleY(0.98); filter: none; }
+  100% { transform: translateY(0) scaleY(1); filter: blur(0); }
+}
+
+@keyframes neonReelStopBounce {
+  0% { transform: translateY(-8px); }
+  55% { transform: translateY(4px); }
+  100% { transform: translateY(0); }
+}
+
+@keyframes neonBlink {
+  from { opacity: 0.35; transform: scale(0.85); }
+  to { opacity: 1; transform: scale(1.15); }
+}
+
+@keyframes neonWinnerPulse {
+  from { transform: scale(0.94); }
+  to { transform: scale(1.06); }
+}
+
+@keyframes neonScatterPulse {
+  from { transform: scale(0.9) rotate(-3deg); }
+  to { transform: scale(1.08) rotate(3deg); }
+}
+
+@keyframes neonWinningFlash {
+  from { opacity: 0.65; }
+  to { opacity: 1; }
+}
+
+@keyframes neonJackpotGlow {
+  from { transform: scale(0.98); opacity: 0.82; }
+  to { transform: scale(1.03); opacity: 1; }
+}
+
+@keyframes neonCabinetWin {
+  from { filter: brightness(1); }
+  to { filter: brightness(1.18) saturate(1.2); }
+}
+
+@keyframes neonCelebrationPop {
+  0% { transform: translate(-50%, -50%) scale(0.35) rotate(-7deg); opacity: 0; }
+  75% { transform: translate(-50%, -50%) scale(1.06) rotate(1deg); opacity: 1; }
+  100% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+}
+
+@keyframes neonCoinFall {
+  0% { transform: translateY(-10vh) rotate(0deg); opacity: 0; }
+  12% { opacity: 1; }
+  100% { transform: translateY(125vh) rotate(720deg); opacity: 1; }
+}
+
+/* =========================
+   RESPONSIVE
+   ========================= */
+.wild-west-page {
+    width: 100vw;
+    height: 100dvh;
+    min-height: 100dvh;
+
+    padding:
+      env(safe-area-inset-top)
+      env(safe-area-inset-right)
+      env(safe-area-inset-bottom)
+      env(safe-area-inset-left);
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    overflow: hidden;
+}
+     .wild-west-page {
+    min-height: 100dvh;
+    padding:
+      max(4px, env(safe-area-inset-top))
+      max(4px, env(safe-area-inset-right))
+      max(4px, env(safe-area-inset-bottom))
+      max(4px, env(safe-area-inset-left));
+    align-items: flex-start;
+    padding-top: 22px;
+
+display: flex;
+flex-direction: column;
+justify-content: space-between;
+  }
+
+ .wild-west-page .machine {
+    width: 100%;
+    height: 100%;
+
+    max-width: 100%;
+    max-height: 100%;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+
+    padding: 8px;
+
+    border-width: 3px;
+    border-radius: 0;
+
+    overflow: hidden;
+}
+
+  .wild-west-page .lights {
+    top: 5px;
+    left: 6px;
+    right: 6px;
+  }
+
+  .wild-west-page .light {
+    width: 6px;
+    height: 6px;
+  }
+
+  .wild-west-page .top-actions {
+    top: 7px;
+    right: 5px;
+    gap: 3px;
+  }
+
+  .wild-west-page .round-action-button {
+    width: 28px;
+    height: 28px;
+    font-size: 12px;
+  }
+
+  .wild-west-page .western-heading {
+    width: calc(100% - 92px);
+  }
+
+  .wild-west-page .neon-city-kicker,
+.wild-west-page .western-kicker {
+    font-size: 6px;
+    letter-spacing: 2px;
+  }
+
+  .wild-west-page .title {
+    font-size: clamp(54px, 6vw, 78px);
+  }
+
+  .wild-west-page .western-stars {
+    height: 8px;
+    font-size: 10px;
+    line-height: 8px;
+    letter-spacing: 1px;
+  }
+
+  .wild-west-page .subtitle {
+    margin: 2px 0 4px;
+    font-size: 7px;
+    letter-spacing: 1px;
+    white-space: nowrap;
+  }
+
+  .wild-west-page .jackpot-panel {
+  width: min(390px, 88%);
+  margin-bottom: 10px;
+  padding: 10px 14px;
+  border-width: 2px;
+  border-radius: 16px;
+}
+
+  .wild-west-page .jackpot-panel span,
+.wild-west-page .jackpot-panel small {
+  font-size: 10px;
+  letter-spacing: 1px;
+}
+
+.wild-west-page .jackpot-panel strong {
+  font-size: clamp(42px, 6vw, 60px);
+  line-height: 1;
+}
+
+  .wild-west-page .information-panel {
+    gap: 2px;
+    margin-bottom: 3px;
+  }
+
+  .wild-west-page .information-box {
+    padding: 3px 1px;
+    border-width: 1px;
+    border-radius: 6px;
+  }
+
+  .wild-west-page .information-label {
+    margin-bottom: 1px;
+    font-size: 5px;
+  }
+
+  .wild-west-page .information-value {
+    font-size: clamp(13px, 4.1vw, 17px);
+  }
+
+  .wild-west-page .special-symbols {
+    gap: 2px 5px;
+    margin-bottom: 3px;
+    font-size: 6px;
+  }
+
+  .wild-west-page .line-indicators {
+    gap: 2px;
+    margin-bottom: 3px;
+  }
+
+  .wild-west-page .line-indicator {
+    padding: 2px 3px;
+    font-size: 5px;
+  }
+
+  .wild-west-page .reels-frame {
+    margin-bottom: 4px;
+    padding: 4px;
+    border-width: 2px;
+    border-radius: 9px;
+  }
+
+  .wild-west-page .reels-container {
+    gap: 2px;
+    padding: 2px;
+  }
+
+  .wild-west-page .reel-window {
+    height: 32vh;
+    border-width: 1px;
+    border-radius: 5px;
+  }
+
+  .wild-west-page .reel-symbol,
+  .wild-west-page .stopped-symbol {
+  
+    font-size: clamp(26px, 7.8vw, 38px);
+  }
+
+  .wild-west-page .message {
+    min-height: 14px;
+    margin-bottom: 3px;
+    font-size: 9px;
+  }
+
+  .wild-west-page .controls {
+    grid-template-columns: 37px minmax(0, 1fr) 37px 45px;
+    gap: 3px;
+  }
+
+  .wild-west-page .bet-display {
+    display: none;
+  }
+
+ .wild-west-page .controls {
+    width: 100%;
+    padding:
+        0
+        6px
+        max(8px, env(safe-area-inset-bottom));
+
+    grid-template-columns: 37px minmax(0, 1fr) 37px 45px;
+
+    gap: 3px;
+
+    align-items: center;
+}
+  .wild-west-page .spin-button {
+    padding: 8px 3px;
+    border-width: 2px;
+    border-radius: 21px;
+    font-size: 15px;
+    line-height: 1;
+    letter-spacing: 0;
+  }
+
+  .wild-west-page .max-bet-button {
+    width: 45px;
+    min-width: 45px;
+    height: 36px;
+    padding: 0 2px;
+    border-width: 2px;
+    border-radius: 10px;
+    font-size: 9px;
+  }
+
+  .wild-west-page .bottom-buttons {
+    margin-top: 3px;
+    gap: 4px;
+  }
+
+  .wild-west-page .reset-button {
+    padding: 4px 7px;
+    border-width: 1px;
+    font-size: 7px;
+  }
+
+  .wild-west-page .saved-message {
+    font-size: 6px;
+  }
+
+
+@media (max-width: 768px) and (max-height: 700px) {
+  .wild-west-page .special-symbols {
+    display: none;
+  }
+
+  .wild-west-page .reel-window {
+    height: 195px;
+  }
+
+  .wild-west-page .reel-symbol,
+  .wild-west-page .stopped-symbol {
+    height: 65px;
+  }
+}
+@media (min-width: 769px) and (max-height: 900px) {
+  .wild-west-page {
+    padding: 8px;
+  }
+
+  .wild-west-page .machine {
+    transform: scale(0.88);
+    transform-origin: top center;
+    margin-bottom: -110px;
+  }
+}
+
+/* Ajustes exclusivos Diamond Fortune */
+.wild-west-page .western-heading {
+  width: calc(100% - 150px);
+  margin: 0 auto 2px;
+}
+
+.wild-west-page .western-stars {
+  display: block;
+  height: 20px;
+  overflow: hidden;
+  color: #e7b85b;
+  font-size: 18px;
+  line-height: 18px;
+  letter-spacing: 5px;
+  text-shadow: 0 0 8px #fff0b8, 0 0 18px #d47a2c;
+}
+
+@media (max-width: 768px) {
+  .wild-west-page .western-heading {
+    width: calc(100% - 92px);
+  }
+
+  .wild-west-page .title {
+    font-size: clamp(23px, 7.5vw, 36px);
+    letter-spacing: 0;
+    white-space: nowrap;
+  }
+
+  .wild-west-page .western-stars {
+    height: 10px;
+    font-size: 10px;
+    line-height: 9px;
+    letter-spacing: 1px;
+  }
+}
+/* ===========================
+   CELULARES
+=========================== */
+
+@media (max-width: 768px) {
+
+  .wild-west-page {
+    padding: 10px;
+    align-items: flex-start;
+  }
+
+  .wild-west-page .machine {
+    width: 100%;
+    max-width: 100%;
+    padding: 14px;
+    border-width: 4px;
+    border-radius: 22px;
+  }
+
+  .wild-west-page .title {
+    font-size: clamp(36px, 10vw, 52px);
+    margin-bottom: 6px;
+  }
+
+  .wild-west-page .subtitle {
+    font-size: 15px;
+    margin-bottom: 10px;
+  }
+
+  .wild-west-page .jackpot-panel {
+    width: 100%;
+    padding: 12px;
+  }
+
+  .wild-west-page .information-panel {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+  }
+
+  .wild-west-page .information-box {
+    min-height: 62px;
+  }
+
+  .wild-west-page .reels-frame {
+    padding: 8px;
+  }
+
+  .wild-west-page .spin-controls {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+  }
+
+  .wild-west-page .spin-button {
+    width: 100%;
+    max-width: 320px;
+  }
+}
+html,
+body,
+#root {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+}
+/* ==================================================
+   WILD WEST - AJUSTE REAL PARA IPHONE
+   ================================================== */
+
+@media screen and (max-width: 430px) {
+
+  .wild-west-page {
+    min-height: 100dvh !important;
+    padding:
+      max(8px, env(safe-area-inset-top))
+      4px
+      max(8px, env(safe-area-inset-bottom)) !important;
+  }
+
+  .wild-west-page .machine {
+    width: 100% !important;
+    max-width: none !important;
+    padding: 8px 7px 10px !important;
+    border-radius: 24px !important;
+  }
+
+  /* Encabezado */
+  .wild-west-page .western-heading {
+    width: calc(100% - 150px) !important;
+    margin: 14px auto 0 !important;
+  }
+
+  .wild-west-page .title {
+    font-size: clamp(25px, 8.2vw, 34px) !important;
+    line-height: 0.95 !important;
+    letter-spacing: -1px !important;
+    white-space: nowrap !important;
+  }
+
+  .wild-west-page .western-stars {
+    height: 12px !important;
+    margin-top: 2px !important;
+    font-size: 10px !important;
+    line-height: 10px !important;
+  }
+
+  .wild-west-page .subtitle {
+    margin: 2px 0 8px !important;
+    font-size: 9px !important;
+    line-height: 1 !important;
+  }
+
+  /* Jackpot */
+  .wild-west-page .jackpot-panel {
+    width: calc(100% - 24px) !important;
+    min-height: 78px !important;
+    margin: 0 auto 8px !important;
+    padding: 8px 5px !important;
+  }
+
+  .wild-west-page .jackpot-panel span,
+  .wild-west-page .jackpot-panel small {
+    font-size: 8px !important;
+  }
+
+  .wild-west-page .jackpot-panel strong {
+    font-size: 34px !important;
+    line-height: 1 !important;
+  }
+
+  /* Créditos, apuesta, premio y giros */
+  .wild-west-page .information-panel {
+    gap: 6px !important;
+    margin-bottom: 7px !important;
+  }
+
+  .wild-west-page .information-box {
+    min-height: 58px !important;
+    padding: 5px 2px !important;
+  }
+
+  .wild-west-page .information-label {
+    margin-bottom: 1px !important;
+    font-size: 6px !important;
+  }
+
+  .wild-west-page .information-value {
+    font-size: 18px !important;
+    line-height: 1 !important;
+  }
+
+  /* Textos y líneas */
+  .wild-west-page .special-symbols {
+    margin-bottom: 5px !important;
+    font-size: 7px !important;
+    line-height: 1.1 !important;
+  }
+
+  .wild-west-page .line-indicators {
+    gap: 3px !important;
+    margin-bottom: 5px !important;
+  }
+
+  .wild-west-page .line-indicator {
+    padding: 2px 4px !important;
+    font-size: 6px !important;
+  }
+
+  /* Rodillos */
+  .wild-west-page .reels-frame {
+    margin-bottom: 4px !important;
+    padding: 5px !important;
+    border-width: 3px !important;
+    border-radius: 12px !important;
+  }
+
+  .wild-west-page .reels-container {
+    gap: 3px !important;
+    padding: 3px !important;
+  }
+
+  .wild-west-page .reel-window {
+    height: 225px !important;
+    border-width: 2px !important;
+    border-radius: 6px !important;
+  }
+
+  .wild-west-page .reel-symbol,
+  .wild-west-page .stopped-symbol {
+    height: 75px !important;
+    font-size: 36px !important;
+  }
+
+  .wild-west-page .message {
+    min-height: 12px !important;
+    margin: 2px 0 !important;
+    font-size: 8px !important;
+  }
+
+  /* Controles */
+  .wild-west-page .controls {
+    padding: 0 4px 5px !important;
+    gap: 4px !important;
+  }
+
+  .wild-west-page .spin-button {
+    min-height: 40px !important;
+    padding: 7px 3px !important;
+    font-size: 14px !important;
+  }
+}
+/* CORRECCIÓN DE CONTROLES Y TÍTULO EN IPHONE */
+@media screen and (max-width: 430px) {
+
+  /* Título perfectamente centrado */
+  .wild-west-page .western-heading {
+    width: 100% !important;
+    padding: 0 72px !important;
+    margin: 14px auto 0 !important;
+    text-align: center !important;
+    box-sizing: border-box !important;
+  }
+
+  .wild-west-page .title {
+    display: block !important;
+    width: 100% !important;
+    margin: 0 auto !important;
+    text-align: center !important;
+    transform: none !important;
+  }
+
+  /* Controles: - / GIRAR / + / MAX */
+  .wild-west-page .controls {
+    display: grid !important;
+    grid-template-columns: 42px minmax(110px, 1fr) 42px 48px !important;
+    align-items: center !important;
+    column-gap: 6px !important;
+    width: 100% !important;
+    padding: 0 4px 6px !important;
+    box-sizing: border-box !important;
+  }
+
+  .wild-west-page .bet-minus-button,
+  .wild-west-page .bet-plus-button,
+  .wild-west-page .decrease-bet-button,
+  .wild-west-page .increase-bet-button {
+    position: static !important;
+    width: 42px !important;
+    min-width: 42px !important;
+    height: 40px !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    transform: none !important;
+  }
+
+  .wild-west-page .spin-button {
+    position: static !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    height: 42px !important;
+    margin: 0 !important;
+    padding: 6px 4px !important;
+    transform: none !important;
+  }
+
+  .wild-west-page .max-bet-button {
+    position: static !important;
+    width: 48px !important;
+    min-width: 48px !important;
+    height: 40px !important;
+    margin: 0 !important;
+    padding: 0 2px !important;
+    transform: none !important;
+  }
+}
+/* AJUSTE FINAL CONTROLES + TITULO IPHONE */
+@media screen and (max-width: 430px) {
+
+  /* Título centrado de verdad */
+  .wild-west-page .western-heading {
+    width: 100% !important;
+    padding: 0 !important;
+    margin: 14px auto 0 !important;
+    box-sizing: border-box !important;
+    text-align: center !important;
+  }
+
+  .wild-west-page .title {
+  display: block !important;
+  width: max-content !important;
+  max-width: 100% !important;
+  position: relative !important;
+  left: 50% !important;
+  margin: 0 !important;
+  text-align: center !important;
+  transform: translateX(-50%) !important;
+  white-space: nowrap !important;
+}
+
+  /* Oculta apuesta total */
+  .wild-west-page .bet-display {
+    display: none !important;
+  }
+
+  /* - / GIRAR / + / MAX */
+  .wild-west-page .controls {
+    display: grid !important;
+    grid-template-columns: 42px minmax(0, 1fr) 42px 48px !important;
+    gap: 6px !important;
+    align-items: center !important;
+    width: 100% !important;
+    padding: 0 4px 6px !important;
+    box-sizing: border-box !important;
+  }
+
+  .wild-west-page .small-button {
+    position: static !important;
+    width: 42px !important;
+    min-width: 42px !important;
+    height: 40px !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    transform: none !important;
+  }
+
+  .wild-west-page .spin-button {
+    position: static !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    height: 42px !important;
+    margin: 0 !important;
+    padding: 6px 4px !important;
+    transform: none !important;
+  }
+
+  .wild-west-page .max-bet-button {
+    position: static !important;
+    width: 48px !important;
+    min-width: 48px !important;
+    height: 40px !important;
+    margin: 0 !important;
+    padding: 0 2px !important;
+    transform: none !important;
+  }
+}
+/* ==================================================
+   AJUSTE FINAL ANDROID / CELULARES
+   EVITA QUE LOS CONTROLES QUEDEN TAPADOS
+   ================================================== */
+
+@media screen and (max-width: 768px) {
+
+  .wild-west-page {
+    width: 100% !important;
+    height: 100dvh !important;
+    min-height: 100dvh !important;
+
+    padding:
+      max(4px, env(safe-area-inset-top))
+      4px
+      max(6px, env(safe-area-inset-bottom))
+      4px !important;
+
+    align-items: flex-start !important;
+    overflow: hidden !important;
+  }
+
+  .wild-west-page .machine {
+    width: 100% !important;
+    height: calc(
+      100dvh
+      - max(4px, env(safe-area-inset-top))
+      - max(6px, env(safe-area-inset-bottom))
+      - 4px
+    ) !important;
+
+    max-height: none !important;
+    padding: 7px 6px 6px !important;
+    gap: 2px !important;
+    overflow: hidden !important;
+  }
+
+  .wild-west-page .western-heading {
+    margin: 8px auto 0 !important;
+  }
+
+  .wild-west-page .title {
+    font-size: clamp(25px, 8vw, 34px) !important;
+  }
+
+  .wild-west-page .subtitle {
+    margin: 1px 0 4px !important;
+    font-size: 8px !important;
+  }
+
+  .wild-west-page .jackpot-panel {
+    width: calc(100% - 20px) !important;
+    min-height: 0 !important;
+    margin: 0 auto 4px !important;
+    padding: 5px !important;
+  }
+
+  .wild-west-page .jackpot-panel strong {
+    font-size: 28px !important;
+  }
+
+  .wild-west-page .information-panel {
+    grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+    gap: 3px !important;
+    margin-bottom: 3px !important;
+  }
+
+  .wild-west-page .information-box {
+    min-height: 0 !important;
+    padding: 4px 1px !important;
+  }
+
+  .wild-west-page .information-label {
+    font-size: 5px !important;
+  }
+
+  .wild-west-page .information-value {
+    font-size: 15px !important;
+  }
+
+  .wild-west-page .special-symbols {
+    margin-bottom: 2px !important;
+    font-size: 6px !important;
+  }
+
+  .wild-west-page .line-indicators {
+    margin-bottom: 2px !important;
+  }
+
+  .wild-west-page .reels-frame {
+    margin-bottom: 2px !important;
+    padding: 4px !important;
+  }
+
+  .wild-west-page .reels-container {
+    padding: 2px !important;
+  }
+
+  .wild-west-page .reel-window {
+    height: clamp(165px, 28dvh, 205px) !important;
+  }
+
+  .wild-west-page .reel-symbol,
+  .wild-west-page .stopped-symbol {
+    height: calc(clamp(165px, 28dvh, 205px) / 3) !important;
+    font-size: clamp(27px, 8vw, 38px) !important;
+  }
+
+  .wild-west-page .message {
+    min-height: 10px !important;
+    margin: 0 !important;
+    font-size: 7px !important;
+  }
+
+  .wild-west-page .controls {
+    flex-shrink: 0 !important;
+    padding: 0 3px max(3px, env(safe-area-inset-bottom)) !important;
+    gap: 4px !important;
+  }
+
+  .wild-west-page .small-button {
+    width: 38px !important;
+    min-width: 38px !important;
+    height: 38px !important;
+  }
+
+  .wild-west-page .spin-button {
+    height: 40px !important;
+    min-height: 40px !important;
+  }
+
+  .wild-west-page .max-bet-button {
+    width: 45px !important;
+    min-width: 45px !important;
+    height: 38px !important;
+  }
+
+  .wild-west-page .bottom-buttons {
+    display: none !important;
+  }
+}
+
+/* ==========================================================
+   WILD WEST — CORRECCIÓN FINAL MULTIDISPOSITIVO
+   Rodillos azules + controles completos + centrado real
+   ========================================================== */
+
+/* ---------- ESTRUCTURA GENERAL ---------- */
+.wild-west-page {
+  width: 100vw !important;
+  min-width: 320px !important;
+  min-height: 100dvh !important;
+  margin: 0 !important;
+  padding: 8px !important;
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+  overflow-x: hidden !important;
+  overflow-y: auto !important;
+}
+
+.wild-west-page .machine {
+  width: min(1180px, calc(100vw - 16px)) !important;
+  max-width: 1180px !important;
+  height: auto !important;
+  max-height: none !important;
+  margin: auto !important;
+  padding: 14px 14px 12px !important;
+  gap: 5px !important;
+  overflow: visible !important;
+  transform: none !important;
+  transform-origin: center !important;
+}
+
+/* ---------- TÍTULO CENTRADO ---------- */
+.wild-west-page .western-heading {
+  width: 100% !important;
+  margin: 4px auto 0 !important;
+  padding: 0 150px !important;
+  display: block !important;
+  text-align: center !important;
+}
+
+.wild-west-page .title {
+  position: static !important;
+  left: auto !important;
+  display: block !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  margin: 0 auto !important;
+  text-align: center !important;
+  transform: none !important;
+}
+
+/* ---------- RODILLOS AZULES ---------- */
+.wild-west-page .reels-frame {
+  width: 100% !important;
+  margin: 0 auto 5px !important;
+  padding: 6px !important;
+}
+
+.wild-west-page .reels-container {
+  width: 100% !important;
+  gap: 4px !important;
+  padding: 4px !important;
+  background:
+    linear-gradient(180deg, rgba(89, 165, 255, 0.18), transparent 25%),
+    #071b42 !important;
+}
+
+.wild-west-page .reel-window {
+  min-width: 0 !important;
+  height: clamp(185px, 28vh, 245px) !important;
+  border-color: #d7ad4f !important;
+  background:
+    radial-gradient(circle at 50% 42%, rgba(83, 159, 255, 0.42), transparent 48%),
+    linear-gradient(180deg, #2978db 0%, #1856ad 48%, #092b68 100%) !important;
+  background-color: #124b9d !important;
+  box-shadow:
+    inset 0 0 22px rgba(0, 0, 0, 0.72),
+    inset 0 0 18px rgba(102, 179, 255, 0.28),
+    0 3px 7px rgba(0, 0, 0, 0.82) !important;
+}
+
+.wild-west-page .reel-strip,
+.wild-west-page .stopped-reel {
+  background: transparent !important;
+}
+
+.wild-west-page .reel-symbol,
+.wild-west-page .stopped-symbol {
+  background: transparent !important;
+  background-color: transparent !important;
+  border: 0 !important;
+  outline: 0 !important;
+  box-shadow: none !important;
+}
+
+/* Conserva el brillo cuando hay premio. */
+.wild-west-page .stopped-symbol.winning-symbol {
+  background:
+    radial-gradient(
+      circle,
+      rgba(255, 255, 255, 0.95),
+      rgba(255, 215, 0, 0.65) 40%,
+      rgba(255, 120, 0, 0.28) 75%,
+      transparent 100%
+    ) !important;
+  box-shadow:
+    inset 0 0 18px #fff,
+    0 0 14px #fff3a0,
+    0 0 28px #ffcc00 !important;
+}
+
+.wild-west-page .stopped-symbol.scatter-winner {
+  background: rgba(255, 145, 35, 0.34) !important;
+  box-shadow:
+    inset 0 0 18px #fff,
+    0 0 22px #d47a2c !important;
+}
+
+/* ---------- CONTROLES EN PC ---------- */
+/* Orden real del JSX:
+   apuesta | menos | girar | más | max */
+.wild-west-page .controls {
+  width: 100% !important;
+  margin: 0 auto !important;
+  padding: 0 !important;
+  display: grid !important;
+  grid-template-columns:
+    minmax(115px, 150px)
+    58px
+    minmax(280px, 1fr)
+    58px
+    72px !important;
+  gap: 9px !important;
+  align-items: center !important;
+  justify-content: stretch !important;
+}
+
+.wild-west-page .controls > * {
+  min-width: 0 !important;
+  margin: 0 !important;
+  position: static !important;
+  transform: none !important;
+}
+
+.wild-west-page .controls > .bet-display {
+  display: flex !important;
+  grid-column: 1 !important;
+  width: 100% !important;
+  height: 56px !important;
+}
+
+.wild-west-page .controls > .small-button:first-of-type {
+  grid-column: 2 !important;
+}
+
+.wild-west-page .controls > .spin-button {
+  grid-column: 3 !important;
+}
+
+.wild-west-page .controls > .small-button:nth-of-type(3) {
+  grid-column: 4 !important;
+}
+
+.wild-west-page .controls > .max-bet-button {
+  grid-column: 5 !important;
+}
+
+.wild-west-page .small-button {
+  width: 58px !important;
+  min-width: 58px !important;
+  height: 58px !important;
+  padding: 0 !important;
+  font-size: 31px !important;
+}
+
+.wild-west-page .spin-button {
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  height: 58px !important;
+  padding: 8px 16px !important;
+  font-size: clamp(20px, 3vw, 28px) !important;
+  white-space: nowrap !important;
+  overflow: visible !important;
+}
+
+.wild-west-page .max-bet-button {
+  width: 72px !important;
+  min-width: 72px !important;
+  height: 54px !important;
+  padding: 0 5px !important;
+}
+
+/* ---------- TABLETS Y CELULARES ---------- */
+@media screen and (max-width: 768px) {
+  .wild-west-page {
+    min-height: 100dvh !important;
+    padding:
+      max(5px, env(safe-area-inset-top))
+      max(4px, env(safe-area-inset-right))
+      max(6px, env(safe-area-inset-bottom))
+      max(4px, env(safe-area-inset-left)) !important;
+    align-items: flex-start !important;
+    overflow-y: auto !important;
+  }
+
+  .wild-west-page .machine {
+    width: 100% !important;
+    max-width: 100% !important;
+    min-height: calc(
+      100dvh
+      - max(5px, env(safe-area-inset-top))
+      - max(6px, env(safe-area-inset-bottom))
+    ) !important;
+    margin: 0 auto !important;
+    padding: 7px 6px 8px !important;
+    gap: 2px !important;
+    border-width: 3px !important;
+    border-radius: 16px !important;
+  }
+
+  .wild-west-page .western-heading {
+    width: 100% !important;
+    padding: 0 84px !important;
+    margin: 7px auto 0 !important;
+  }
+
+  .wild-west-page .title {
+    font-size: clamp(26px, 8.5vw, 42px) !important;
+    line-height: 0.95 !important;
+    letter-spacing: -0.5px !important;
+  }
+
+  .wild-west-page .subtitle {
+    margin: 1px 0 4px !important;
+    font-size: 8px !important;
+  }
+
+  .wild-west-page .jackpot-panel {
+    width: calc(100% - 18px) !important;
+    min-height: 0 !important;
+    margin: 0 auto 4px !important;
+    padding: 5px !important;
+  }
+
+  .wild-west-page .jackpot-panel strong {
+    font-size: 27px !important;
+  }
+
+  .wild-west-page .information-panel {
+    grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+    gap: 3px !important;
+    margin-bottom: 3px !important;
+  }
+
+  .wild-west-page .information-box {
+    min-height: 0 !important;
+    padding: 4px 1px !important;
+  }
+
+  .wild-west-page .information-label {
+    font-size: 5px !important;
+  }
+
+  .wild-west-page .information-value {
+    font-size: 15px !important;
+  }
+
+  .wild-west-page .special-symbols {
+    margin-bottom: 2px !important;
+    font-size: 6px !important;
+  }
+
+  .wild-west-page .line-indicators {
+    gap: 2px !important;
+    margin-bottom: 2px !important;
+  }
+
+  .wild-west-page .line-indicator {
+    padding: 2px 3px !important;
+    font-size: 5px !important;
+  }
+
+  .wild-west-page .reels-frame {
+    margin-bottom: 2px !important;
+    padding: 4px !important;
+  }
+
+  .wild-west-page .reels-container {
+    gap: 2px !important;
+    padding: 2px !important;
+  }
+
+  .wild-west-page .reel-window {
+    height: clamp(165px, 29dvh, 210px) !important;
+  }
+
+  .wild-west-page .reel-symbol,
+  .wild-west-page .stopped-symbol {
+    height: calc(clamp(165px, 29dvh, 210px) / 3) !important;
+    font-size: clamp(27px, 8vw, 38px) !important;
+  }
+
+  .wild-west-page .message {
+    min-height: 11px !important;
+    margin: 0 0 2px !important;
+    font-size: 7px !important;
+  }
+
+  /* En móvil se oculta APUESTA TOTAL para dejar lugar a los 4 controles. */
+  .wild-west-page .controls {
+    grid-template-columns: 40px minmax(0, 1fr) 40px 48px !important;
+    gap: 5px !important;
+    padding: 0 3px max(4px, env(safe-area-inset-bottom)) !important;
+  }
+
+  .wild-west-page .controls > .bet-display {
+    display: none !important;
+  }
+
+  .wild-west-page .controls > .small-button:first-of-type {
+    grid-column: 1 !important;
+  }
+
+  .wild-west-page .controls > .spin-button {
+    grid-column: 2 !important;
+  }
+
+  .wild-west-page .controls > .small-button:nth-of-type(3) {
+    grid-column: 3 !important;
+  }
+
+  .wild-west-page .controls > .max-bet-button {
+    grid-column: 4 !important;
+  }
+
+  .wild-west-page .small-button {
+    width: 40px !important;
+    min-width: 40px !important;
+    height: 40px !important;
+    font-size: 25px !important;
+  }
+
+  .wild-west-page .spin-button {
+    width: 100% !important;
+    height: 42px !important;
+    min-height: 42px !important;
+    padding: 5px 3px !important;
+    font-size: 15px !important;
+  }
+
+  .wild-west-page .max-bet-button {
+    width: 48px !important;
+    min-width: 48px !important;
+    height: 40px !important;
+    font-size: 9px !important;
+  }
+
+  .wild-west-page .bottom-buttons {
+    display: none !important;
+  }
+}
+
+/* ---------- CELULARES ANGOSTOS ---------- */
+@media screen and (max-width: 430px) {
+  .wild-west-page .western-heading {
+    padding: 0 70px !important;
+  }
+
+  .wild-west-page .title {
+    font-size: clamp(24px, 8.2vw, 34px) !important;
+  }
+
+  .wild-west-page .controls {
+    grid-template-columns: 38px minmax(0, 1fr) 38px 45px !important;
+    gap: 4px !important;
+  }
+
+  .wild-west-page .small-button {
+    width: 38px !important;
+    min-width: 38px !important;
+    height: 38px !important;
+  }
+
+  .wild-west-page .max-bet-button {
+    width: 45px !important;
+    min-width: 45px !important;
+    height: 38px !important;
+  }
+}
+
+/* ---------- CELULARES EN HORIZONTAL ---------- */
+@media screen and (max-height: 500px) and (orientation: landscape) {
+  .wild-west-page {
+    padding: 3px !important;
+  }
+
+  .wild-west-page .machine {
+    padding: 5px !important;
+    gap: 1px !important;
+  }
+
+  .wild-west-page .western-heading {
+    margin-top: 3px !important;
+  }
+
+  .wild-west-page .western-kicker,
+  .wild-west-page .western-stars,
+  .wild-west-page .special-symbols,
+  .wild-west-page .bottom-buttons {
+    display: none !important;
+  }
+
+  .wild-west-page .title {
+    font-size: clamp(24px, 7vh, 38px) !important;
+  }
+
+  .wild-west-page .subtitle {
+    margin: 0 0 2px !important;
+  }
+
+  .wild-west-page .jackpot-panel {
+    padding: 2px 5px !important;
+    margin-bottom: 2px !important;
+  }
+
+  .wild-west-page .jackpot-panel strong {
+    font-size: 20px !important;
+  }
+
+  .wild-west-page .information-box {
+    padding: 2px 1px !important;
+  }
+
+  .wild-west-page .reel-window {
+    height: clamp(120px, 37vh, 165px) !important;
+  }
+
+  .wild-west-page .reel-symbol,
+  .wild-west-page .stopped-symbol {
+    height: calc(clamp(120px, 37vh, 165px) / 3) !important;
+    font-size: clamp(23px, 8vh, 34px) !important;
+  }
+
+  .wild-west-page .controls {
+    grid-template-columns: 36px minmax(0, 1fr) 36px 44px !important;
+  }
+
+  .wild-west-page .small-button,
+  .wild-west-page .max-bet-button {
+    height: 34px !important;
+  }
+
+  .wild-west-page .spin-button {
+    height: 36px !important;
+    min-height: 36px !important;
+  }
+}
+
+/* ==========================================================
+   DETALLES TEMÁTICOS WILD WEST
+   ========================================================== */
+
+.wild-west-page .stopped-symbol.wild-symbol {
+  position: relative;
+  z-index: 6;
+  animation: westernSheriffPulse 0.85s ease-in-out infinite alternate !important;
+  filter: drop-shadow(0 0 7px #ffd36a) drop-shadow(0 0 13px #ff7a18);
+}
+
+.wild-west-page .stopped-symbol.scatter-symbol {
+  position: relative;
+  z-index: 6;
+  animation: westernDynamiteShake 0.7s ease-in-out infinite !important;
+  filter: drop-shadow(0 0 6px #ffce65) drop-shadow(0 0 12px #ff4b18);
+}
+
+.wild-west-page .message-win {
+  color: #fff6ba !important;
+  text-shadow:
+    0 0 7px #fff,
+    0 0 15px #ffc14d,
+    0 0 25px #ff6a18 !important;
+  animation: westernMessageGlow 0.55s ease-in-out infinite alternate;
+}
+
+.wild-west-page .jackpot-panel span {
+  color: #ffe09a !important;
+  text-shadow: 0 0 8px #ff9f32, 0 0 15px rgba(255, 105, 24, 0.7);
+}
+
+.wild-west-page .celebration-card {
+  background:
+    radial-gradient(circle at 50% 28%, rgba(255, 176, 71, 0.28), transparent 32%),
+    radial-gradient(circle, #7e2d0e, #351006 58%, #080301) !important;
+}
+
+@keyframes westernSheriffPulse {
+  from {
+    transform: scale(0.94) rotate(-2deg);
+    filter: drop-shadow(0 0 5px #ffd36a) drop-shadow(0 0 9px #ff7a18);
+  }
+  to {
+    transform: scale(1.08) rotate(2deg);
+    filter: drop-shadow(0 0 10px #fff2a8) drop-shadow(0 0 20px #ff7a18);
+  }
+}
+
+@keyframes westernDynamiteShake {
+  0%, 100% { transform: translateX(0) rotate(0deg); }
+  25% { transform: translateX(-2px) rotate(-3deg); }
+  50% { transform: translateX(2px) rotate(3deg); }
+  75% { transform: translateX(-1px) rotate(-2deg); }
+}
+
+@keyframes westernMessageGlow {
+  from { opacity: 0.82; transform: scale(0.99); }
+  to { opacity: 1; transform: scale(1.02); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .wild-west-page .stopped-symbol.wild-symbol,
+  .wild-west-page .stopped-symbol.scatter-symbol,
+  .wild-west-page .message-win {
+    animation: none !important;
+  }
+}
+
+/* ==========================================================
+   CLASSIC FRUITS — SOLO COLOR DE RODILLOS
+   No modifica controles, tamaños ni responsive
+   ========================================================== */
+
+.wild-west-page .reel-window {
+  background:
+    linear-gradient(
+      to bottom,
+      #d4d4d4 0%,
+      #f7f4e8 18%,
+      #fffef6 50%,
+      #f7f4e8 82%,
+      #d4d4d4 100%
+    ) !important;
+
+  background-color: #fffef6 !important;
+  border-color: #d8b34b !important;
+
+  box-shadow:
+    inset 0 0 18px rgba(0, 0, 0, 0.34),
+    inset 0 0 10px rgba(255, 255, 255, 0.85),
+    0 0 10px rgba(255, 211, 75, 0.45),
+    0 4px 7px rgba(0, 0, 0, 0.75) !important;
+}
+

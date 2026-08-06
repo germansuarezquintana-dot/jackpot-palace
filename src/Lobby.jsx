@@ -50,8 +50,12 @@ const GAME_PREVIEWS = {
     ["💰", "🧲", "🤠"],
     ["⭐", "🐎", "💰"],
   ],
+"classic-fruits": [
+  ["🍒", "🍋", "🔔"],
+  ["🍇", "7️⃣", "🍊"],
+  ["🍒", "🍉", "🔔"],
+],
 };
-
 function WheelLobbyPreview() {
   const labels = ["100", "200", "500", "X2", "100", "BONUS", "200", "JP"];
 
@@ -92,6 +96,16 @@ const games = [
     badge: "POPULAR",
     available: true,
   },
+  {
+  id: "classic-fruits",
+  name: "Classic Fruits",
+  icon: "🍒",
+  subtitle: "TRAGAMONEDAS CLÁSICA",
+  description: "Cerezas, limones, campanas y el clásico 7.",
+  theme: "red",
+  badge: "NUEVO",
+  available: true,
+},
   {
   id: "diamond-fortune",
   name: "Diamond Fortune",
