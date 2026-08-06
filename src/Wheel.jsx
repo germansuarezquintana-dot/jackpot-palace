@@ -3,41 +3,41 @@ import "./Wheel.css";
 import { supabase } from "./supabase";
 
 const SEGMENTS = [
+  { label: "PIERDE", lossBet: true },
   { label: "X1", multiplier: 1 },
   { label: "PIERDE", lossBet: true },
   { label: "X2", multiplier: 2 },
-  { label: "-500", loss: 500 },
+  { label: "PIERDE", lossBet: true },
   { label: "X1", multiplier: 1 },
-  { label: "-1000", loss: 1000 },
-  { label: "B X3", bonus: true },
+  { label: "PIERDE", lossBet: true },
+  { label: "X3", multiplier: 3 },
+  { label: "PIERDE", lossBet: true },
+  { label: "X1", multiplier: 1 },
   { label: "PIERDE", lossBet: true },
   { label: "X2", multiplier: 2 },
-  { label: "-2000", loss: 2000 },
+  { label: "PIERDE", lossBet: true },
   { label: "X1", multiplier: 1 },
-  { label: "-4000", loss: 4000 },
+  { label: "PIERDE", lossBet: true },
   { label: "X5", multiplier: 5 },
   { label: "PIERDE", lossBet: true },
   { label: "X1", multiplier: 1 },
-  { label: "-1000", loss: 1000 },
-  { label: "JP X10", jackpot: true },
-  { label: "X2", multiplier: 2 },
-  { label: "-500", loss: 500 },
-  { label: "X10", multiplier: 10 },
+  { label: "PIERDE", lossBet: true },
+  { label: "JACKPOT X10", jackpot: true },
 ];
 
 const SPIN_DURATION_MS = 5400;
 
-// Pesos de salida: la rueda pierde más de lo que paga, sin alterar el diseño.
+// Probabilidades aproximadas reales:
+// PIERDE 55%, X1 25%, X2 12%, X3 5%, X5 2%, JACKPOT 1%.
+// El peso se reparte entre los casilleros repetidos de cada tipo.
 function getSegmentWeight(segment) {
-  if (segment.jackpot) return 0.03;
-  if (segment.bonus) return 0.12;
-  if (segment.multiplier === 10) return 0.04;
-  if (segment.multiplier === 5) return 0.16;
-  if (segment.multiplier === 2) return 0.72;
-  if (segment.multiplier === 1) return 1.05;
-  if (segment.lossBet) return 1.75;
-  if (segment.loss > 0) return 1.45;
-  return 1;
+  if (segment.lossBet) return 5.5;
+  if (segment.multiplier === 1) return 5;
+  if (segment.multiplier === 2) return 6;
+  if (segment.multiplier === 3) return 5;
+  if (segment.multiplier === 5) return 2;
+  if (segment.jackpot) return 1;
+  return 0;
 }
 
 function selectWeightedSegmentIndex() {
@@ -55,9 +55,8 @@ function selectWeightedSegmentIndex() {
 
 function getSegmentClass(segment) {
   if (segment.jackpot) return "fortune-wheel-segment-label is-jackpot";
-  if (segment.bonus) return "fortune-wheel-segment-label is-bonus";
   if (segment.multiplier) return "fortune-wheel-segment-label is-multiplier";
-  if (segment.lossBet || segment.loss > 0 || segment.value === 0) {
+  if (segment.lossBet) {
     return "fortune-wheel-segment-label is-lose";
   }
   return "fortune-wheel-segment-label";
@@ -281,20 +280,8 @@ export default function Wheel({
       return;
     }
 
-    if (segment.bonus) {
-      [392, 523, 659, 784].forEach((frequency, index) => {
-        playTone(context, {
-          frequency,
-          duration: 0.24,
-          volume: 0.1,
-          type: "square",
-          delay: index * 0.1,
-        });
-      });
-      return;
-    }
 
-    if (segment.multiplier || segment.value > 0) {
+    if (segment.multiplier) {
       [523, 659, 784].forEach((frequency, index) => {
         playTone(context, {
           frequency,
@@ -369,15 +356,8 @@ export default function Wheel({
 
   function calculatePrize(segment, currentBet) {
     if (segment.jackpot) return currentBet * 10;
-    if (segment.bonus) return currentBet * 3;
     if (segment.multiplier) return currentBet * segment.multiplier;
     return 0;
-  }
-
-  function calculateTotalLoss(segment, currentBet, availableCredits) {
-    const safeCredits = Math.max(0, Number(availableCredits) || 0);
-    const extraLoss = segment.loss > 0 ? Math.max(0, Number(segment.loss) || 0) : 0;
-    return Math.min(currentBet + extraLoss, safeCredits);
   }
 
   function selectChip(value) {
@@ -450,11 +430,8 @@ export default function Wheel({
     spinTimeoutRef.current = window.setTimeout(async () => {
       const selectedSegment = SEGMENTS[selectedIndex];
       const prize = calculatePrize(selectedSegment, currentBet);
-      const totalLoss =
-        selectedSegment.lossBet || selectedSegment.loss > 0
-          ? calculateTotalLoss(selectedSegment, currentBet, credits)
-          : currentBet;
-      const isPenalty = selectedSegment.lossBet || selectedSegment.loss > 0;
+      const totalLoss = selectedSegment.lossBet ? currentBet : 0;
+      const isPenalty = selectedSegment.lossBet;
 
       setResult(selectedSegment);
       setLastPrize(prize);
@@ -469,7 +446,7 @@ export default function Wheel({
       ].slice(0, 8));
       try {
         if (player?.id) {
-          const extraLoss = Math.max(0, Number(selectedSegment.loss) || 0);
+          const extraLoss = 0;
 
           const { data: resultData, error: resultError } = await supabase.rpc(
             "apply_wheel_result",
@@ -490,7 +467,7 @@ export default function Wheel({
           }
         } else {
           // Modo local de respaldo para desarrollo.
-          updateCredits(Math.max(0, credits - currentBet - (Number(selectedSegment.loss) || 0) + prize));
+          updateCredits(Math.max(0, credits - currentBet + prize));
         }
       } catch (error) {
         console.error("Error al registrar la jugada de Wheel:", error);
@@ -592,11 +569,11 @@ export default function Wheel({
 
             <section className="fortune-wheel-rules-panel">
               <span className="fortune-wheel-section-title">REGLAS</span>
-              <div className="fortune-wheel-rule-row"><b>X1 / X2 / X5 / X10</b><span>multiplican la apuesta</span></div>
-              <div className="fortune-wheel-rule-row"><b>B X3</b><span>bonus: paga 3 veces</span></div>
-              <div className="fortune-wheel-rule-row"><b>JP X10</b><span>jackpot: paga 10 veces</span></div>
-              <div className="fortune-wheel-rule-row"><b>PIERDE</b><span>pierde la apuesta</span></div>
-              <div className="fortune-wheel-rule-row"><b>-500 a -4000</b><span>apuesta + penalidad</span></div>
+              <div className="fortune-wheel-rule-row"><b>X1</b><span>recuperás la apuesta</span></div>
+              <div className="fortune-wheel-rule-row"><b>X2 / X3</b><span>premio doble o triple</span></div>
+              <div className="fortune-wheel-rule-row"><b>X5</b><span>gran premio</span></div>
+              <div className="fortune-wheel-rule-row"><b>JACKPOT X10</b><span>premio mayor</span></div>
+              <div className="fortune-wheel-rule-row"><b>PIERDE</b><span>perdés solo lo apostado</span></div>
             </section>
           </aside>
 
@@ -604,13 +581,11 @@ export default function Wheel({
             className={`fortune-wheel-main-area${
               result?.jackpot
                 ? " is-jackpot-result"
-                : result?.bonus
-                  ? " is-bonus-result"
-                  : result && lastPrize > 0
-                    ? " is-win-result"
-                    : result?.lossBet || result?.loss > 0
-                      ? " is-loss-result"
-                      : ""
+                : result && lastPrize > 0
+                  ? " is-win-result"
+                  : result?.lossBet
+                    ? " is-loss-result"
+                    : ""
             }`}
           >
             <div
@@ -650,7 +625,7 @@ export default function Wheel({
                     if (angle > 180) textRotation += 180;
 
                     const labelFontSize =
-                      segment.jackpot || segment.bonus
+                      segment.jackpot
                         ? 2.55
                         : segment.lossBet
                           ? 2.25
@@ -694,18 +669,16 @@ export default function Wheel({
               className={`fortune-wheel-result${lastPrize > 0 ? " is-win" : ""}${
                 result?.jackpot
                   ? " is-jackpot"
-                  : result?.bonus
-                    ? " is-bonus"
-                    : result?.lossBet || result?.loss > 0
-                      ? " is-loss"
-                      : ""
+                  : result?.lossBet
+                    ? " is-loss"
+                    : ""
               }`}
               aria-live="polite"
             >
               {result
                 ? lastPrize > 0
                   ? `${result.label} · GANASTE ${lastPrize.toLocaleString("es-AR")}`
-                  : result.lossBet || result.loss > 0
+                  : result.lossBet
                     ? `${result.label} · PÉRDIDA APLICADA`
                     : `${result.label} · SIN PREMIO`
                 : spinning
@@ -717,10 +690,9 @@ export default function Wheel({
           <aside className="fortune-wheel-info-column">
             <section className="fortune-wheel-info-panel">
               <span className="fortune-wheel-section-title">INFORMACIÓN</span>
-              <div className="fortune-wheel-info-row"><i>✦</i><b>MULTIPLICA</b><strong>X1 a X10</strong></div>
-              <div className="fortune-wheel-info-row"><i>🎁</i><b>BONUS</b><strong>X3</strong></div>
+              <div className="fortune-wheel-info-row"><i>✦</i><b>PREMIOS</b><strong>X1 a X5</strong></div>
               <div className="fortune-wheel-info-row"><i>♦</i><b>JACKPOT</b><strong>X10</strong></div>
-              <div className="fortune-wheel-info-row"><i>−</i><b>PÉRDIDAS</b><strong>apuesta + multa</strong></div>
+              <div className="fortune-wheel-info-row"><i>−</i><b>PIERDE</b><strong>solo la apuesta</strong></div>
             </section>
 
             <section className="fortune-wheel-status-panel">
