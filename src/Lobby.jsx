@@ -55,6 +55,11 @@ const GAME_PREVIEWS = {
   ["🍇", "7️⃣", "🍊"],
   ["🍒", "🍉", "🔔"],
 ],
+"pirate-gold": [
+  ["⚓", "🦜", "🏴‍☠️"],
+  ["💎", "💰", "🪙"],
+  ["🗺️", "🏝️", "⚓"],
+],
 };
 function WheelLobbyPreview() {
   const labels = ["100", "200", "500", "X2", "100", "BONUS", "200", "JP"];
@@ -103,6 +108,16 @@ const games = [
   subtitle: "TRAGAMONEDAS CLÁSICA",
   description: "Cerezas, limones, campanas y el clásico 7.",
   theme: "red",
+  badge: "NUEVO",
+  available: true,
+},
+{
+  id: "pirate-gold",
+  name: "Pirate Gold",
+  icon: "🏴‍☠️",
+  subtitle: "TESORO PIRATA",
+  description: "Mapas, tesoros, piratas y jackpots legendarios.",
+  theme: "orange",
   badge: "NUEVO",
   available: true,
 },

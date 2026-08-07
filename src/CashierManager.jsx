@@ -191,8 +191,19 @@ export default function CashierManager() {
     setAssigning(false);
 
     if (error || data?.error) {
+      let errorDetail = data?.error || error?.message || "Error desconocido";
+
+      if (error?.context) {
+        try {
+          const responseBody = await error.context.json();
+          errorDetail = responseBody?.error || responseBody?.message || errorDetail;
+        } catch {
+          // Si la respuesta no es JSON, conservamos el mensaje original.
+        }
+      }
+
       setMessageType("error");
-      setMessage(`Error: ${data?.error || error.message}`);
+      setMessage(`Error: ${errorDetail}`);
       return;
     }
 

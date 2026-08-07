@@ -6,7 +6,7 @@ import Game from "./Game";
 import ClownParty from "./ClownParty";
 import Wheel from "./Wheel";
 import ClassicFruits from "./classicfruits/ClassicFruits";
-
+import PirateGold from "./PirateGold/PirateGold";
 import NeonCity from "./neon/NeonCity";
 import DiamondFortune from "./diamond/DiamondFortune";
 import WildWest from "./wildwest/WildWest";
@@ -44,6 +44,7 @@ export default function App() {
       "wild-west",
       "clown-party",
       "neon-city",
+      "pirate-gold",
       "classic-fruits",
       "wheel",
     ];
@@ -468,6 +469,42 @@ if (screen === "classic-fruits") {
       </button>
 
       <ClassicFruits
+        player={player}
+        onCreditsChange={(credits) =>
+          setPlayer((current) => ({
+            ...current,
+            credits,
+          }))
+        }
+      />
+    </>
+  );
+}
+if (screen === "pirate-gold") {
+  return (
+    <>
+      <button
+        type="button"
+        onClick={() => setScreen("lobby")}
+        style={{
+          position: "fixed",
+          top: 20,
+          left: 10,
+          zIndex: 9999,
+          padding: "6px 10px",
+          border: "1px solid #e7b85b",
+          borderRadius: 12,
+          color: "#fff",
+          background: "linear-gradient(180deg, #123b63, #07182a)",
+          fontWeight: 900,
+          cursor: "pointer",
+          boxShadow: "0 0 15px rgba(231,184,91,.6)",
+        }}
+      >
+        ← CASINO
+      </button>
+
+      <PirateGold
         player={player}
         onCreditsChange={(credits) =>
           setPlayer((current) => ({

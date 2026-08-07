@@ -1,0 +1,974 @@
+/* ==========================================================
+   PIRATE GOLD — SKIN ESTABLE
+   Basada visualmente en Classic Fruits.
+   Lógica separada: este archivo solo modifica la estética.
+   ========================================================== */
+
+.pirate-gold-page,
+.pirate-gold-page * {
+  box-sizing: border-box;
+}
+
+.pirate-gold-page {
+  width: 100%;
+  min-width: 320px;
+  min-height: 100dvh;
+  margin: 0;
+  padding: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow-x: hidden;
+  overflow-y: auto;
+  font-family: Arial, Helvetica, sans-serif;
+  color: #fff;
+  background:
+    radial-gradient(circle at 50% -15%, rgba(100, 25, 120, .22), transparent 40%),
+    linear-gradient(180deg, #18001d 0%, #0d0012 58%, #050008 100%);
+}
+
+.pirate-gold-page button {
+  font-family: inherit;
+}
+
+/* =========================
+   GABINETE
+   ========================= */
+
+.pirate-gold-page .machine {
+  position: relative;
+  width: min(900px, 100%);
+  margin: auto;
+  padding: 18px 20px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  text-align: center;
+  border: 3px solid #9d7617;
+  border-radius: 26px;
+  background:
+    linear-gradient(180deg, rgba(255,255,255,.045), transparent 12%),
+    linear-gradient(145deg, #171717 0%, #090909 52%, #141414 100%);
+  box-shadow:
+    0 0 0 2px rgba(255, 210, 55, .12),
+    0 0 22px rgba(212, 160, 23, .38),
+    inset 0 0 35px rgba(0,0,0,.95);
+}
+
+.pirate-gold-page .machine-winning {
+  animation: pirateCabinetWin .55s ease-in-out infinite alternate;
+}
+
+/* =========================
+   LUCES / BOTONES SUPERIORES
+   ========================= */
+
+.pirate-gold-page .lights {
+  position: absolute;
+  top: 9px;
+  left: 28px;
+  right: 28px;
+  display: flex;
+  justify-content: space-around;
+  pointer-events: none;
+}
+
+.pirate-gold-page .light {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #fff6a8;
+  box-shadow:
+    0 0 7px #fff,
+    0 0 14px #ffe66a,
+    0 0 24px #d9a719;
+  animation: pirateBlink .7s alternate infinite;
+}
+
+.pirate-gold-page .light:nth-child(even) {
+  animation-delay: .35s;
+}
+
+.pirate-gold-page .machine-spinning .light {
+  animation-duration: .18s;
+}
+
+.pirate-gold-page .top-actions {
+  position: absolute;
+  z-index: 20;
+  top: 8px;
+  right: 12px;
+  display: flex;
+  gap: 5px;
+}
+
+.pirate-gold-page .round-action-button {
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border: 1px solid #a98219;
+  border-radius: 50%;
+  color: #fff;
+  font-size: 15px;
+  cursor: pointer;
+  background: #171717;
+  box-shadow: 0 0 9px rgba(255, 214, 73, .38);
+}
+
+/* =========================
+   TÍTULO
+   ========================= */
+
+.pirate-gold-page .western-heading {
+  width: 100%;
+  margin: 8px auto 0;
+  padding: 0 110px;
+  text-align: center;
+}
+
+.pirate-gold-page .western-kicker {
+  display: block;
+  margin-bottom: 3px;
+  color: #efe8d0;
+  font-size: clamp(9px, 1.5vw, 13px);
+  letter-spacing: 1px;
+}
+
+.pirate-gold-page .title {
+  width: 100%;
+  margin: 0;
+  color: #ffd52e;
+  font-size: clamp(34px, 6vw, 55px);
+  font-weight: 1000;
+  line-height: .95;
+  letter-spacing: 2px;
+  white-space: nowrap;
+  text-align: center;
+  text-shadow:
+    0 2px 0 #6b4800,
+    0 0 8px #fff0a0,
+    0 0 18px #e3b218;
+}
+
+.pirate-gold-page .western-stars {
+  display: block;
+  height: 16px;
+  margin-top: 3px;
+  overflow: hidden;
+  color: #f6e9cf;
+  font-size: 15px;
+  line-height: 15px;
+  letter-spacing: 4px;
+  text-shadow: 0 0 7px #ffd84b;
+}
+
+.pirate-gold-page .subtitle {
+  margin: 2px 0 5px;
+  color: #fff1f1;
+  font-size: 10px;
+  font-weight: 900;
+  letter-spacing: 3px;
+  text-shadow: 0 0 8px rgba(255, 70, 70, .65);
+}
+
+/* =========================
+   JACKPOT / INFO
+   ========================= */
+
+.pirate-gold-page .jackpot-panel {
+  width: min(405px, 82%);
+  margin: 0 auto 3px;
+  padding: 5px 12px 6px;
+  border: 2px solid #a98219;
+  border-radius: 16px;
+  background: linear-gradient(180deg, #181203, #080703);
+  box-shadow:
+    inset 0 0 15px #000,
+    0 0 14px rgba(255, 215, 50, .35);
+}
+
+.pirate-gold-page .jackpot-panel span,
+.pirate-gold-page .jackpot-panel small {
+  display: block;
+  color: #ffe277;
+  font-size: 9px;
+  font-weight: 900;
+  letter-spacing: 1px;
+}
+
+.pirate-gold-page .jackpot-panel strong {
+  display: block;
+  margin: 1px 0;
+  color: #d467ff;
+  font-size: clamp(25px, 4vw, 35px);
+  line-height: 1;
+  text-shadow:
+    0 0 7px #fff,
+    0 0 14px #a62bcc;
+}
+
+.pirate-gold-page .information-panel {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 5px;
+  margin-bottom: 2px;
+}
+
+.pirate-gold-page .information-box {
+  min-width: 0;
+  padding: 5px 3px;
+  border: 2px solid #e4bb21;
+  border-radius: 9px;
+  background: linear-gradient(180deg, #2e0808, #140404);
+  box-shadow: inset 0 0 9px rgba(0,0,0,.9);
+}
+
+.pirate-gold-page .free-spin-box {
+  border-color: #00e4e4;
+}
+
+.pirate-gold-page .information-label {
+  display: block;
+  margin-bottom: 2px;
+  color: #fff1ab;
+  font-size: 7px;
+  font-weight: 900;
+}
+
+.pirate-gold-page .information-value {
+  color: #fff;
+  font-size: clamp(15px, 3vw, 20px);
+  line-height: 1;
+  text-shadow: 0 0 7px rgba(255,255,255,.35);
+}
+
+.pirate-gold-page .special-symbols {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 4px 12px;
+  margin: 0;
+  color: #fff;
+  font-size: 7px;
+  font-weight: 800;
+}
+
+.pirate-gold-page .line-indicators {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 3px;
+  margin-bottom: 3px;
+}
+
+.pirate-gold-page .line-indicator {
+  padding: 2px 5px;
+  border: 1px solid #9f7c18;
+  border-radius: 10px;
+  color: #ddd;
+  font-size: 6px;
+  font-weight: 900;
+  background: #151515;
+}
+
+.pirate-gold-page .active-line {
+  color: #111;
+  background: #ffd83d;
+  box-shadow: 0 0 8px #fff, 0 0 15px #ffd83d;
+  animation: pirateWinningFlash .45s alternate infinite;
+}
+
+/* =========================
+   RODILLOS ROJOS
+   ========================= */
+
+.pirate-gold-page .reels-frame {
+  width: 100%;
+  margin: 0 0 3px;
+  padding: 7px;
+  border: 3px solid #d9ad15;
+  border-radius: 18px;
+  background: linear-gradient(145deg, #171717, #070707);
+  box-shadow:
+    inset 0 0 14px #000,
+    0 0 13px rgba(255, 212, 32, .55);
+}
+
+.pirate-gold-page .reels-container {
+  display: flex;
+  justify-content: center;
+  gap: 5px;
+  width: 100%;
+  padding: 5px;
+  overflow: hidden;
+  border: 2px solid #d2a81c;
+  border-radius: 13px;
+  background: #111;
+}
+
+.pirate-gold-page .reel-window {
+  position: relative;
+  flex: 1 1 0;
+  min-width: 0;
+  height: 168px;
+  overflow: hidden;
+  border: 2px solid #b68d18;
+  border-radius: 12px;
+  background:
+    linear-gradient(
+      to bottom,
+     #0a2d5e 0%,
+#1976d2 10%,
+#1565c0 31%,
+#0b4f9c 33%,
+#2196f3 35%,
+#1565c0 64%,
+#0a3b78 66%,
+#1e88e5 68%,
+#1565c0 91%,
+#041f45 100%
+    )!important;
+  box-shadow:
+    inset 0 0 18px rgba(0,0,0,.85),
+    inset 0 0 12px rgba(255,75,40,.28);
+}
+
+.pirate-gold-page .reel-strip {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+}
+
+.pirate-gold-page .reel-strip.spinning {
+  animation: pirateReelRoll .38s linear infinite;
+  will-change: transform;
+}
+
+.pirate-gold-page .reel-symbol,
+.pirate-gold-page .stopped-symbol {
+  height: 56px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: clamp(31px, 5vw, 49px);
+  line-height: 1;
+  user-select: none;
+  filter: drop-shadow(0 2px 1px rgba(0,0,0,.8));
+}
+
+.pirate-gold-page .stopped-reel {
+  position: absolute;
+  inset: 0;
+  animation: pirateStopBounce .24s ease-out;
+}
+
+.pirate-gold-page .reel-window-stopping {
+  animation: pirateReelStopBounce .28s ease-out;
+}
+
+.pirate-gold-page .wild-symbol {
+  text-shadow: 0 0 8px #fff, 0 0 17px #ffd52b;
+}
+
+.pirate-gold-page .scatter-symbol {
+  text-shadow: 0 0 8px #fff, 0 0 17px #00e8ff;
+}
+
+.pirate-gold-page .winning-symbol {
+  position: relative;
+  z-index: 5;
+  border-radius: 10px;
+  background:
+    radial-gradient(circle, rgba(255,255,255,.95), rgba(255,218,41,.65) 43%, transparent 78%);
+  box-shadow: inset 0 0 14px #fff, 0 0 20px #ffd51f;
+  animation: pirateWinnerPulse .42s ease-in-out infinite alternate;
+}
+
+.pirate-gold-page .scatter-winner {
+  position: relative;
+  z-index: 6;
+  border-radius: 10px;
+  background: rgba(0, 225, 255, .25);
+  box-shadow: inset 0 0 15px #fff, 0 0 20px #00e4ff;
+}
+
+.pirate-gold-page .reel-shadow {
+  position: absolute;
+  z-index: 8;
+  left: 0;
+  width: 100%;
+  height: 24px;
+  pointer-events: none;
+}
+
+.pirate-gold-page .reel-shadow-top {
+  top: 0;
+  background: linear-gradient(to bottom, rgba(0,0,0,.65), transparent);
+}
+
+.pirate-gold-page .reel-shadow-bottom {
+  bottom: 0;
+  background: linear-gradient(to top, rgba(0,0,0,.7), transparent);
+}
+
+/* =========================
+   MENSAJE / CONTROLES
+   ========================= */
+
+.pirate-gold-page .message {
+  min-height: 17px;
+  margin: 0;
+  color: #fff;
+  font-size: 12px;
+  font-weight: 900;
+  line-height: 1.1;
+  text-shadow: 0 0 7px #ff3838;
+}
+
+.pirate-gold-page .message-win {
+  color: #ffe66e;
+  text-shadow: 0 0 8px #ffd529;
+}
+
+.pirate-gold-page .controls {
+  width: 100%;
+  display: grid;
+  grid-template-columns: 145px 58px minmax(220px, 1fr) 58px 65px;
+  gap: 9px;
+  align-items: center;
+  padding: 1px 2px 0;
+}
+
+.pirate-gold-page .bet-display {
+  height: 52px;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  gap: 3px;
+  padding: 5px 8px;
+  border: 0;
+  border-radius: 12px;
+  color: #fff;
+  background: transparent;
+}
+
+.pirate-gold-page .bet-display span {
+  font-size: 12px;
+}
+
+.pirate-gold-page .bet-display strong {
+  color: #ffe55b;
+  font-size: 19px;
+}
+
+.pirate-gold-page .small-button {
+  width: 58px;
+  height: 58px;
+  padding: 0;
+  border: 3px solid #a98728;
+  border-radius: 50%;
+  color: #fff;
+  font-size: 30px;
+  font-weight: 900;
+  cursor: pointer;
+  background: linear-gradient(#313131, #101010);
+  box-shadow: 0 4px 0 #050505;
+}
+
+.pirate-gold-page .spin-button {
+  width: 100%;
+  min-width: 0;
+  min-height: 50px;
+  padding: 9px 15px;
+  border: 3px solid #f8e39a;
+  border-radius: 30px;
+  color: #151000;
+  font-size: clamp(19px, 3vw, 24px);
+  font-weight: 1000;
+  letter-spacing: 4px;
+  cursor: pointer;
+  background: linear-gradient(to bottom, #fff0a0, #d7a91c 55%, #9a7109);
+  box-shadow:
+    0 5px 0 #5f4708,
+    0 0 17px rgba(255, 213, 50, .48);
+}
+
+.pirate-gold-page .free-spin-button {
+  background: linear-gradient(to bottom, #cfffff, #20d1d1 55%, #0b7272);
+}
+
+.pirate-gold-page .max-bet-button {
+  width: 65px;
+  min-width: 65px;
+  height: 52px;
+  padding: 0 4px;
+  border: 3px solid #9c7b1f;
+  border-radius: 14px;
+  color: #fff;
+  font-weight: 1000;
+  cursor: pointer;
+  background: linear-gradient(#343434, #111);
+  box-shadow: 0 4px 0 #050505;
+}
+
+.pirate-gold-page .spin-button:not(:disabled):active,
+.pirate-gold-page .small-button:not(:disabled):active,
+.pirate-gold-page .max-bet-button:not(:disabled):active {
+  transform: translateY(3px);
+}
+
+.pirate-gold-page button:disabled {
+  cursor: not-allowed;
+  opacity: .55;
+}
+
+.pirate-gold-page .bottom-buttons {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 2px;
+}
+
+.pirate-gold-page .reset-button {
+  padding: 7px 15px;
+  border: 2px solid #9c7b1f;
+  border-radius: 18px;
+  color: #fff;
+  font-size: 10px;
+  font-weight: 900;
+  cursor: pointer;
+  background: #181818;
+}
+
+.pirate-gold-page .saved-message {
+  color: #d5ffd5;
+  font-size: 9px;
+  font-weight: 800;
+}
+
+/* =========================
+   TABLA DE PAGOS
+   ========================= */
+
+.pirate-gold-page .paytable-overlay {
+  position: fixed;
+  z-index: 120;
+  inset: 0;
+  width: 100%;
+  border: 0;
+  padding: 20px;
+  cursor: pointer;
+  background: rgba(3,0,5,.9);
+  backdrop-filter: blur(5px);
+}
+
+.pirate-gold-page .paytable-card {
+  position: relative;
+  width: min(720px, 96vw);
+  max-height: 90vh;
+  margin: auto;
+  padding: 24px;
+  overflow-y: auto;
+  cursor: default;
+  border: 3px solid #d7a91a;
+  border-radius: 22px;
+  color: #fff;
+  background: radial-gradient(circle at top, #2a1d02, #111 58%, #050505);
+  box-shadow: 0 0 32px rgba(255,208,38,.65);
+}
+
+.pirate-gold-page .paytable-card h2 {
+  margin: 0 0 6px;
+  color: #ffe05a;
+  font-size: clamp(27px, 6vw, 44px);
+}
+
+.pirate-gold-page .paytable-close {
+  position: absolute;
+  top: 10px;
+  right: 12px;
+  width: 40px;
+  height: 40px;
+  border: 2px solid #d7a91a;
+  border-radius: 50%;
+  color: #fff;
+  font-size: 25px;
+  cursor: pointer;
+  background: #181818;
+}
+
+.pirate-gold-page .paytable-grid {
+  display: grid;
+  gap: 7px;
+  margin: 16px 0;
+}
+
+.pirate-gold-page .paytable-row {
+  display: grid;
+  grid-template-columns: 70px repeat(3, 1fr);
+  align-items: center;
+  gap: 8px;
+  padding: 9px;
+  border: 1px solid rgba(255,215,62,.5);
+  border-radius: 11px;
+  background: rgba(0,0,0,.4);
+}
+
+.pirate-gold-page .paytable-row strong {
+  font-size: 31px;
+}
+
+.pirate-gold-page .paytable-row span {
+  font-weight: 900;
+}
+
+.pirate-gold-page .scatter-pay {
+  border-color: #00d9e8;
+}
+
+/* =========================
+   CELEBRACIÓN
+   ========================= */
+
+.pirate-gold-page .celebration {
+  position: fixed;
+  z-index: 100;
+  inset: 0;
+  width: 100%;
+  border: 0;
+  overflow: hidden;
+  cursor: pointer;
+  background: rgba(3,0,5,.84);
+  backdrop-filter: blur(5px);
+}
+
+.pirate-gold-page .celebration-card {
+  position: absolute;
+  z-index: 2;
+  top: 50%;
+  left: 50%;
+  width: min(600px, 90vw);
+  padding: 32px 18px;
+  transform: translate(-50%, -50%);
+  border: 4px solid #d7aa1d;
+  border-radius: 26px;
+  background: radial-gradient(circle, #5d4209, #171003 58%, #050505);
+  box-shadow: 0 0 38px #d5a91f, 0 0 80px rgba(255,210,37,.42);
+  animation: pirateCelebrationPop .5s cubic-bezier(.2,1.6,.4,1);
+}
+
+.pirate-gold-page .celebration-kicker {
+  display: block;
+  color: #ffe35e;
+  font-size: clamp(22px, 6vw, 52px);
+  font-weight: 1000;
+}
+
+.pirate-gold-page .celebration-card strong {
+  display: block;
+  margin: 10px 0;
+  color: #fff;
+  font-size: clamp(50px, 13vw, 105px);
+  line-height: .95;
+  text-shadow: 0 0 12px #fff, 0 0 30px #ffc817;
+}
+
+.pirate-gold-page .celebration-card small {
+  color: #fff;
+  font-size: 11px;
+  font-weight: 900;
+}
+
+.pirate-gold-page .coin-rain span {
+  position: absolute;
+  z-index: 1;
+  top: -15%;
+  left: var(--coin-left);
+  font-size: 22px;
+  animation: pirateCoinFall 2.4s linear infinite;
+  animation-delay: var(--coin-delay);
+}
+
+/* =========================
+   ANIMACIONES
+   ========================= */
+
+@keyframes pirateReelRoll {
+  from { transform: translateY(-3360px) scaleY(1.03); }
+  to { transform: translateY(0) scaleY(1); }
+}
+
+@keyframes pirateStopBounce {
+  0% { transform: translateY(-20px) scaleY(1.03); }
+  55% { transform: translateY(6px) scaleY(.99); }
+  100% { transform: translateY(0) scaleY(1); }
+}
+
+@keyframes pirateReelStopBounce {
+  0% { transform: translateY(-7px); }
+  55% { transform: translateY(3px); }
+  100% { transform: translateY(0); }
+}
+
+@keyframes pirateBlink {
+  from { opacity: .35; transform: scale(.86); }
+  to { opacity: 1; transform: scale(1.12); }
+}
+
+@keyframes pirateWinnerPulse {
+  from { transform: scale(.95); }
+  to { transform: scale(1.05); }
+}
+
+@keyframes pirateWinningFlash {
+  from { opacity: .65; }
+  to { opacity: 1; }
+}
+
+@keyframes pirateCabinetWin {
+  from { filter: brightness(1); }
+  to { filter: brightness(1.14) saturate(1.12); }
+}
+
+@keyframes pirateCelebrationPop {
+  0% { transform: translate(-50%, -50%) scale(.35); opacity: 0; }
+  75% { transform: translate(-50%, -50%) scale(1.05); opacity: 1; }
+  100% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+}
+
+@keyframes pirateCoinFall {
+  0% { transform: translateY(-10vh) rotate(0deg); opacity: 0; }
+  12% { opacity: 1; }
+  100% { transform: translateY(125vh) rotate(720deg); opacity: 1; }
+}
+
+/* =========================
+   CELULARES
+   ========================= */
+
+@media (max-width: 768px) {
+  .pirate-gold-page {
+    height: 100dvh;
+    min-height: 100dvh;
+    padding:
+      max(6px, env(safe-area-inset-top))
+      4px
+      max(6px, env(safe-area-inset-bottom))
+      4px;
+    align-items: flex-start;
+    overflow: hidden;
+  }
+
+  .pirate-gold-page .machine {
+    width: 100%;
+    height: calc(
+      100dvh
+      - max(6px, env(safe-area-inset-top))
+      - max(6px, env(safe-area-inset-bottom))
+      - 4px
+    );
+    max-height: none;
+    padding: 8px 7px 7px;
+    gap: 2px;
+    border-width: 3px;
+    border-radius: 20px;
+    overflow: hidden;
+  }
+
+  .pirate-gold-page .lights {
+    top: 5px;
+    left: 12px;
+    right: 12px;
+  }
+
+  .pirate-gold-page .light {
+    width: 6px;
+    height: 6px;
+  }
+
+  .pirate-gold-page .top-actions {
+    top: 5px;
+    right: 5px;
+    gap: 3px;
+  }
+
+  .pirate-gold-page .round-action-button {
+    width: 27px;
+    height: 27px;
+    font-size: 12px;
+  }
+
+  .pirate-gold-page .western-heading {
+    margin: 6px auto 0;
+    padding: 0 82px;
+  }
+
+  .pirate-gold-page .western-kicker {
+    font-size: 7px;
+  }
+
+  .pirate-gold-page .title {
+    font-size: clamp(25px, 8vw, 36px);
+    letter-spacing: 1px;
+  }
+
+  .pirate-gold-page .western-stars {
+    height: 10px;
+    margin-top: 1px;
+    font-size: 9px;
+    line-height: 9px;
+    letter-spacing: 2px;
+  }
+
+  .pirate-gold-page .subtitle {
+    margin: 1px 0 3px;
+    font-size: 7px;
+    letter-spacing: 1.5px;
+  }
+
+  .pirate-gold-page .jackpot-panel {
+    width: calc(100% - 34px);
+    margin-bottom: 2px;
+    padding: 4px 6px;
+  }
+
+  .pirate-gold-page .jackpot-panel span,
+  .pirate-gold-page .jackpot-panel small {
+    font-size: 7px;
+  }
+
+  .pirate-gold-page .jackpot-panel strong {
+    font-size: 25px;
+  }
+
+  .pirate-gold-page .information-panel {
+    gap: 3px;
+    margin-bottom: 2px;
+  }
+
+  .pirate-gold-page .information-box {
+    padding: 4px 1px;
+    border-width: 1px;
+    border-radius: 7px;
+  }
+
+  .pirate-gold-page .information-label {
+    font-size: 5px;
+  }
+
+  .pirate-gold-page .information-value {
+    font-size: 15px;
+  }
+
+  .pirate-gold-page .special-symbols {
+    font-size: 6px;
+    gap: 2px 6px;
+  }
+
+  .pirate-gold-page .line-indicators {
+    gap: 2px;
+    margin-bottom: 2px;
+  }
+
+  .pirate-gold-page .line-indicator {
+    padding: 1px 3px;
+    font-size: 5px;
+  }
+
+  .pirate-gold-page .reels-frame {
+    padding: 4px;
+    margin-bottom: 2px;
+  }
+
+  .pirate-gold-page .reels-container {
+    gap: 3px;
+    padding: 3px;
+  }
+
+  .pirate-gold-page .reel-window {
+    height: clamp(165px, 29dvh, 210px);
+  }
+
+  .pirate-gold-page .reel-symbol,
+  .pirate-gold-page .stopped-symbol {
+    height: calc(clamp(165px, 29dvh, 210px) / 3);
+    font-size: clamp(28px, 8vw, 39px);
+  }
+
+  .pirate-gold-page .message {
+    min-height: 12px;
+    font-size: 8px;
+  }
+
+  .pirate-gold-page .controls {
+    grid-template-columns: 40px minmax(0, 1fr) 40px 48px;
+    gap: 5px;
+    padding: 0 3px max(2px, env(safe-area-inset-bottom));
+  }
+
+  .pirate-gold-page .bet-display {
+    display: none;
+  }
+
+  .pirate-gold-page .small-button {
+    width: 40px;
+    min-width: 40px;
+    height: 40px;
+    font-size: 24px;
+  }
+
+  .pirate-gold-page .spin-button {
+    min-height: 40px;
+    height: 40px;
+    padding: 5px 3px;
+    font-size: 15px;
+    letter-spacing: 2px;
+  }
+
+  .pirate-gold-page .max-bet-button {
+    width: 48px;
+    min-width: 48px;
+    height: 40px;
+    font-size: 9px;
+  }
+
+  .pirate-gold-page .bottom-buttons {
+    display: none;
+  }
+}
+
+/* iPhone angosto: evita que el título quede debajo de los botones */
+@media (max-width: 430px) {
+  .pirate-gold-page .western-heading {
+    padding: 0 70px;
+  }
+
+  .pirate-gold-page .title {
+    font-size: clamp(23px, 7.6vw, 33px);
+  }
+
+  .pirate-gold-page .reel-window {
+    height: clamp(158px, 27dvh, 195px);
+  }
+
+  .pirate-gold-page .reel-symbol,
+  .pirate-gold-page .stopped-symbol {
+    height: calc(clamp(158px, 27dvh, 195px) / 3);
+  }
+}
+
+/* PC baja de altura */
+@media (min-width: 769px) and (max-height: 820px) {
+  .pirate-gold-page {
+    align-items: flex-start;
+  }
+
+  .pirate-gold-page .machine {
+    transform: scale(.88);
+    transform-origin: top center;
+  }
+}
