@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import { supabase } from "./supabase";
+import "./Cashier.css";
 
 const QUICK_AMOUNTS = [100, 500, 1000];
 
@@ -148,197 +149,169 @@ export default function Cashier({ player, onLogout }) {
   }
 
   return (
-    <main
-      style={{
-        minHeight: "100vh",
-        padding: 32,
-        color: "white",
-        background:
-          "linear-gradient(180deg, #090909 0%, #050005 55%, #10000b 100%)",
-      }}
-    >
-      <h1 style={{ color: "#e9bd45" }}>Panel de Cajero</h1>
+    <main className="cashier-page">
+      <section className="cashier-shell">
+        <header className="cashier-header">
+          <div>
+            <p className="cashier-brand">👑 JACKPOT PALACE</p>
+            <h1>PANEL DE CAJERO</h1>
+          </div>
 
-      <p>
-        Usuario:{" "}
-        <strong>{player?.display_name || player?.username}</strong>
-      </p>
+          <div className="cashier-header-actions">
+            <button
+              className="cashier-refresh"
+              type="button"
+              onClick={loadData}
+              disabled={loading || Boolean(workingId)}
+            >
+              ACTUALIZAR
+            </button>
+            <button className="cashier-logout" type="button" onClick={onLogout}>
+              CERRAR SESIÓN
+            </button>
+          </div>
+        </header>
 
-      <p>
-        Saldo disponible:{" "}
-        <strong style={{ color: "#f8d66d" }}>
-          {cashierCredits.toLocaleString("es-AR")} créditos
-        </strong>
-      </p>
+        <section className="cashier-summary">
+          <div>
+            <span>USUARIO</span>
+            <strong>{player?.display_name || player?.username}</strong>
+          </div>
+          <div>
+            <span>SALDO DISPONIBLE</span>
+            <strong>{cashierCredits.toLocaleString("es-AR")} créditos</strong>
+          </div>
+          <div>
+            <span>JUGADORES ASIGNADOS</span>
+            <strong>{players.length}</strong>
+          </div>
+        </section>
 
-      <div
-        style={{
-          display: "flex",
-          gap: 10,
-          flexWrap: "wrap",
-          marginBottom: 18,
-        }}
-      >
-        <button type="button" onClick={onLogout}>
-          CERRAR SESIÓN
-        </button>
+        <div className="cashier-section-title">
+          <div>
+            <span>GESTIÓN DE CRÉDITOS</span>
+            <h2>Mis jugadores</h2>
+          </div>
+        </div>
 
-        <button
-          type="button"
-          onClick={loadData}
-          disabled={loading || Boolean(workingId)}
-        >
-          ACTUALIZAR
-        </button>
-      </div>
+        {loading && <p className="cashier-loading">Cargando jugadores...</p>}
 
-      <hr />
+        {message && <p className="cashier-message">{message}</p>}
 
-      <h2>Mis jugadores</h2>
+        {!loading && players.length === 0 && (
+          <p className="cashier-empty">Todavía no tenés jugadores asignados.</p>
+        )}
 
-      {loading && <p>Cargando jugadores...</p>}
-
-      {message && (
-        <p
-          style={{
-            padding: 12,
-            border: "1px solid #c99b32",
-            borderRadius: 8,
-            background: "rgba(201, 155, 50, 0.12)",
-          }}
-        >
-          {message}
-        </p>
-      )}
-
-      {!loading && players.length === 0 && (
-        <p>Todavía no tenés jugadores asignados.</p>
-      )}
-
-      <div style={{ display: "grid", gap: 16 }}>
+        <div className="cashier-players-list">
         {players.map((item) => {
           const isWorking = workingId === item.id;
 
           return (
             <section
               key={item.id}
-              style={{
-                padding: 16,
-                border: "1px solid #8d6a20",
-                borderRadius: 12,
-                background: "rgba(255, 255, 255, 0.035)",
-              }}
+              className={`cashier-player-card${item.is_blocked ? " is-blocked" : ""}`}
             >
-              <div style={{ marginBottom: 12 }}>
-                <strong style={{ fontSize: 18 }}>
-                  {item.display_name || item.username}
-                </strong>
+              <div className="cashier-player-info">
+                <div className="cashier-player-name">
+                  <strong>{item.display_name || item.username}</strong>
+                  <span className={item.is_blocked ? "blocked" : "active"}>
+                    {item.is_blocked ? "BLOQUEADO" : "ACTIVO"}
+                  </span>
+                </div>
 
-                <span>
-                  {" "}
-                  — Créditos:{" "}
-                  <strong>{Number(item.credits || 0).toLocaleString("es-AR")}</strong>
-                </span>
-
-                <span
-                  style={{
-                    color: item.is_blocked ? "#ff6b6b" : "#6ee78b",
-                  }}
-                >
-                  {item.is_blocked ? " — BLOQUEADO" : " — ACTIVO"}
-                </span>
+                <div className="cashier-player-credit">
+                  <span>CRÉDITOS</span>
+                  <strong>
+                    {Number(item.credits || 0).toLocaleString("es-AR")}
+                  </strong>
+                </div>
               </div>
 
-              <div
-                style={{
-                  display: "flex",
-                  flexWrap: "wrap",
-                  gap: 8,
-                  marginBottom: 12,
-                }}
-              >
-                {QUICK_AMOUNTS.map((amount) => (
+              <div className="cashier-credit-controls">
+                <div className="cashier-quick-buttons">
+                  {QUICK_AMOUNTS.map((amount) => (
+                    <button
+                      className="add"
+                      key={`add-${amount}`}
+                      type="button"
+                      disabled={isWorking || item.is_blocked}
+                      onClick={() => adjustCredits(item, amount)}
+                    >
+                      +{amount.toLocaleString("es-AR")}
+                    </button>
+                  ))}
+
+                  {QUICK_AMOUNTS.map((amount) => (
+                    <button
+                      className="remove"
+                      key={`remove-${amount}`}
+                      type="button"
+                      disabled={isWorking || item.is_blocked}
+                      onClick={() => adjustCredits(item, -amount)}
+                    >
+                      -{amount.toLocaleString("es-AR")}
+                    </button>
+                  ))}
+                </div>
+
+                <div className="cashier-custom-row">
+                  <input
+                    type="number"
+                    min="1"
+                    step="1"
+                    placeholder="Monto personalizado"
+                    value={customAmounts[item.id] || ""}
+                    disabled={isWorking || item.is_blocked}
+                    onChange={(event) =>
+                      setCustomAmounts((current) => ({
+                        ...current,
+                        [item.id]: event.target.value,
+                      }))
+                    }
+                  />
+
                   <button
-                    key={`add-${amount}`}
+                    className="deliver"
                     type="button"
                     disabled={isWorking || item.is_blocked}
-                    onClick={() => adjustCredits(item, amount)}
+                    onClick={() => applyCustomAmount(item, "add")}
                   >
-                    +{amount.toLocaleString("es-AR")}
+                    ENTREGAR
                   </button>
-                ))}
 
-                {QUICK_AMOUNTS.map((amount) => (
                   <button
-                    key={`remove-${amount}`}
+                    className="recover"
                     type="button"
                     disabled={isWorking || item.is_blocked}
-                    onClick={() => adjustCredits(item, -amount)}
+                    onClick={() => applyCustomAmount(item, "remove")}
                   >
-                    -{amount.toLocaleString("es-AR")}
+                    RECUPERAR
                   </button>
-                ))}
-              </div>
+                </div>
 
-              <div
-                style={{
-                  display: "flex",
-                  flexWrap: "wrap",
-                  gap: 8,
-                  marginBottom: 8,
-                }}
-              >
                 <input
-                  type="number"
-                  min="1"
-                  step="1"
-                  placeholder="Monto personalizado"
-                  value={customAmounts[item.id] || ""}
+                  className="cashier-reason-input"
+                  type="text"
+                  placeholder="Motivo opcional"
+                  value={reasons[item.id] || ""}
                   disabled={isWorking || item.is_blocked}
                   onChange={(event) =>
-                    setCustomAmounts((current) => ({
+                    setReasons((current) => ({
                       ...current,
                       [item.id]: event.target.value,
                     }))
                   }
                 />
 
-                <button
-                  type="button"
-                  disabled={isWorking || item.is_blocked}
-                  onClick={() => applyCustomAmount(item, "add")}
-                >
-                  ENTREGAR
-                </button>
-
-                <button
-                  type="button"
-                  disabled={isWorking || item.is_blocked}
-                  onClick={() => applyCustomAmount(item, "remove")}
-                >
-                  RECUPERAR
-                </button>
+                {isWorking && (
+                  <p className="cashier-working">Procesando operación...</p>
+                )}
               </div>
-
-              <input
-                type="text"
-                placeholder="Motivo opcional"
-                value={reasons[item.id] || ""}
-                disabled={isWorking || item.is_blocked}
-                onChange={(event) =>
-                  setReasons((current) => ({
-                    ...current,
-                    [item.id]: event.target.value,
-                  }))
-                }
-                style={{ width: "min(100%, 520px)" }}
-              />
-
-              {isWorking && <p>Procesando operación...</p>}
             </section>
           );
         })}
-      </div>
+        </div>
+      </section>
     </main>
   );
 }
