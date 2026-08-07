@@ -342,6 +342,81 @@ const canManage =
       return json({ ok: true });
     }
 
+    if (body.action === "assign_players_to_cashier") {
+      const cashierId =
+        typeof body.cashier_id === "string" ? body.cashier_id : "";
+      const prefix = normalizeUsername(String(body.prefix ?? ""));
+      const start = Number(body.start ?? 0);
+      const end = Number(body.end ?? 0);
+
+      if (!cashierId || !prefix) {
+        return json({ error: "El cajero y el prefijo son obligatorios." }, 400);
+      }
+
+      if (
+        !Number.isInteger(start) ||
+        !Number.isInteger(end) ||
+        start < 1 ||
+        end < start ||
+        end - start + 1 > 200
+      ) {
+        return json({ error: "El rango debe tener entre 1 y 200 jugadores." }, 400);
+      }
+
+      const { data: cashier, error: cashierError } = await adminClient
+        .from("players")
+        .select("id,username,role,parent_id,is_active")
+        .eq("id", cashierId)
+        .maybeSingle();
+
+      if (cashierError) throw cashierError;
+
+      if (!cashier || cashier.role !== "cashier" || !cashier.is_active) {
+        return json({ error: "El cajero seleccionado no es válido." }, 400);
+      }
+
+      if (caller.role === "admin" && cashier.parent_id !== caller.id) {
+        return json({ error: "No podés asignar jugadores a un cajero ajeno." }, 403);
+      }
+
+      const usernames = Array.from(
+        { length: end - start + 1 },
+        (_, index) => `${prefix}${String(start + index).padStart(3, "0")}`
+      );
+
+      const { data: targetPlayers, error: playersError } = await adminClient
+        .from("players")
+        .select("id,username,parent_id")
+        .eq("role", "player")
+        .in("username", usernames);
+
+      if (playersError) throw playersError;
+
+      const validPlayers = targetPlayers || [];
+      const movedCount = validPlayers.filter(
+        (targetPlayer) =>
+          targetPlayer.parent_id && targetPlayer.parent_id !== cashier.id
+      ).length;
+
+      if (validPlayers.length) {
+        const { error: updateError } = await adminClient
+          .from("players")
+          .update({ parent_id: cashier.id })
+          .in("id", validPlayers.map((targetPlayer) => targetPlayer.id));
+
+        if (updateError) throw updateError;
+      }
+
+      return json({
+        ok: true,
+        cashier_id: cashier.id,
+        cashier_username: cashier.username,
+        assigned_count: validPlayers.length,
+        moved_count: movedCount,
+        missing_count: usernames.length - validPlayers.length,
+      });
+    }
+
     if (body.action === "force_logout") {
       const { data: player, error: playerError } = await adminClient
   .from("players")
